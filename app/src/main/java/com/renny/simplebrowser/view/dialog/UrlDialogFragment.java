@@ -17,10 +17,9 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
+import com.renny.simplebrowser.business.base.BaseDialogFragment;
 import com.renny.simplebrowser.business.base.CommonAdapter;
 import com.renny.simplebrowser.business.base.ViewHolder;
-import com.renny.simplebrowser.business.helper.UIHelper;
-import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
 
 import java.util.ArrayList;
@@ -30,20 +29,19 @@ import java.util.List;
  * Created by Renny on 2018/1/10.
  */
 
-public class LongClickDialogFragment extends DialogFragment {
+public class UrlDialogFragment extends BaseDialogFragment {
     private RecyclerView mRecyclerView;
-    private int LocationX = 0;
+    private String codeContent = "";
     private int LocationY = 0;
     OnItemClickListener mOnItemClickListener;
     final List<String> list = new ArrayList<>();
     CommonAdapter<String> commonAdapter;
     String result;
 
-    public static LongClickDialogFragment getInstance(int locationX, int locationY) {
-        LongClickDialogFragment longClickDialogFragment = new LongClickDialogFragment();
+    public static UrlDialogFragment getInstance(String codeContent) {
+        UrlDialogFragment longClickDialogFragment = new UrlDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt("intX", locationX);
-        bundle.putInt("intY", locationY);
+        bundle.putString("codeContent", codeContent);
         longClickDialogFragment.setArguments(bundle);
         return longClickDialogFragment;
     }
@@ -63,6 +61,11 @@ public class LongClickDialogFragment extends DialogFragment {
         return rootView;
     }
 
+    @Override
+    protected int getLayoutId() {
+        return 0;
+    }
+
 
     public void bindView(View rootView, Bundle savedInstanceState) {
         mRecyclerView = rootView.findViewById(R.id.popup_list);
@@ -74,12 +77,6 @@ public class LongClickDialogFragment extends DialogFragment {
         return result;
     }
 
-    public void setShowZxing(String result) {
-        this.result = result;
-        Logs.base.d("识别图中二维码" + result);
-        commonAdapter.addData("识别图中二维码");
-        commonAdapter.notifyDataSetChanged();
-    }
 
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
         list.add("保存图片");
@@ -110,7 +107,7 @@ public class LongClickDialogFragment extends DialogFragment {
     }
 
     protected void initParams(Bundle bundle) {
-        LocationX = bundle.getInt("intX");
+        codeContent = bundle.getString("codeContent");
         LocationY = bundle.getInt("intY");
     }
 
@@ -121,11 +118,7 @@ public class LongClickDialogFragment extends DialogFragment {
             Window window = dialog.getWindow();
             if (window != null) {
                 WindowManager.LayoutParams lp = window.getAttributes();
-                window.setGravity(Gravity.LEFT | Gravity.TOP);
-                lp.x = LocationX;
-                lp.y = LocationY;
-                lp.width = UIHelper.dip2px(100);
-                lp.dimAmount = 0.0f;
+                window.setGravity(Gravity.CENTER);
                 lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
                 lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                 window.setAttributes(lp);

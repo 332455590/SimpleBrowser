@@ -48,7 +48,7 @@ public abstract class CommonAdapter<T> extends RecyclerView.Adapter<ViewHolder> 
         return dataList.size();
     }
 
-    public CommonAdapter setItemClickListener(ItemClickListener itemClickListener) {
+    public CommonAdapter<T> setItemClickListener(ItemClickListener itemClickListener) {
         mItemClickListener = itemClickListener;
         return this;
     }
@@ -60,7 +60,11 @@ public abstract class CommonAdapter<T> extends RecyclerView.Adapter<ViewHolder> 
             notifyItemRangeChanged(position, getItemCount()); //刷新被删除数据，以及其后面的数据
         }
     }
-
+    public void addData(T data) {
+        if (dataList != null ) {
+            dataList.add(data);
+        }
+    }
     public void clear() {
         if (dataList != null) {
             dataList.clear();

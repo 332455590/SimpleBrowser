@@ -506,13 +506,20 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
         }
     }
 
+    public static String handleResult(String path) {
+        Result rawResult = scanningImage(path);
+        if (rawResult == null) {
+            return null;
+        } else return rawResult.getText();
+    }
+
     /**
      * 图片识别
      *
      * @param path
      * @return
      */
-    protected Result scanningImage(String path) {
+    public static Result scanningImage(String path) {
         if (TextUtils.isEmpty(path)) {
             return null;
         }
