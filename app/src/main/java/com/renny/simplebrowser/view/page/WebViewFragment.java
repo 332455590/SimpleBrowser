@@ -2,6 +2,7 @@ package com.renny.simplebrowser.view.page;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -157,8 +158,14 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                         ThreadHelper.postMain(new Runnable() {
                             @Override
                             public void run() {
-                                DeviceHelper.openFile(getActivity(),file);
-                                ToastHelper.makeToast("下载成功");
+                                Snackbar.make(mWebView, "下载成功，是否立即打开文件？", Snackbar.LENGTH_LONG)
+                                        .setAction("打开", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                DeviceHelper.openFile(getActivity(),file);
+                                            }
+                                        })
+                                        .show();
                             }
                         });
                     }

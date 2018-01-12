@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Vibrator;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 import com.renny.simplebrowser.App;
@@ -118,7 +119,7 @@ public class DeviceHelper {
         }
 
         String end = fName.substring(dotIndex, fName.length()).toLowerCase();
-        if (end == "") {
+        if (TextUtils.equals(end, "")) {
             return type;
         }
 
