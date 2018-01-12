@@ -1,28 +1,29 @@
 package com.renny.simplebrowser.business.base;
 
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.renny.simplebrowser.R;
 
 /**
  * Created by Renny on 2018/1/11.
  */
 
 public abstract class BaseDialogFragment extends DialogFragment {
+    private View rootView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (getArguments() != null) {
             initParams(getArguments());
         }
-        View rootView = inflater.inflate(R.layout.popup_list, container, false);
-        bindView(rootView, savedInstanceState);
-        afterViewBind(rootView, savedInstanceState);
+        if (rootView == null) {
+            rootView = inflater.inflate(getLayoutId(), container, false);
+            bindView(rootView, savedInstanceState);
+            afterViewBind(rootView, savedInstanceState);
+        }
         return rootView;
     }
 
@@ -37,4 +38,12 @@ public abstract class BaseDialogFragment extends DialogFragment {
     protected void initParams(Bundle bundle) {
     }
 
+
+    public BaseActivity getBaseActivity() {
+        return (BaseActivity) getActivity();
+    }
+
+    public boolean isShowing() {
+        return getDialog() != null && getDialog().isShowing();
+    }
 }

@@ -50,7 +50,7 @@ public class BitmapUtils {
         }
         String photoPath = photoFile.getAbsolutePath();
         String photoName = photoFile.getName();
-        // 其次把文件插入到系统图库
+        // 把文件插入到系统图库
         try {
             ContentResolver contentResolver = context.getContentResolver();
             MediaStore.Images.Media.insertImage(contentResolver, photoPath, photoName, null);

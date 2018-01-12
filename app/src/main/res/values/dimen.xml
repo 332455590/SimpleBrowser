@@ -1,0 +1,38 @@
+<resources>
+    <!--输入框高度1-->
+    <dimen name="input_height_160">53dp</dimen>
+    <dimen name="input_height_200">67dp</dimen>
+
+    <!--输入框高度2-->
+    <dimen name="input_height_146">49dp</dimen>
+    <!--输入框高度3-->
+    <dimen name="input_height_176">59dp</dimen>
+    <!--输入框的高度4-->
+    <dimen name="input_height_150">50dp</dimen>
+    <dimen name="label_height">48dp</dimen>
+
+    <dimen name="search_height_130">43dp</dimen>
+    <dimen name="text_height_32">32dp</dimen>
+    <dimen name="margin_top">13dp</dimen>
+    <!--按钮高度-->
+    <dimen name="btn_height">48dp</dimen>
+    <dimen name="btn_height_135">45dp</dimen>
+    <!--分割线高度-->
+    <dimen name="line_height">0.5dp</dimen>
+    <!--分割块的高度-->
+    <dimen name="line_height_30">10dp</dimen>
+    <!--分割条高度-->
+    <dimen name="spacing">15dp</dimen>
+    <dimen name="height_135">45dp</dimen>
+    <dimen name="item_height_150">50dp</dimen>
+    <dimen name="height_20">20dp</dimen>
+    <!-- 用于按钮距离上部内容的距离-->
+    <dimen name="margin_right_arrow">12.5dp</dimen>
+    <!--用于按钮距离父类的距离-->
+    <dimen name="margin_father_left">16dp</dimen>
+    <dimen name="margin_father_right">15dp</dimen>
+    <dimen name="margin_father_top">15dp</dimen>
+    <dimen name="margin_father_left_normal">16dp</dimen>
+    <dimen name="margin_father_right_normal">17.05dp</dimen>
+
+</resources>

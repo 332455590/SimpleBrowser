@@ -1,0 +1,27 @@
+<resources>
+
+    <!--用于少数重要标题 如导航栏、分类名称等 52px-->
+    <dimen name="size_major_large">18dp</dimen>
+    <dimen name="size_major_normal">17dp</dimen>
+    <!--用于少数重要标题 如按钮文案等 48px-->
+    <dimen name="size_major_middle">16dp</dimen>
+    <!--用于较为重要的文字或按钮 如按钮文字或表单文字 44px-->
+    <dimen name="size_major_small">15dp</dimen>
+    <!--用于大多数文字 如首页模块名称、价格等 40px-->
+    <dimen name="size_normal_large">14dp</dimen>
+    <!--用于大多数文字 如小标题、模块说明等 38px-->
+    <dimen name="size_normal_small">13dp</dimen>
+    <!--用于辅助性文字 如次要的副标题、icon说明等 34px-->
+    <dimen name="size_minor_large">12dp</dimen>
+
+    <!--新定义字体大小-->
+    <dimen name="font22">8dp</dimen>
+    <dimen name="font24">9dp</dimen>
+    <dimen name="font26">10dp</dimen>
+    <dimen name="font28">11dp</dimen>
+    <dimen name="font30">12dp</dimen>
+    <dimen name="font32">13dp</dimen>
+    <dimen name="font34">14dp</dimen>
+    <dimen name="font36">15dp</dimen>
+    <dimen name="font40">16dp</dimen>
+</resources>

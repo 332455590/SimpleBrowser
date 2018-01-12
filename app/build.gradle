@@ -9,7 +9,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true    // Enable RS support
     }
     buildTypes {
         release {
@@ -29,5 +30,6 @@ dependencies {
     implementation "com.github.bumptech.glide:okhttp3-integration:${rootProject.ext.glideVersion}"
     implementation "com.github.bumptech.glide:annotations:${rootProject.ext.glideVersion}"
     implementation project(':zxing')
+    implementation 'com.github.mmin18:realtimeblurview:1.1.0'
 
 }

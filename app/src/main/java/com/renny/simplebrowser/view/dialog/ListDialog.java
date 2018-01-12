@@ -4,12 +4,9 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
+import com.renny.simplebrowser.business.base.BaseDialogFragment;
 import com.renny.simplebrowser.business.base.CommonAdapter;
 import com.renny.simplebrowser.business.base.ViewHolder;
 import com.renny.simplebrowser.business.helper.UIHelper;
@@ -30,37 +28,32 @@ import java.util.List;
  * Created by Renny on 2018/1/10.
  */
 
-public class LongClickDialogFragment extends DialogFragment {
+public class ListDialog extends BaseDialogFragment {
     private RecyclerView mRecyclerView;
     private int LocationX = 0;
     private int LocationY = 0;
-    OnItemClickListener mOnItemClickListener;
+    private OnItemClickListener mOnItemClickListener;
     final List<String> list = new ArrayList<>();
-    CommonAdapter<String> commonAdapter;
-    String result;
+    private CommonAdapter<String> commonAdapter;
+    private String result;
 
-    public static LongClickDialogFragment getInstance(int locationX, int locationY) {
-        LongClickDialogFragment longClickDialogFragment = new LongClickDialogFragment();
+    public static ListDialog getInstance(int locationX, int locationY) {
+        ListDialog listDialog = new ListDialog();
         Bundle bundle = new Bundle();
         bundle.putInt("intX", locationX);
         bundle.putInt("intY", locationY);
-        longClickDialogFragment.setArguments(bundle);
-        return longClickDialogFragment;
+        listDialog.setArguments(bundle);
+        return listDialog;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
 
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (getArguments() != null) {
-            initParams(getArguments());
-        }
-        View rootView = inflater.inflate(R.layout.popup_list, container, false);
-        bindView(rootView, savedInstanceState);
-        afterViewBind(rootView, savedInstanceState);
-        return rootView;
+    protected int getLayoutId() {
+        return R.layout.popup_list;
     }
 
 
@@ -106,7 +99,7 @@ public class LongClickDialogFragment extends DialogFragment {
             }
         });
         mRecyclerView.setAdapter(commonAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
     }
 
     protected void initParams(Bundle bundle) {

@@ -24,7 +24,7 @@ import com.renny.simplebrowser.globe.helper.BitmapUtils;
 import com.renny.simplebrowser.globe.helper.FileUtil;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
-import com.renny.simplebrowser.view.dialog.LongClickDialogFragment;
+import com.renny.simplebrowser.view.dialog.ListDialog;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshWebView;
@@ -86,7 +86,6 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         };
 
         WebViewClient webViewClient = new X5WebViewClient(getActivity()) {
-
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
@@ -106,40 +105,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         mWebView.setOnSelectItemListener(this);
     }
 
-    private void downLoad(final String imgUrl) {
-        ToastHelper.makeToast("开始保存");
-        TaskHelper.submitResult(new ITaskWithResult<File>() {
-            @Override
-            public File onBackground() throws Exception {
-                return ImgHelper.syncLoadFile(imgUrl);
-            }
 
-            @Override
-            public void onComplete(File sourceFile) {
-                if (sourceFile != null && sourceFile.exists()) {
-                    File file = Folders.gallery.getFile(System.currentTimeMillis() + ".jpg");
-                    FileUtil.copyFile(sourceFile, file);
-                    BitmapUtils.displayToGallery(getActivity(), file);
-                    ToastHelper.makeToast("保存成功");
-
-                    new AlertDialog.Builder(getContext())
-                            .setMessage("保存成功")
-                            .setPositiveButton("打开相册", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(Intent.ACTION_PICK);
-                                    intent.setType("image/*");
-                                    startActivity(intent);
-                                }
-                            })
-                            .setNegativeButton("取消", null)
-                            .show();
-                } else {
-                    ToastHelper.makeToast("保存失败");
-                }
-            }
-        });
-    }
 
 
     @Override
@@ -153,7 +119,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     @Override
     public void onSelected(int x, int y, int type, final String extra) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        final LongClickDialogFragment bottomDialogFragment = LongClickDialogFragment.getInstance(x, y);
+        final ListDialog bottomDialogFragment = ListDialog.getInstance(x, y);
         bottomDialogFragment.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(int position) {
@@ -220,7 +186,40 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             }
         });
     }
+    private void downLoad(final String imgUrl) {
+        ToastHelper.makeToast("开始保存");
+        TaskHelper.submitResult(new ITaskWithResult<File>() {
+            @Override
+            public File onBackground() throws Exception {
+                return ImgHelper.syncLoadFile(imgUrl);
+            }
 
+            @Override
+            public void onComplete(File sourceFile) {
+                if (sourceFile != null && sourceFile.exists()) {
+                    File file = Folders.gallery.getFile(System.currentTimeMillis() + ".jpg");
+                    FileUtil.copyFile(sourceFile, file);
+                    BitmapUtils.displayToGallery(getActivity(), file);
+                    ToastHelper.makeToast("保存成功");
+
+                    new AlertDialog.Builder(getContext())
+                            .setMessage("保存成功")
+                            .setPositiveButton("打开相册", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(Intent.ACTION_PICK);
+                                    intent.setType("image/*");
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .show();
+                } else {
+                    ToastHelper.makeToast("保存失败");
+                }
+            }
+        });
+    }
     @Override
     public void onDownloadStart(String url, String userAgent, String contentDisposition,
                                 String mimetype, long contentLength) {
