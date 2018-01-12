@@ -6,9 +6,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Vibrator;
 import android.util.DisplayMetrics;
 
 import com.renny.simplebrowser.App;
+import com.renny.simplebrowser.globe.helper.ContextHelper;
 
 
 /**
@@ -70,6 +72,11 @@ public class DeviceHelper {
     public static boolean mountedSdCard() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
-
+    public static void vibrate(int milliseconds){
+        Vibrator vibrator= (Vibrator) ContextHelper.getAppContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            vibrator.vibrate(milliseconds);
+        }
+    }
 
 }

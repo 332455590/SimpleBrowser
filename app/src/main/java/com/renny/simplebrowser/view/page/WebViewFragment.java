@@ -12,9 +12,9 @@ import android.view.View;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseFragment;
+import com.renny.simplebrowser.business.helper.DeviceHelper;
 import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.helper.ImgHelper;
-import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.business.webview.X5WebChromeClient;
@@ -24,8 +24,7 @@ import com.renny.simplebrowser.globe.helper.BitmapUtils;
 import com.renny.simplebrowser.globe.helper.FileUtil;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
-import com.renny.simplebrowser.view.dialog.ListDialog;
-import com.renny.simplebrowser.view.listener.OnItemClickListener;
+import com.renny.simplebrowser.view.dialog.HandlePictureDialog;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshWebView;
 import com.renny.zxing.Activity.CaptureActivity;
@@ -119,52 +118,10 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     @Override
     public void onSelected(int x, int y, int type, final String extra) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        final ListDialog bottomDialogFragment = ListDialog.getInstance(x, y);
-        bottomDialogFragment.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClicked(int position) {
-                if (position == 0) {
-                    downLoad(extra);
-                } else if (position == 1) {
-                    final String content = bottomDialogFragment.getResult();
-                    if (Validator.checkUrl(content)) {
-                        new AlertDialog.Builder(getContext())
-                                .setMessage(content)
-                                .setPositiveButton("复制", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                })
-                                .setNegativeButton("直接访问", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mWebView.loadUrl(content);
-                                    }
-                                })
-                                .show();
-                     ;
-                    } else {
-                        new AlertDialog.Builder(getContext())
-                                .setMessage(content)
-                                .setPositiveButton("复制", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }
-                                })
-                                .setNegativeButton("搜索", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                      mWebView.loadUrl("http://wap.baidu.com/s?wd=" + content);
-                                    }
-                                })
-                                .show();
-
-                    }
-                }
-            }
-        });
-        bottomDialogFragment.show(fm, "fragment_bottom_dialog");
+        final HandlePictureDialog handlePictureDialog = HandlePictureDialog.getInstance(x, y,extra);
+        handlePictureDialog.setWebView(mWebView);
+        handlePictureDialog.show(fm);
+        DeviceHelper.vibrate(30);
         TaskHelper.submitResult(new ITaskWithResult<File>() {
             @Override
             public File onBackground() throws Exception {
@@ -180,7 +137,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                     String result = CaptureActivity.handleResult(file.getPath());
                     Logs.base.d("xxxx--"+result);
                     if (!TextUtils.isEmpty(result)) {
-                        bottomDialogFragment.setShowZxing(result);
+                        handlePictureDialog.setShowZxing(result);
                     }
                 }
             }

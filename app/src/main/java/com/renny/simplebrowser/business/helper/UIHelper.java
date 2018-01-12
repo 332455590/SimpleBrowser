@@ -1,5 +1,8 @@
 package com.renny.simplebrowser.business.helper;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -13,13 +16,11 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.renny.simplebrowser.App;
+import com.renny.simplebrowser.globe.helper.ContextHelper;
 
 import java.util.List;
 
@@ -27,42 +28,6 @@ import java.util.List;
  * @author Created by xinzai on 2015/5/14.
  */
 public class UIHelper {
-    /**
-     * TODO(在使用时ListView item必须不包含RelativeLayout(layout中必须重写measure()))
-     * <p>
-     * TODO(谨慎使用)
-     **/
-    @Deprecated
-    public static void setListViewHeight(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        int totalHeight = 0;
-        if (listAdapter == null) {
-            return;
-        }
-        for (int i = 0, len = listAdapter.getCount(); i < len; i++) {
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(0, 0);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight
-                + (listView.getDividerHeight() * (listAdapter.getCount()));
-        listView.setLayoutParams(params);
-    }
-
-    public static int getViewMeasuredHeight(TextView tv) {
-        tv.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        return tv.getMeasuredHeight();
-
-    }
-
-    /**
-     * dp转px
-     */
-    public static int dip2px(Context context, float dpValue) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
-    }
 
     /**
      * dp转px
@@ -225,10 +190,6 @@ public class UIHelper {
         return String.format(Htmls.color, color, content);
     }
 
-
-
-
-
     /**
      * 圆角Drawable
      *
@@ -242,5 +203,22 @@ public class UIHelper {
         return gd;
     }
 
+    public static void clipContent(String content) {
+        ClipboardManager cm = (ClipboardManager) ContextHelper.getAppContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData mClipData = ClipData.newPlainText("Label", content);
+        if (cm != null) {
+            cm.setPrimaryClip(mClipData);
+        }
+    }
 
+    public static String getClipContent() {
+        ClipboardManager cm = (ClipboardManager) ContextHelper.getAppContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        if (cm != null && cm.getPrimaryClipDescription().hasMimeType(
+                ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+            ClipData cdText = cm.getPrimaryClip();
+            ClipData.Item item = cdText.getItemAt(0);
+            return item.getText().toString();
+        }
+        return "";
+    }
 }
