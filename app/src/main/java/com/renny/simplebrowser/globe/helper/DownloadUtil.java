@@ -59,6 +59,11 @@ public class DownloadUtil {
                     is = response.body().byteStream();
                     long total = response.body().contentLength();
                     File file = Folders.download.getFile(getNameFromUrl(url));
+                    if (file.exists()) {
+                        listener.onDownloadSuccess(true,file);
+                        return;
+                    }
+                    listener.onDownloadStart();
                     fos = new FileOutputStream(file);
                     long sum = 0;
                     while ((len = is.read(buf)) != -1) {
@@ -75,7 +80,7 @@ public class DownloadUtil {
                     }
                     fos.flush();
                     // 下载完成
-                    listener.onDownloadSuccess(file);
+                    listener.onDownloadSuccess(false,file);
                 } catch (Exception e) {
                     e.printStackTrace();
                     listener.onDownloadFailed();
@@ -105,8 +110,11 @@ public class DownloadUtil {
         /**
          * 下载成功
          */
-        void onDownloadSuccess(File file);
-
+        void onDownloadSuccess(boolean exist,File file);
+        /**
+         * 下载成功
+         */
+        void onDownloadStart();
         /**
          * @param progress 下载进度
          */

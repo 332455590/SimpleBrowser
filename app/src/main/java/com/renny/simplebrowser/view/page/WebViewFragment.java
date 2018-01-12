@@ -147,18 +147,17 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
      /*   Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         getActivity().startActivity(intent);*/
-        ToastHelper.makeToast("开始下载");
         TaskHelper.submitResult(new ITaskWithResult<String>() {
             @Override
             public String onBackground() throws Exception {
                 Logs.base.d("download:  " + url);
                 DownloadUtil.get().download(url, new DownloadUtil.OnDownloadListener() {
                     @Override
-                    public void onDownloadSuccess(final File file) {
+                    public void onDownloadSuccess(final boolean exist, final File file) {
                         ThreadHelper.postMain(new Runnable() {
                             @Override
                             public void run() {
-                                Snackbar.make(mWebView, "下载成功，是否立即打开文件？", Snackbar.LENGTH_LONG)
+                                Snackbar.make(mWebView, exist?"文件已存在，是否立即打开文件？":"下载成功，是否立即打开文件？", Snackbar.LENGTH_LONG)
                                         .setAction("打开", new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
@@ -166,6 +165,16 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                                             }
                                         })
                                         .show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onDownloadStart() {
+                        ThreadHelper.postMain(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastHelper.makeToast("开始下载");
                             }
                         });
                     }
