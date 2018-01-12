@@ -2,6 +2,7 @@ package com.renny.simplebrowser.business.helper;
 
 
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 
 import com.renny.simplebrowser.App;
 import com.renny.simplebrowser.business.log.Logs;
@@ -20,7 +21,8 @@ public enum Folders {
     temp("temp"),//临时目录
     crash("logs/crash"),//错误日志
     img("image"),//图片下载
-    gallery("图库", false),//图片保存
+    gallery("download", false),//图片保存
+    download("download", false),//图片保存
     ;
     private String subFolder;
     private boolean isCache = true;
@@ -74,6 +76,9 @@ public enum Folders {
 
 
     public File getFile(String name) {
+        if (TextUtils.isEmpty(name)) {
+            name = System.currentTimeMillis() + ".temp";
+        }
         File folder = getFolder();
         if (!folder.exists()) {
             folder.mkdirs();
@@ -107,6 +112,7 @@ public enum Folders {
         }
         return null;
     }
+
 
     public File newJpgFile(Bitmap bitmap) {
 

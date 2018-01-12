@@ -1,12 +1,8 @@
 package com.renny.simplebrowser.view.page;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -20,8 +16,9 @@ import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
-import com.renny.simplebrowser.globe.helper.BitmapUtils;
+import com.renny.simplebrowser.globe.helper.DownloadUtil;
 import com.renny.simplebrowser.globe.helper.FileUtil;
+import com.renny.simplebrowser.globe.helper.ThreadHelper;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
 import com.renny.simplebrowser.view.dialog.HandlePictureDialog;
@@ -40,6 +37,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     private X5WebView mWebView;
     private String mUrl;
     private OnReceivedListener onReceivedTitleListener;
+    private int preProgress = 0;
 
     @Override
     protected int getLayoutId() {
@@ -105,8 +103,6 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     }
 
 
-
-
     @Override
     public void onAttach(Context context) {
         if (context instanceof OnReceivedListener) {
@@ -118,7 +114,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     @Override
     public void onSelected(int x, int y, int type, final String extra) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        final HandlePictureDialog handlePictureDialog = HandlePictureDialog.getInstance(x, y,extra);
+        final HandlePictureDialog handlePictureDialog = HandlePictureDialog.getInstance(x, y, extra);
         handlePictureDialog.setWebView(mWebView);
         handlePictureDialog.show(fm);
         DeviceHelper.vibrate(30);
@@ -135,7 +131,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             public void onComplete(File file) {
                 if (file != null && file.exists()) {
                     String result = CaptureActivity.handleResult(file.getPath());
-                    Logs.base.d("xxxx--"+result);
+                    Logs.base.d("xxxx--" + result);
                     if (!TextUtils.isEmpty(result)) {
                         handlePictureDialog.setShowZxing(result);
                     }
@@ -143,46 +139,46 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             }
         });
     }
-    private void downLoad(final String imgUrl) {
-        ToastHelper.makeToast("开始保存");
-        TaskHelper.submitResult(new ITaskWithResult<File>() {
-            @Override
-            public File onBackground() throws Exception {
-                return ImgHelper.syncLoadFile(imgUrl);
-            }
 
+    @Override
+    public void onDownloadStart(final String url, String userAgent, String contentDisposition,
+                                String mimetype, long contentLength) {
+     /*   Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        getActivity().startActivity(intent);*/
+        ToastHelper.makeToast("开始下载");
+        TaskHelper.submitResult(new ITaskWithResult<String>() {
             @Override
-            public void onComplete(File sourceFile) {
-                if (sourceFile != null && sourceFile.exists()) {
-                    File file = Folders.gallery.getFile(System.currentTimeMillis() + ".jpg");
-                    FileUtil.copyFile(sourceFile, file);
-                    BitmapUtils.displayToGallery(getActivity(), file);
-                    ToastHelper.makeToast("保存成功");
+            public String onBackground() throws Exception {
+                Logs.base.d("download:  " + url);
+                DownloadUtil.get().download(url, new DownloadUtil.OnDownloadListener() {
+                    @Override
+                    public void onDownloadSuccess(final File file) {
+                        ThreadHelper.postMain(new Runnable() {
+                            @Override
+                            public void run() {
+                                DeviceHelper.openFile(getActivity(),file);
+                                ToastHelper.makeToast("下载成功");
+                            }
+                        });
+                    }
 
-                    new AlertDialog.Builder(getContext())
-                            .setMessage("保存成功")
-                            .setPositiveButton("打开相册", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(Intent.ACTION_PICK);
-                                    intent.setType("image/*");
-                                    startActivity(intent);
-                                }
-                            })
-                            .setNegativeButton("取消", null)
-                            .show();
-                } else {
-                    ToastHelper.makeToast("保存失败");
-                }
+                    @Override
+                    public void onDownloading(final int progress) {
+                        Logs.base.d("onDownloading:  " + progress);
+                        if (progress != preProgress) {
+                            preProgress = progress;
+                            ((WebViewActivity) getActivity()).setMyProgress(progress);
+                        }
+                    }
+
+                    @Override
+                    public void onDownloadFailed() {
+                    }
+                });
+                return null;
             }
         });
-    }
-    @Override
-    public void onDownloadStart(String url, String userAgent, String contentDisposition,
-                                String mimetype, long contentLength) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        getActivity().startActivity(intent);
     }
 
     public interface OnReceivedListener {

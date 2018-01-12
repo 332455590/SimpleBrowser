@@ -32,6 +32,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     ImageView mark;
     View bottomBar;
     GestureLayout mGestureLayout;
+    TextView mProgressView;
     FragmentManager mFragmentManager;
     private boolean isOnHomePage = false;
     private boolean fromBack = false;
@@ -50,9 +51,17 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
         bottomBar = findViewById(R.id.bottom_bar);
         mGestureLayout = findViewById(R.id.gesture_layout);
         mark = findViewById(R.id.mark);
+        mProgressView = findViewById(R.id.progressView);
         mark.setOnClickListener(this);
     }
 
+    public void setMyProgress(int progress) {
+        Logs.base.d("onDownloading2:  " + progress);
+        mProgressView.setText(progress + "%");
+        if (progress==100){
+            mProgressView.setText(" ");
+        }
+    }
 
     @Override
     protected void afterViewBind(Bundle savedInstanceState) {
