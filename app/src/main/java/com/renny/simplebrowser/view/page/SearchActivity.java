@@ -17,6 +17,7 @@ import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseActivity;
 import com.renny.simplebrowser.business.base.CommonAdapter;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
+import com.renny.simplebrowser.business.helper.SearchHelper;
 import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.http.constants.Apis;
 import com.renny.simplebrowser.business.toast.ToastHelper;
@@ -180,9 +181,12 @@ public class SearchActivity extends BaseActivity {
         } else {
             Intent intent = new Intent();
             if (!Validator.checkUrl(text)) {
-                intent.putExtra("url", "http://wap.baidu.com/s?wd=" + text);
+                intent.putExtra("url", SearchHelper.buildSearchUrl(text));
                 setResult(111, intent);
             } else {
+                if (!text.startsWith("http") && !text.startsWith("https")) {
+                    text = "http://" + text;
+                }
                 intent.putExtra("url", text);
                 setResult(111, intent);
             }

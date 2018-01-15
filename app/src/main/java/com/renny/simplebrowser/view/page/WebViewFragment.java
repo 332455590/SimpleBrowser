@@ -47,6 +47,14 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     String result;
     String extra;
 
+    public static WebViewFragment getInstance(String url) {
+        WebViewFragment  webViewFragment = new WebViewFragment();
+        Bundle args = new Bundle();
+        args.putString("url", url);
+        webViewFragment.setArguments(args);
+        return webViewFragment;
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_webview;
@@ -154,7 +162,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             downLoad(extra);
         } else if (position == 1) {
             final String content = result;
-            TextView textView = (TextView)(UIHelper.inflaterLayout(getActivity(), R.layout.item_textview));
+            TextView textView = (TextView) (UIHelper.inflaterLayout(getActivity(), R.layout.item_textview));
             SpannableStringBuilder ssb = new SpannableStringBuilder(content);
             ssb.setSpan(new UnderlineSpan(), 0, content.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             textView.setText(ssb);
@@ -197,7 +205,6 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     }
 
     private void downLoad(final String imgUrl) {
-        ToastHelper.makeToast("开始保存");
         TaskHelper.submitResult(new ITaskWithResult<File>() {
             @Override
             public File onBackground() throws Exception {

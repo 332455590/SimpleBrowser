@@ -146,10 +146,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
 
     private void goWebView(String url) {
         if (webViewFragment == null || !TextUtils.isEmpty(url)) {
-            webViewFragment = new WebViewFragment();
-            Bundle args = new Bundle();
-            args.putString("url", url);
-            webViewFragment.setArguments(args);
+            webViewFragment =  WebViewFragment.getInstance(url);
         }
         mFragmentManager.beginTransaction().replace(R.id.container,
                 webViewFragment).commit();

@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.URLUtil;
 
+import com.renny.simplebrowser.business.log.Logs;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 
@@ -34,11 +35,16 @@ public class X5WebView extends WebView {
         mOnSelectItemListener = onSelectItemListener;
     }
 
+    @Override
+    public void loadUrl(String url) {
+        super.loadUrl(url);
+        Logs.h5.d(url);
+    }
+
     private void init() {
         WebSettings setting = getSettings();
         setting.setGeolocationEnabled(true);
         setting.setJavaScriptEnabled(true);
-
         //设置自适应屏幕，两者合用（下面这两个方法合用）
         setting.setUseWideViewPort(true); //将图片调整到适合webview的大小
         setting.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
@@ -102,8 +108,8 @@ public class X5WebView extends WebView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        touchX = (int) event.getRawX();
-        touchY = (int) event.getRawY();
+        touchX = (int) event.getX();
+        touchY = (int) event.getY();
         return super.onInterceptTouchEvent(event);
     }
 
