@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseFragment;
+import com.renny.simplebrowser.business.db.dao.HistoryDao;
+import com.renny.simplebrowser.business.db.entity.History;
 import com.renny.simplebrowser.business.helper.DeviceHelper;
 import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.helper.ImgHelper;
@@ -42,13 +44,15 @@ import java.io.File;
 
 public class WebViewFragment extends BaseFragment implements X5WebView.onSelectItemListener, OnItemClickListener {
     private X5WebView mWebView;
+    PullToRefreshWebView pullToRefreshWebView;
     private String mUrl;
     private OnReceivedListener onReceivedTitleListener;
     String result;
     String extra;
+    HistoryDao mHistoryDao;
 
     public static WebViewFragment getInstance(String url) {
-        WebViewFragment  webViewFragment = new WebViewFragment();
+        WebViewFragment webViewFragment = new WebViewFragment();
         Bundle args = new Bundle();
         args.putString("url", url);
         webViewFragment.setArguments(args);
@@ -66,15 +70,19 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         mUrl = bundle.getString("url");
     }
 
+    @Override
+    public void bindView(View rootView, Bundle savedInstanceState) {
+        super.bindView(rootView, savedInstanceState);
+        pullToRefreshWebView = rootView.findViewById(R.id.refreshLayout);
+        mWebView = pullToRefreshWebView.getRefreshableView();
+        mWebView.getView().setOverScrollMode(View.OVER_SCROLL_NEVER);
+    }
 
     public WebView getWebView() {
         return mWebView;
     }
 
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
-        final PullToRefreshWebView pullToRefreshWebView = rootView.findViewById(R.id.refreshLayout);
-        mWebView = pullToRefreshWebView.getRefreshableView();
-        mWebView.getView().setOverScrollMode(View.OVER_SCROLL_NEVER);
         pullToRefreshWebView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<X5WebView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<X5WebView> refreshView) {
@@ -95,6 +103,10 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                     onReceivedTitleListener.onReceivedTitle(webView.getUrl(), title);
 
                 }
+                if (mHistoryDao == null) {
+                    mHistoryDao = new HistoryDao();
+                }
+                mHistoryDao.addEntity(new History(System.currentTimeMillis(), webView.getUrl(), title));
             }
         };
 

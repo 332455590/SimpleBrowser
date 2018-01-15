@@ -15,6 +15,7 @@ import com.renny.simplebrowser.business.base.BaseFragment;
 import com.renny.simplebrowser.business.base.CommonAdapter;
 import com.renny.simplebrowser.business.db.dao.BookMarkDao;
 import com.renny.simplebrowser.business.db.entity.BookMark;
+import com.renny.simplebrowser.business.helper.SearchHelper;
 import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.permission.PermissionHelper;
 import com.renny.simplebrowser.business.permission.PermissionListener;
@@ -65,7 +66,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         rootView.findViewById(R.id.url_edit).setOnClickListener(this);
         listHeader = mPullNewHeader.getRecyclerView();
         listFooter = mPullNewFooter.getRecyclerView();
-        listHeader.setLayoutManager(new OverFlyingLayoutManager(OrientationHelper.HORIZONTAL,false));
+        listHeader.setLayoutManager(new OverFlyingLayoutManager(OrientationHelper.HORIZONTAL, false));
         listFooter.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         listFooter.setItemAnimator(new DefaultItemAnimator());
     }
@@ -113,6 +114,10 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         listHeader.setAdapter(new ExtendHeadAdapter(mDatas).setItemClickListener(new CommonAdapter.ItemClickListener() {
             @Override
             public void onItemClicked(int position, View view) {
+                switch (position){
+                    case 0:
+
+                }
                 ToastHelper.makeToast(mDatas.get(position) + " 功能待实现");
             }
         }));
@@ -136,7 +141,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
                 Toast.makeText(getActivity(), "请输入网址", Toast.LENGTH_SHORT).show();
             } else {
                 if (!Validator.checkUrl(text)) {
-                    mGoPageListener.onGoPage("http://www.baidu.com/s?wd=" + text);
+                    mGoPageListener.onGoPage(SearchHelper.buildSearchUrl(text));
                 } else {
                     mGoPageListener.onGoPage(text);
                 }
@@ -179,7 +184,6 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
                 }
         }
     }
-
 
 
 }

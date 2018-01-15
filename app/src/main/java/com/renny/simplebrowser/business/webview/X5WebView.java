@@ -15,6 +15,7 @@ import com.tencent.smtt.sdk.WebView;
  */
 
 public class X5WebView extends WebView {
+
     int touchX = 0, touchY = 0;
     private onSelectItemListener mOnSelectItemListener;
 
@@ -39,6 +40,7 @@ public class X5WebView extends WebView {
     public void loadUrl(String url) {
         super.loadUrl(url);
         Logs.h5.d(url);
+
     }
 
     private void init() {

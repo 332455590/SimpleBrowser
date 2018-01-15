@@ -41,6 +41,13 @@ public class SearchActivity extends BaseActivity {
     RecyclerView keyListView;
     KeyListAdapter mKeyListAdapter;
     List<String> keyList = new ArrayList<>();
+    private String url;
+
+    @Override
+    protected void initParam(Bundle intent) {
+        super.initParam(intent);
+        url = intent.getString("url");
+    }
 
     @Override
     protected int getLayoutId() {
@@ -59,6 +66,10 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void afterViewBind(Bundle savedInstanceState) {
+        if (!TextUtils.isEmpty(url)) {
+            searchEdit.setText(url);
+            searchEdit.setSelection(0, url.length() - 1);
+        }
         mKeyListAdapter = new KeyListAdapter(keyList);
         mKeyListAdapter.setOnClickListener(new KeyListAdapter.OnClickListener() {
             @Override

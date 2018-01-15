@@ -70,9 +70,9 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
         mMarkDao = new BookMarkDao();
         List<BookMark> markList = mMarkDao.queryForAll();
         if (markList == null || markList.isEmpty()) {
-            mMarkDao.addMark(new BookMark("我的掘金主页", "https://juejin.im/user/5795bb80d342d30059f14b1c"));
-            mMarkDao.addMark(new BookMark("GitHub地址", "https://github.com/renjianan/SimpleBrowser"));
-            mMarkDao.addMark(new BookMark("百度", "https://www.baidu.com/"));
+            mMarkDao.addEntity(new BookMark("我的掘金主页", "https://juejin.im/user/5795bb80d342d30059f14b1c"));
+            mMarkDao.addEntity(new BookMark("GitHub地址", "https://github.com/renjianan/SimpleBrowser"));
+            mMarkDao.addEntity(new BookMark("百度", "https://www.baidu.com/"));
         }
         goHomePage();
         mGestureLayout.setGestureListener(new GestureLayout.GestureListener() {
@@ -134,7 +134,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
                         mMarkDao.delete(url);
                         mark.setSelected(false);
                     } else {
-                        mMarkDao.addMark(new BookMark(title, url));
+                        mMarkDao.addEntity(new BookMark(title, url));
                         mark.setSelected(true);
                     }
                     mHomePageFragment.reloadMarkListData();

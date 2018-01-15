@@ -2,10 +2,7 @@ package com.renny.simplebrowser.business.db.dao;
 
 import android.support.annotation.NonNull;
 
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
-import com.renny.simplebrowser.App;
-import com.renny.simplebrowser.business.db.DatabaseHelper;
 import com.renny.simplebrowser.business.db.entity.BookMark;
 import com.renny.simplebrowser.business.log.Logs;
 
@@ -17,34 +14,10 @@ import java.util.List;
  * Created by Renny on 2018/1/5.
  */
 
-public class BookMarkDao {
-
-    private Dao<BookMark, Integer> mMarkDao;
+public class BookMarkDao extends BaseDao<BookMark> {
 
     public BookMarkDao() {
-        try {
-            mMarkDao = DatabaseHelper.getHelper(App.getContext()).getmarkDao();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addMark(@NonNull BookMark mark) {
-        if (!query(mark.getUrl())) {
-            try {
-                mMarkDao.create(mark);
-            } catch (SQLException e) {
-                Logs.base.e(e);
-            }
-        }
-    }
-
-    public void addMarkList(@NonNull List<BookMark> markList) {
-        try {
-            mMarkDao.create(markList);
-        } catch (SQLException e) {
-            Logs.base.e(e);
-        }
+        super(BookMark.class);
     }
 
     /**
@@ -52,7 +25,7 @@ public class BookMarkDao {
      */
     public void delete(@NonNull String url) {
         try {
-            DeleteBuilder<BookMark, Integer> deleteBuilder = mMarkDao.deleteBuilder();
+            DeleteBuilder<BookMark, Integer> deleteBuilder = getDao().deleteBuilder();
             deleteBuilder.where().eq("url", url);
             deleteBuilder.delete();
         } catch (SQLException e) {
@@ -66,7 +39,7 @@ public class BookMarkDao {
     public boolean query(@NonNull String url) {
         List<BookMark> markList = null;
         try {
-            markList = mMarkDao.queryBuilder().where().eq("url", url).query();
+            markList = getDao().queryBuilder().where().eq("url", url).query();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -76,10 +49,11 @@ public class BookMarkDao {
     /**
      * 查询所有记录
      */
+    @Override
     public List<BookMark> queryForAll() {
         List<BookMark> markList = new ArrayList<>();
         try {
-            markList = mMarkDao.queryForAll();
+            markList = getDao().queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -87,4 +61,43 @@ public class BookMarkDao {
     }
 
 
+    @Override
+    public long getCount() {
+        try {
+            return getDao().countOf();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public void addEntity(@NonNull BookMark entity) {
+        if (!query(entity.getUrl())) {
+            try {
+                getDao().create(entity);
+            } catch (SQLException e) {
+                Logs.base.e(e);
+            }
+        }
+    }
+
+    @Override
+    public void addEntityList(@NonNull List<BookMark> entityList) {
+        try {
+            getDao().create(entityList);
+        } catch (SQLException e) {
+            Logs.base.e(e);
+        }
+    }
+
+    @Override
+    public List<BookMark> queryForPage(long offset, long limit) {
+        return null;
+    }
+
+    @Override
+    public void deleteAll() {
+
+    }
 }
