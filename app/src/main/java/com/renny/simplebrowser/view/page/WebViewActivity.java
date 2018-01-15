@@ -58,7 +58,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     public void setMyProgress(int progress) {
         Logs.base.d("onDownloading2:  " + progress);
         mProgressView.setText(progress + "%");
-        if (progress==100){
+        if (progress == 100) {
             mProgressView.setText(" ");
         }
     }
@@ -242,6 +242,8 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
         mark.setSelected(mMarkDao.query(url));
         if (!TextUtils.isEmpty(title)) {
             titleView.setText(title);
+        } else {
+            titleView.setText(url);
         }
         if (isOnHomePage) {
             titleView.setText("");

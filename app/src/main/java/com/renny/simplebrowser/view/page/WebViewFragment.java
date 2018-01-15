@@ -143,10 +143,8 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     @Override
     public void onDownloadStart(final String url, String userAgent, String contentDisposition,
-                                String mimetype, long contentLength) {
-     /*   Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        getActivity().startActivity(intent);*/
+                                final String mimetype, long contentLength) {
+
         TaskHelper.submitResult(new ITaskWithResult<String>() {
             @Override
             public String onBackground() throws Exception {
@@ -161,7 +159,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                                         .setAction("打开", new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                DeviceHelper.openFile(getActivity(),file);
+                                                DeviceHelper.openFile(getActivity(),file,mimetype);
                                             }
                                         })
                                         .show();

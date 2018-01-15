@@ -65,7 +65,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         rootView.findViewById(R.id.url_edit).setOnClickListener(this);
         listHeader = mPullNewHeader.getRecyclerView();
         listFooter = mPullNewFooter.getRecyclerView();
-        listHeader.setLayoutManager(new OverFlyingLayoutManager(OrientationHelper.HORIZONTAL));
+        listHeader.setLayoutManager(new OverFlyingLayoutManager(OrientationHelper.HORIZONTAL,false));
         listFooter.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         listFooter.setItemAnimator(new DefaultItemAnimator());
     }

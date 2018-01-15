@@ -27,7 +27,7 @@ public class X5WebViewClient extends WebViewClient {
         WebView.HitTestResult hitTestResult = view.getHitTestResult();
         if ((url.startsWith("http://") || url.startsWith("https://"))) {
             if (hitTestResult == null) {//hitTestResult==null解决重定向问题
-                view.loadUrl(url);
+                view.loadUrl(url); //使得打开网页时不调用系统浏览器， 而是在本WebView中显示
                 return true;
             }
         } else {
