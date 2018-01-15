@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseFragment;
@@ -21,7 +25,6 @@ import com.renny.simplebrowser.business.webview.X5DownloadListener;
 import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
-import com.renny.simplebrowser.globe.helper.BitmapUtils;
 import com.renny.simplebrowser.globe.helper.FileUtil;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
@@ -147,37 +150,41 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     @Override
     public void onItemClicked(int position) {
-        if (position == 0) {
+        if (position == 0 && !TextUtils.isEmpty(extra)) {
             downLoad(extra);
         } else if (position == 1) {
             final String content = result;
+            TextView textView = (TextView)(UIHelper.inflaterLayout(getActivity(), R.layout.item_textview));
+            SpannableStringBuilder ssb = new SpannableStringBuilder(content);
+            ssb.setSpan(new UnderlineSpan(), 0, content.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            textView.setText(ssb);
             if (Validator.checkUrl(content)) {
                 new AlertDialog.Builder(getContext())
-                        .setMessage(content)
-                        .setPositiveButton("复制", new DialogInterface.OnClickListener() {
+                        .setView(textView)
+                        .setNegativeButton("复制", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 UIHelper.clipContent(content);
                             }
                         })
-                        .setNegativeButton("直接访问", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("直接访问", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mWebView.loadUrl(content);
                             }
                         })
                         .show();
-                ;
             } else {
                 new AlertDialog.Builder(getContext())
+                        .setView(textView)
                         .setMessage(content)
-                        .setPositiveButton("复制", new DialogInterface.OnClickListener() {
+                        .setNegativeButton("复制", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 UIHelper.clipContent(content);
                             }
                         })
-                        .setNegativeButton("搜索", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("搜索", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mWebView.loadUrl(SearchHelper.buildSearchUrl(content));
@@ -194,8 +201,8 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         TaskHelper.submitResult(new ITaskWithResult<File>() {
             @Override
             public File onBackground() throws Exception {
-                File sourceFile = ImgHelper.syncLoadFile(extra);
-                File file = Folders.gallery.getFile(Validator.getNameFromUrl(extra));
+                File sourceFile = ImgHelper.syncLoadFile(imgUrl);
+                File file = Folders.gallery.getFile(Validator.getNameFromUrl(imgUrl));
                 FileUtil.copyFile(sourceFile, file);
                 return file;
             }
@@ -203,14 +210,12 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             @Override
             public void onComplete(final File file) {
                 if (file != null && file.exists()) {
-                    BitmapUtils.displayToGallery(file);
-                    ToastHelper.makeToast("保存成功");
                     new AlertDialog.Builder(getContext())
                             .setMessage("保存成功")
                             .setPositiveButton("查看", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                   DeviceHelper.openFile(getContext(),file);
+                                    DeviceHelper.openFile(getContext(), file);
                                 }
                             })
                             .setNegativeButton("取消", null)
