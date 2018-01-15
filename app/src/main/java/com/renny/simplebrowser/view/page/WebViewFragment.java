@@ -1,9 +1,11 @@
 package com.renny.simplebrowser.view.page;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -12,17 +14,22 @@ import com.renny.simplebrowser.business.base.BaseFragment;
 import com.renny.simplebrowser.business.helper.DeviceHelper;
 import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.helper.ImgHelper;
+import com.renny.simplebrowser.business.helper.SearchHelper;
+import com.renny.simplebrowser.business.helper.UIHelper;
+import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
+import com.renny.simplebrowser.globe.helper.BitmapUtils;
 import com.renny.simplebrowser.globe.helper.DownloadUtil;
 import com.renny.simplebrowser.globe.helper.FileUtil;
 import com.renny.simplebrowser.globe.helper.ThreadHelper;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
 import com.renny.simplebrowser.view.dialog.HandlePictureDialog;
+import com.renny.simplebrowser.view.listener.OnItemClickListener;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshWebView;
 import com.renny.zxing.Activity.CaptureActivity;
@@ -34,11 +41,13 @@ import com.tencent.smtt.sdk.WebViewClient;
 import java.io.File;
 
 
-public class WebViewFragment extends BaseFragment implements X5WebView.onSelectItemListener, DownloadListener {
+public class WebViewFragment extends BaseFragment implements X5WebView.onSelectItemListener, DownloadListener, OnItemClickListener {
     private X5WebView mWebView;
     private String mUrl;
     private OnReceivedListener onReceivedTitleListener;
     private int preProgress = 0;
+    String result;
+    String extra;
 
     @Override
     protected int getLayoutId() {
@@ -114,16 +123,16 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     @Override
     public void onSelected(int x, int y, int type, final String extra) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
+        this.extra = extra;
         final HandlePictureDialog handlePictureDialog = HandlePictureDialog.getInstance(x, y, extra);
-        handlePictureDialog.setWebView(mWebView);
-        handlePictureDialog.show(fm);
+        handlePictureDialog.show(getChildFragmentManager());
         DeviceHelper.vibrate(30);
+        handlePictureDialog.setOnItemClickListener(this);
         TaskHelper.submitResult(new ITaskWithResult<File>() {
             @Override
             public File onBackground() throws Exception {
                 File sourceFile = ImgHelper.syncLoadFile(extra);
-                File file = Folders.gallery.getFile(System.currentTimeMillis() + ".jpg");
+                File file = Folders.gallery.getFile(Validator.getNameFromUrl(extra));
                 FileUtil.copyFile(sourceFile, file);
                 return file;
             }
@@ -131,7 +140,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             @Override
             public void onComplete(File file) {
                 if (file != null && file.exists()) {
-                    String result = CaptureActivity.handleResult(file.getPath());
+                    result = CaptureActivity.handleResult(file.getPath());
                     Logs.base.d("xxxx--" + result);
                     if (!TextUtils.isEmpty(result)) {
                         handlePictureDialog.setShowZxing(result);
@@ -152,19 +161,13 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 DownloadUtil.get().download(url, new DownloadUtil.OnDownloadListener() {
                     @Override
                     public void onDownloadSuccess(final boolean exist, final File file) {
-                        ThreadHelper.postMain(new Runnable() {
-                            @Override
-                            public void run() {
-                                Snackbar.make(mWebView, exist?"文件已存在，是否立即打开文件？":"下载成功，是否立即打开文件？", Snackbar.LENGTH_LONG)
-                                        .setAction("打开", new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                DeviceHelper.openFile(getActivity(),file,mimetype);
-                                            }
-                                        })
-                                        .show();
-                            }
-                        });
+                        Snackbar.make(mWebView, exist ? "文件已存在，是否立即打开文件？" : "下载成功，是否立即打开文件？", Snackbar.LENGTH_LONG)
+                                .setAction("打开", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        DeviceHelper.openFile(getActivity(), file, mimetype);
+                                    }
+                                }).show();
                     }
 
                     @Override
@@ -193,6 +196,86 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 return null;
             }
         });
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        if (position == 0) {
+            downLoad(extra);
+        } else if (position == 1) {
+            final String content = result;
+            if (Validator.checkUrl(content)) {
+                new AlertDialog.Builder(getContext())
+                        .setMessage(content)
+                        .setPositiveButton("复制", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                UIHelper.clipContent(content);
+                            }
+                        })
+                        .setNegativeButton("直接访问", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mWebView.loadUrl(content);
+                            }
+                        })
+                        .show();
+                ;
+            } else {
+                new AlertDialog.Builder(getContext())
+                        .setMessage(content)
+                        .setPositiveButton("复制", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                UIHelper.clipContent(content);
+                            }
+                        })
+                        .setNegativeButton("搜索", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mWebView.loadUrl(SearchHelper.buildSearchUrl(content));
+                            }
+                        })
+                        .show();
+
+            }
+        }
+    }
+
+    private void downLoad(final String imgUrl) {
+        ToastHelper.makeToast("开始保存");
+        TaskHelper.submitResult(new ITaskWithResult<File>() {
+            @Override
+            public File onBackground() throws Exception {
+                return ImgHelper.syncLoadFile(imgUrl);
+            }
+
+            @Override
+            public void onComplete(File sourceFile) {
+                if (sourceFile != null && sourceFile.exists()) {
+                    File file = Folders.gallery.getFile(System.currentTimeMillis() + ".jpg");
+                    FileUtil.copyFile(sourceFile, file);
+                    BitmapUtils.displayToGallery(file);
+                    ToastHelper.makeToast("保存成功");
+
+                    new AlertDialog.Builder(getContext())
+                            .setMessage("保存成功")
+                            .setPositiveButton("打开相册", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(Intent.ACTION_PICK);
+                                    intent.setType("image/*");
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .show();
+                } else {
+                    ToastHelper.makeToast("保存失败");
+                }
+            }
+        });
+
     }
 
     public interface OnReceivedListener {

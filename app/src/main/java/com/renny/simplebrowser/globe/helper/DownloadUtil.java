@@ -1,8 +1,8 @@
 package com.renny.simplebrowser.globe.helper;
 
-import android.support.annotation.NonNull;
-
 import com.renny.simplebrowser.business.helper.Folders;
+import com.renny.simplebrowser.business.helper.Validator;
+import com.renny.simplebrowser.business.toast.ToastHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -58,12 +58,23 @@ public class DownloadUtil {
                 try {
                     is = response.body().byteStream();
                     long total = response.body().contentLength();
-                    File file = Folders.download.getFile(getNameFromUrl(url));
+                    final File file = Folders.download.getFile(Validator.getNameFromUrl(url));
                     if (file.exists()) {
-                        listener.onDownloadSuccess(true,file);
+                        ThreadHelper.postMain(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onDownloadSuccess(true,file);
+                            }
+                        });
                         return;
                     }
-                    listener.onDownloadStart();
+                    ThreadHelper.postMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onDownloadStart();
+                        }
+                    });
+
                     fos = new FileOutputStream(file);
                     long sum = 0;
                     while ((len = is.read(buf)) != -1) {
@@ -96,14 +107,6 @@ public class DownloadUtil {
     }
 
 
-    /**
-     * @return 从下载连接中解析出文件名
-     */
-    @NonNull
-    private String getNameFromUrl(String url) {
-        String temp = url.substring(0, url.indexOf("?"));
-        return temp.substring(temp.lastIndexOf("/") + 1);
-    }
 
     public interface OnDownloadListener {
         /**

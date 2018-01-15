@@ -92,16 +92,12 @@ public class DeviceHelper {
      */
     public static void openFile(Context context, File file,String mimeType) {
         if (file != null && file.exists()) {
-            //Uri uri = Uri.parse("file://"+file.getAbsolutePath());
             Intent intent = new Intent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             //设置intent的Action属性
             intent.setAction(Intent.ACTION_VIEW);
-            //获取文件file的MIME类型
-            String type = getMIMEType(mimeType);
             //设置intent的data和Type属性。
-            intent.setDataAndType(/*uri*/Uri.fromFile(file), type);
-            //跳转
+            intent.setDataAndType(Uri.fromFile(file), mimeType);
             context.startActivity(intent);
         }
     }

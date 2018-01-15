@@ -1,5 +1,6 @@
 package com.renny.simplebrowser.business.helper;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
@@ -180,6 +181,14 @@ public class Validator {
         if (TextUtils.isEmpty(color))
             return false;
         return color.matches("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$");
+    }
+    /**
+     * @return 从下载连接中解析出文件名
+     */
+    @NonNull
+    public static String getNameFromUrl(String url) {
+        String temp = url.substring(0, url.indexOf("?"));
+        return temp.substring(temp.lastIndexOf("/") + 1);
     }
 
 

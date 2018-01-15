@@ -1,7 +1,9 @@
 package com.renny.simplebrowser.business.base;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 
 public abstract class BaseDialogFragment extends DialogFragment {
     private View rootView;
+    Context mContext;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,6 +30,12 @@ public abstract class BaseDialogFragment extends DialogFragment {
         return rootView;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.mContext = context;//保存Context引用
+    }
+
     protected abstract int getLayoutId();
 
     public void bindView(View rootView, Bundle savedInstanceState) {
@@ -38,8 +47,19 @@ public abstract class BaseDialogFragment extends DialogFragment {
     protected void initParams(Bundle bundle) {
     }
 
+    @Nullable
+    @Override
+    public Context getContext() {
+        if (mContext != null) {
+            return mContext;
+        }
+        return super.getContext();
+    }
 
     public BaseActivity getBaseActivity() {
+        if (mContext != null) {
+            return (BaseActivity) mContext;
+        }
         return (BaseActivity) getActivity();
     }
 

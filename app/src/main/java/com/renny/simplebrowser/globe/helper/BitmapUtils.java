@@ -41,10 +41,9 @@ public class BitmapUtils {
     /**
      * 显示图片到相册
      *
-     * @param context
      * @param photoFile 要保存的图片文件
      */
-    public static void displayToGallery(Context context, File photoFile) {
+    public static void displayToGallery( File photoFile) {
         if (photoFile == null || !photoFile.exists()) {
             return;
         }
@@ -52,13 +51,13 @@ public class BitmapUtils {
         String photoName = photoFile.getName();
         // 把文件插入到系统图库
         try {
-            ContentResolver contentResolver = context.getContentResolver();
+            ContentResolver contentResolver = ContextHelper.getAppContext().getContentResolver();
             MediaStore.Images.Media.insertImage(contentResolver, photoPath, photoName, null);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         // 最后通知图库更新
-        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + photoPath)));
+        ContextHelper.getAppContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + photoPath)));
     }
 
     public static File saveToFile(Bitmap bitmap, File folder) {
