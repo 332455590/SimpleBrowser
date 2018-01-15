@@ -2,9 +2,7 @@ package com.renny.simplebrowser.view.page;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,13 +17,12 @@ import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
+import com.renny.simplebrowser.business.webview.X5DownloadListener;
 import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
 import com.renny.simplebrowser.globe.helper.BitmapUtils;
-import com.renny.simplebrowser.globe.helper.DownloadUtil;
 import com.renny.simplebrowser.globe.helper.FileUtil;
-import com.renny.simplebrowser.globe.helper.ThreadHelper;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
 import com.renny.simplebrowser.view.dialog.HandlePictureDialog;
@@ -33,7 +30,6 @@ import com.renny.simplebrowser.view.listener.OnItemClickListener;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshWebView;
 import com.renny.zxing.Activity.CaptureActivity;
-import com.tencent.smtt.sdk.DownloadListener;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
@@ -41,11 +37,10 @@ import com.tencent.smtt.sdk.WebViewClient;
 import java.io.File;
 
 
-public class WebViewFragment extends BaseFragment implements X5WebView.onSelectItemListener, DownloadListener, OnItemClickListener {
+public class WebViewFragment extends BaseFragment implements X5WebView.onSelectItemListener, OnItemClickListener {
     private X5WebView mWebView;
     private String mUrl;
     private OnReceivedListener onReceivedTitleListener;
-    private int preProgress = 0;
     String result;
     String extra;
 
@@ -108,7 +103,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         mWebView.setWebChromeClient(webChromeClient);
         mWebView.setWebViewClient(webViewClient);
         mWebView.loadUrl(mUrl);
-        mWebView.setDownloadListener(this);
+        mWebView.setDownloadListener(new X5DownloadListener((WebViewActivity) getActivity(), mWebView));
         mWebView.setOnSelectItemListener(this);
     }
 
@@ -146,54 +141,6 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                         handlePictureDialog.setShowZxing(result);
                     }
                 }
-            }
-        });
-    }
-
-    @Override
-    public void onDownloadStart(final String url, String userAgent, String contentDisposition,
-                                final String mimetype, long contentLength) {
-
-        TaskHelper.submitResult(new ITaskWithResult<String>() {
-            @Override
-            public String onBackground() throws Exception {
-                Logs.base.d("download:  " + url);
-                DownloadUtil.get().download(url, new DownloadUtil.OnDownloadListener() {
-                    @Override
-                    public void onDownloadSuccess(final boolean exist, final File file) {
-                        Snackbar.make(mWebView, exist ? "文件已存在，是否立即打开文件？" : "下载成功，是否立即打开文件？", Snackbar.LENGTH_LONG)
-                                .setAction("打开", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        DeviceHelper.openFile(getActivity(), file, mimetype);
-                                    }
-                                }).show();
-                    }
-
-                    @Override
-                    public void onDownloadStart() {
-                        ThreadHelper.postMain(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastHelper.makeToast("开始下载");
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onDownloading(final int progress) {
-                        Logs.base.d("onDownloading:  " + progress);
-                        if (progress != preProgress) {
-                            preProgress = progress;
-                            ((WebViewActivity) getActivity()).setMyProgress(progress);
-                        }
-                    }
-
-                    @Override
-                    public void onDownloadFailed() {
-                    }
-                });
-                return null;
             }
         });
     }
@@ -247,25 +194,23 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         TaskHelper.submitResult(new ITaskWithResult<File>() {
             @Override
             public File onBackground() throws Exception {
-                return ImgHelper.syncLoadFile(imgUrl);
+                File sourceFile = ImgHelper.syncLoadFile(extra);
+                File file = Folders.gallery.getFile(Validator.getNameFromUrl(extra));
+                FileUtil.copyFile(sourceFile, file);
+                return file;
             }
 
             @Override
-            public void onComplete(File sourceFile) {
-                if (sourceFile != null && sourceFile.exists()) {
-                    File file = Folders.gallery.getFile(System.currentTimeMillis() + ".jpg");
-                    FileUtil.copyFile(sourceFile, file);
+            public void onComplete(final File file) {
+                if (file != null && file.exists()) {
                     BitmapUtils.displayToGallery(file);
                     ToastHelper.makeToast("保存成功");
-
                     new AlertDialog.Builder(getContext())
                             .setMessage("保存成功")
-                            .setPositiveButton("打开相册", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("查看", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(Intent.ACTION_PICK);
-                                    intent.setType("image/*");
-                                    startActivity(intent);
+                                   DeviceHelper.openFile(getContext(),file);
                                 }
                             })
                             .setNegativeButton("取消", null)

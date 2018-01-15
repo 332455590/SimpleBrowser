@@ -182,12 +182,16 @@ public class Validator {
             return false;
         return color.matches("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$");
     }
+
     /**
      * @return 从下载连接中解析出文件名
      */
     @NonNull
     public static String getNameFromUrl(String url) {
-        String temp = url.substring(0, url.indexOf("?"));
+        String temp = url;
+        if (url.contains("?")) {
+            temp = url.substring(0, url.indexOf("?"));
+        }
         return temp.substring(temp.lastIndexOf("/") + 1);
     }
 

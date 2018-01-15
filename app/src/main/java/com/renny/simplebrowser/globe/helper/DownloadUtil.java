@@ -1,8 +1,6 @@
 package com.renny.simplebrowser.globe.helper;
 
 import com.renny.simplebrowser.business.helper.Folders;
-import com.renny.simplebrowser.business.helper.Validator;
-import com.renny.simplebrowser.business.toast.ToastHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,7 +37,7 @@ public class DownloadUtil {
      * @param url      下载连接
      * @param listener 下载监听
      */
-    public void download(final String url, final OnDownloadListener listener) {
+    public void download(final String url, final String fileName, final OnDownloadListener listener) {
 
         Request request = new Request.Builder().url(url).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
@@ -58,7 +56,7 @@ public class DownloadUtil {
                 try {
                     is = response.body().byteStream();
                     long total = response.body().contentLength();
-                    final File file = Folders.download.getFile(Validator.getNameFromUrl(url));
+                    final File file = Folders.download.getFile(fileName);
                     if (file.exists()) {
                         ThreadHelper.postMain(new Runnable() {
                             @Override

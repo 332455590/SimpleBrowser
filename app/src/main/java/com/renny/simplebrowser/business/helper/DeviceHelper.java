@@ -101,7 +101,22 @@ public class DeviceHelper {
             context.startActivity(intent);
         }
     }
-
+    /**
+     * 打开文件
+     *
+     * @param file
+     */
+    public static void openFile(Context context, File file) {
+        if (file != null && file.exists()) {
+            Intent intent = new Intent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //设置intent的Action属性
+            intent.setAction(Intent.ACTION_VIEW);
+            //设置intent的data和Type属性。
+            intent.setDataAndType(Uri.fromFile(file), getMIMEType(file.getAbsolutePath()));
+            context.startActivity(intent);
+        }
+    }
     /**
      * --获取文件类型 --
      */
