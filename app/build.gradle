@@ -33,5 +33,5 @@ dependencies {
     implementation "com.github.bumptech.glide:annotations:${rootProject.ext.glideVersion}"
     implementation project(':zxing')
     implementation 'com.github.mmin18:realtimeblurview:1.1.0'
-
+    implementation 'org.greenrobot:eventbus:3.1.1'
 }

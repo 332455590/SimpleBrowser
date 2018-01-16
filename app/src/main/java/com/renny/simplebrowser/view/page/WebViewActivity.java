@@ -15,10 +15,15 @@ import com.renny.simplebrowser.business.base.BaseActivity;
 import com.renny.simplebrowser.business.db.dao.BookMarkDao;
 import com.renny.simplebrowser.business.db.entity.BookMark;
 import com.renny.simplebrowser.business.log.Logs;
+import com.renny.simplebrowser.view.event.WebviewEvent;
 import com.renny.simplebrowser.view.listener.GoPageListener;
 import com.renny.simplebrowser.view.widget.GestureLayout;
 import com.tencent.smtt.sdk.WebBackForwardList;
 import com.tencent.smtt.sdk.WebView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -268,5 +273,21 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onWebviewEvent(WebviewEvent event) {
+        Logs.event.d("event--"+event.url);
+        goWebView(event.url);
+    }
 }

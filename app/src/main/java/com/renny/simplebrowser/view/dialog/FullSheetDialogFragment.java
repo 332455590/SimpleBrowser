@@ -18,6 +18,9 @@ import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.db.dao.HistoryDao;
 import com.renny.simplebrowser.business.db.entity.History;
 import com.renny.simplebrowser.view.adapter.HistoryAdapter;
+import com.renny.simplebrowser.view.event.WebviewEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -49,8 +52,20 @@ public class FullSheetDialogFragment extends BottomSheetDialogFragment {
 
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
         mHistoryDao = new HistoryDao();
-        List<History> list = mHistoryDao.queryForAll();
+        final List<History> list = mHistoryDao.queryForAll();
         HistoryAdapter historyAdapter = new HistoryAdapter(list);
+        historyAdapter.setOnClickListener(new HistoryAdapter.OnClickListener() {
+            @Override
+            public void onUrlClick(int position, View view) {
+                EventBus.getDefault().post(new WebviewEvent(list.get(position).getUrl()));
+                mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            }
+
+            @Override
+            public void onGoClick(int position, View view) {
+
+            }
+        });
         mRecyclerView.setAdapter(historyAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
     }
@@ -74,10 +89,6 @@ public class FullSheetDialogFragment extends BottomSheetDialogFragment {
         }
     }
 
-    public void doclick(View v) {
-        //点击任意布局关闭
-        mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-    }
 
 
 }

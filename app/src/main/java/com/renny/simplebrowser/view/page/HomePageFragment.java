@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -22,7 +21,6 @@ import com.renny.simplebrowser.business.permission.PermissionListener;
 import com.renny.simplebrowser.business.permission.Permissions;
 import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
 import com.renny.simplebrowser.view.adapter.ExtendMarkAdapter;
-import com.renny.simplebrowser.view.adapter.OverFlyingLayoutManager;
 import com.renny.simplebrowser.view.dialog.FullSheetDialogFragment;
 import com.renny.simplebrowser.view.listener.GoPageListener;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListFooter;
@@ -66,7 +64,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         rootView.findViewById(R.id.url_edit).setOnClickListener(this);
         listHeader = mPullNewHeader.getRecyclerView();
         listFooter = mPullNewFooter.getRecyclerView();
-        listHeader.setLayoutManager(new OverFlyingLayoutManager(OrientationHelper.HORIZONTAL, false));
+        listHeader.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         listFooter.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         listFooter.setItemAnimator(new DefaultItemAnimator());
     }

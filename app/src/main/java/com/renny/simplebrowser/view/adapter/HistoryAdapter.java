@@ -35,14 +35,14 @@ public class HistoryAdapter extends CommonAdapter<History> {
             @Override
             public void onClick(View view) {
                 if (mOnClickListener != null) {
-                    mOnClickListener.onWordClick(position, view);
+                    mOnClickListener.onUrlClick(position, view);
                 }
             }
         });
     }
 
     public interface OnClickListener {
-        void onWordClick(int position, View view);
+        void onUrlClick(int position, View view);
 
         void onGoClick(int position, View view);
     }
