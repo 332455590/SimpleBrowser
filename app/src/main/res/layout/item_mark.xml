@@ -10,8 +10,9 @@
         android:layout_gravity="center"
         android:background="@drawable/bg_item_mark"
         android:ellipsize="end"
-        android:paddingTop="15dp"
         android:maxLines="2"
-        android:padding="10dp"/>
+        android:padding="12dp"
+        android:paddingTop="15dp"
+        android:textSize="@dimen/font28"/>
 
 </FrameLayout>
