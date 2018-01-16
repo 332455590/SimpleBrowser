@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="100dp"
+             android:layout_width="70dp"
              android:layout_height="match_parent">
 
     <Button
@@ -8,11 +8,10 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="center"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
         android:background="@drawable/bg_item_mark"
         android:ellipsize="end"
+        android:paddingTop="15dp"
         android:maxLines="2"
-        android:padding="15dp"/>
+        android:padding="10dp"/>
 
 </FrameLayout>
