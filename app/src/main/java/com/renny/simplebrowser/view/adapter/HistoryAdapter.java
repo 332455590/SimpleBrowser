@@ -2,7 +2,6 @@ package com.renny.simplebrowser.view.adapter;
 
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
@@ -32,20 +31,11 @@ public class HistoryAdapter extends CommonAdapter<History> {
         History data = getData(position);
         TextView textView = holder.getView(R.id.word);
         textView.setText(TextUtils.isEmpty(data.getTitle()) ? data.getUrl() : data.getTitle());
-        ImageView imageView = holder.getView(R.id.go);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mOnClickListener != null) {
                     mOnClickListener.onWordClick(position, view);
-                }
-            }
-        });
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mOnClickListener != null) {
-                    mOnClickListener.onGoClick(position, view);
                 }
             }
         });

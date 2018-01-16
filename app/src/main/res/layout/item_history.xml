@@ -11,20 +11,11 @@
         android:layout_height="match_parent"
         android:layout_weight="8"
         android:background="@drawable/item_selector"
-        android:drawableLeft="@drawable/ic_search"
+        android:drawableLeft="@drawable/ic_history"
         android:drawablePadding="10dp"
+        android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:ellipsize="end"
         android:paddingLeft="15dp"
         android:textSize="15sp"/>
-
-    <ImageView
-        android:id="@+id/go"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:padding="5dp"
-        android:src="@drawable/ic_input"/>
 </LinearLayout>
