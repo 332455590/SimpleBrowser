@@ -17,7 +17,7 @@ public abstract class BaseActivity extends PermissionActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initParam(getIntent().getExtras());
+        initParam(getParams(getIntent().getExtras()));
         setContentView(getLayoutId());
         getWindow().getDecorView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -36,7 +36,7 @@ public abstract class BaseActivity extends PermissionActivity implements View.On
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        initParam(intent.getExtras());
+        initParam(getParams(intent));
     }
     /**
      * 从intent中初始化参数
@@ -57,5 +57,19 @@ public abstract class BaseActivity extends PermissionActivity implements View.On
     @Override
     public void onClick(View v) {
 
+    }
+
+    private Bundle getParams(Intent intent) {
+        Bundle params = intent.getExtras();
+        if (params == null) {
+            params = new Bundle();
+        }
+        return params;
+    }
+    private Bundle getParams(Bundle bundle) {
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        return bundle;
     }
 }

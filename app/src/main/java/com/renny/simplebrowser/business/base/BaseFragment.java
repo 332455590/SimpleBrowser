@@ -1,6 +1,7 @@
 package com.renny.simplebrowser.business.base;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,9 +18,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (getArguments() != null) {
-            initParams(getArguments());
+            initParams(getParams(getArguments()));
         }
         if (rootView == null) {
             rootView = inflater.inflate(getLayoutId(), container, false);
@@ -47,4 +48,10 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
     }
 
+    private Bundle getParams(Bundle bundle) {
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        return bundle;
+    }
 }

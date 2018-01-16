@@ -2,6 +2,7 @@ package com.renny.simplebrowser.view.page;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.ViewDragHelper;
 import android.text.TextUtils;
@@ -29,6 +30,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     WebViewFragment webViewFragment;
     HomePageFragment mHomePageFragment;
     TextView titleView;
+    CoordinatorLayout mCoordinatorLayout;
     ImageView mark;
     View bottomBar;
     GestureLayout mGestureLayout;
@@ -47,6 +49,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
 
     @Override
     protected void bindView(Bundle savedInstanceState) {
+        mCoordinatorLayout = findViewById(R.id.web_contain);
         titleView = findViewById(R.id.title);
         bottomBar = findViewById(R.id.bottom_bar);
         mGestureLayout = findViewById(R.id.gesture_layout);
@@ -146,7 +149,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
 
     private void goWebView(String url) {
         if (webViewFragment == null || !TextUtils.isEmpty(url)) {
-            webViewFragment =  WebViewFragment.getInstance(url);
+            webViewFragment = WebViewFragment.getInstance(url);
         }
         mFragmentManager.beginTransaction().replace(R.id.container,
                 webViewFragment).commit();

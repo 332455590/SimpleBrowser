@@ -77,7 +77,7 @@ public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener
                 DownloadUtil.get().download(url, fileName, new DownloadUtil.OnDownloadListener() {
                     @Override
                     public void onDownloadSuccess(final boolean exist, final File file) {
-                        Snackbar.make(mWebView, exist ? "文件已存在，是否立即打开文件？" : "下载成功，是否立即打开文件？", Snackbar.LENGTH_LONG)
+                        Snackbar.make(mActivity.getWindow().getDecorView().findViewById(android.R.id.content), exist ? "文件已存在，是否立即打开文件？" : "下载成功，是否立即打开文件？", Snackbar.LENGTH_LONG)
                                 .setAction("打开", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
