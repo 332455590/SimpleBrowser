@@ -101,12 +101,12 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 super.onReceivedTitle(webView, title);
                 if (onReceivedTitleListener != null) {
                     onReceivedTitleListener.onReceivedTitle(webView.getUrl(), title);
-
                 }
                 if (mHistoryDao == null) {
                     mHistoryDao = new HistoryDao();
                 }
                 mHistoryDao.addEntity(new History(System.currentTimeMillis(), webView.getUrl(), title));
+              Logs.h5.d("xxxx"+  mHistoryDao.queryForAll().size());
             }
         };
 

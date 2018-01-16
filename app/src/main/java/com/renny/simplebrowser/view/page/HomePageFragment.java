@@ -20,10 +20,10 @@ import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.permission.PermissionHelper;
 import com.renny.simplebrowser.business.permission.PermissionListener;
 import com.renny.simplebrowser.business.permission.Permissions;
-import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
 import com.renny.simplebrowser.view.adapter.ExtendMarkAdapter;
 import com.renny.simplebrowser.view.adapter.OverFlyingLayoutManager;
+import com.renny.simplebrowser.view.dialog.FullSheetDialogFragment;
 import com.renny.simplebrowser.view.listener.GoPageListener;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListFooter;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListHeader;
@@ -99,26 +99,27 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         listFooter.setItemAnimator(new DefaultItemAnimator());
         listFooter.setAdapter(mExtendMarkAdapter);
         mDatas.add("历史记录");
-        mDatas.add("无痕浏览");
+        mDatas.add("下载内容");
+      /*  mDatas.add("无痕浏览");
         mDatas.add("新建窗口");
         mDatas.add("无图模式");
         mDatas.add("夜间模式");
         mDatas.add("网页截图");
         mDatas.add("禁用JS");
-        mDatas.add("下载内容");
         mDatas.add("查找");
         mDatas.add("拦截广告");
         mDatas.add("全屏浏览");
         mDatas.add("翻译");
-        mDatas.add("切换UA");
+        mDatas.add("切换UA");*/
         listHeader.setAdapter(new ExtendHeadAdapter(mDatas).setItemClickListener(new CommonAdapter.ItemClickListener() {
             @Override
             public void onItemClicked(int position, View view) {
-                switch (position){
+                switch (position) {
                     case 0:
-
+                        new FullSheetDialogFragment().show(getChildFragmentManager(), "dialog");
+                        break;
                 }
-                ToastHelper.makeToast(mDatas.get(position) + " 功能待实现");
+
             }
         }));
     }

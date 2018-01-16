@@ -22,7 +22,8 @@ import java.util.Map;
 
 public class DBHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String TABLE_NAME = "sqlite-test.db";
+    private static final String TABLE_NAME = "sqlite-renny.db";
+    private static DBHelper instance;
     /**
      * userDao ，每张表对于一个
      */
@@ -30,7 +31,9 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     private HashMap<Class, Dao> mDaoHashMap = new HashMap<>();
 
     private DBHelper(Context context) {
-        super(context, TABLE_NAME, null, 2);
+        super(context, TABLE_NAME, null, 3);
+        mClassList.add(BookMark.class);
+        mClassList.add(History.class);
     }
 
     /**
@@ -50,8 +53,6 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database,
                          ConnectionSource connectionSource) {
-        mClassList.add(BookMark.class);
-        mClassList.add(History.class);
         try {
             for (Class aClass : mClassList) {
                 TableUtils.createTable(connectionSource, aClass);
@@ -74,7 +75,6 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    private static DBHelper instance;
 
 
     /**
@@ -86,7 +86,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     public Dao getMyDao(Class cls) throws SQLException {
         Dao dao = mDaoHashMap.get(cls);
         if (dao == null) {
-            dao = getDao(BookMark.class);
+            dao = getDao(cls);
             mDaoHashMap.put(cls, dao);
         }
         return dao;

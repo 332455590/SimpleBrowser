@@ -20,7 +20,7 @@ public class BaseDao<entity> implements IDao<entity> {
 
     private Dao<entity, Integer> mDao;
 
-    public BaseDao(Class cls) {
+    BaseDao(Class cls) {
         try {
             mDao = DBHelper.getInstance(App.getContext()).getMyDao(cls);
         } catch (SQLException e) {
@@ -28,35 +28,8 @@ public class BaseDao<entity> implements IDao<entity> {
         }
     }
 
-    public Dao<entity, Integer> getDao() {
+    Dao<entity, Integer> getDao() {
         return mDao;
-    }
-
-    /**
-     * 删除一条记录
-     */
-    public void delete(@NonNull String url) {
-        try {
-            DeleteBuilder<entity, Integer> deleteBuilder = mDao.deleteBuilder();
-            deleteBuilder.where().eq("url", url);
-            deleteBuilder.delete();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 查询所有记录
-     */
-    @Override
-    public List<entity> queryForAll() {
-        List<entity> markList = new ArrayList<>();
-        try {
-            markList = mDao.queryForAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return markList;
     }
 
 
@@ -87,6 +60,33 @@ public class BaseDao<entity> implements IDao<entity> {
         } catch (SQLException e) {
             Logs.base.e(e);
         }
+    }
+
+    /**
+     * 删除一条记录
+     */
+    public void delete(@NonNull String url) {
+        try {
+            DeleteBuilder<entity, Integer> deleteBuilder = mDao.deleteBuilder();
+            deleteBuilder.where().eq("url", url);
+            deleteBuilder.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 查询所有记录
+     */
+    @Override
+    public List<entity> queryForAll() {
+        List<entity> entityList = new ArrayList<>();
+        try {
+            entityList = mDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return entityList;
     }
 
     @Override

@@ -38,10 +38,5 @@ public class HistoryDao extends BaseDao<History>{
 
 
 
-    @Override
-    public void deleteAll() {
-
-    }
-
 
 }
