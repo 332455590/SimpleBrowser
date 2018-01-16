@@ -2,7 +2,6 @@ package com.renny.simplebrowser.view.page;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.ViewDragHelper;
 import android.text.TextUtils;
@@ -30,9 +29,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     WebViewFragment webViewFragment;
     HomePageFragment mHomePageFragment;
     TextView titleView;
-    CoordinatorLayout mCoordinatorLayout;
     ImageView mark;
-    View bottomBar;
     GestureLayout mGestureLayout;
     TextView mProgressView;
     FragmentManager mFragmentManager;
@@ -49,13 +46,12 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
 
     @Override
     protected void bindView(Bundle savedInstanceState) {
-        mCoordinatorLayout = findViewById(R.id.web_contain);
         titleView = findViewById(R.id.title);
-        bottomBar = findViewById(R.id.bottom_bar);
         mGestureLayout = findViewById(R.id.gesture_layout);
         mark = findViewById(R.id.mark);
         mProgressView = findViewById(R.id.progressView);
         mark.setOnClickListener(this);
+        titleView.setOnClickListener(this);
     }
 
     public void setMyProgress(int progress) {
@@ -143,6 +139,12 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
                     mHomePageFragment.reloadMarkListData();
                 }
                 break;
+            case R.id.title:
+                String content=titleView.getText().toString();
+                if (!TextUtils.isEmpty(content)) {
+                    goSearchPage(url);
+                }
+                break;
         }
     }
 
@@ -188,7 +190,11 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     public void goSearchPage() {
         startActivityForResult(new Intent(WebViewActivity.this, SearchActivity.class), 123);
     }
-
+    public void goSearchPage(String content) {
+        Intent intent=new Intent(WebViewActivity.this, SearchActivity.class);
+        intent.putExtra("url",content);
+        startActivityForResult(intent, 123);
+    }
 
     private void returnLastPage() {
         if (fromBack && isOnHomePage) {

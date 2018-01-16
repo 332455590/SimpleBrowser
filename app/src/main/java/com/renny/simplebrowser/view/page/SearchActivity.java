@@ -68,7 +68,7 @@ public class SearchActivity extends BaseActivity {
     public void afterViewBind(Bundle savedInstanceState) {
         if (!TextUtils.isEmpty(url)) {
             searchEdit.setText(url);
-            searchEdit.setSelection(0, url.length() - 1);
+            searchEdit.setSelection(0, url.length());
         }
         mKeyListAdapter = new KeyListAdapter(keyList);
         mKeyListAdapter.setOnClickListener(new KeyListAdapter.OnClickListener() {
