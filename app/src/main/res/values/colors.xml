@@ -24,6 +24,7 @@
     <color name="color_btn_cancel">#E3E3E3</color>
     <!--用于全站背景以及分割线色块-->
     <color name="color_background">#F4F5F9</color>
+    <color name="color_background_dark">#666666</color>
     <color name="color_btn_background">#FFFBFBFB</color>
     <color name="color_item">#F7F7F7</color>
     <color name="color_white">#FFFFFFFF</color>

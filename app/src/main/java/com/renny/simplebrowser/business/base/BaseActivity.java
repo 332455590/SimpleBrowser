@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * Created by Renny on 2018/1/4.
  */
 
-public abstract class BaseActivity extends PermissionActivity implements View.OnClickListener{
+public abstract class BaseActivity extends PermissionActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,7 @@ public abstract class BaseActivity extends PermissionActivity implements View.On
         super.onNewIntent(intent);
         initParam(getParams(intent));
     }
+
     /**
      * 从intent中初始化参数
      *
@@ -45,9 +46,11 @@ public abstract class BaseActivity extends PermissionActivity implements View.On
      */
     protected void initParam(Bundle intent) {
     }
+
     protected void bindView(Bundle savedInstanceState) {
 
     }
+
     protected void afterViewBind(Bundle savedInstanceState) {
 
     }
@@ -66,10 +69,16 @@ public abstract class BaseActivity extends PermissionActivity implements View.On
         }
         return params;
     }
+
     private Bundle getParams(Bundle bundle) {
         if (bundle == null) {
             bundle = new Bundle();
         }
         return bundle;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

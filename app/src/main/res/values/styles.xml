@@ -6,6 +6,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/color_background</item>
+        <item name="android:editTextStyle">@style/EditText</item>
+        <item name="android:textViewStyle">@style/TextView</item>
     </style>
 
     <style name="dialogAnim" mce_bogus="1" parent="android:Animation">
@@ -14,10 +17,17 @@
     </style>
 
     <style name="EditText" parent="@android:style/Widget.EditText">
+        <item name="android:background">@color/transparent</item>
         <item name="android:textColorHint">@color/color_input_hint</item>
         <item name="android:textColor">@color/color_text_major</item>
         <item name="android:textSize">@dimen/size_normal_large</item>
         <item name="android:textCursorDrawable">@drawable/color_cursor</item>
         <item name="android:cursorVisible">true</item>
+    </style>
+
+    <style name="TextView" parent="@android:style/Widget.TextView">
+        <item name="android:textColorHint">@color/color_input_hint</item>
+        <item name="android:textColor">@color/color_text_major</item>
+        <item name="android:textSize">@dimen/size_normal_large</item>
     </style>
 </resources>

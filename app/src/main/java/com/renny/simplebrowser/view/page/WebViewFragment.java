@@ -106,7 +106,6 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                     mHistoryDao = new HistoryDao();
                 }
                 mHistoryDao.addEntity(new History(System.currentTimeMillis(), webView.getUrl(), title));
-              Logs.h5.d("xxxx"+  mHistoryDao.queryForAll().size());
             }
         };
 

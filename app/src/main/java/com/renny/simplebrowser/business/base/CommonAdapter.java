@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class CommonAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     private int mLayoutId;
-    private List<T> dataList;
+    protected List<T> dataList;
     protected ItemClickListener mItemClickListener;
 
     public void setDataList(List<T> dataList) {
