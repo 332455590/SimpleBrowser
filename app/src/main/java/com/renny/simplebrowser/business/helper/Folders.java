@@ -19,7 +19,7 @@ public enum Folders {
     temp("temp"),//临时目录
     crash("logs/crash"),//错误日志
     img("image"),//图片下载
-    gallery("download", false),//图片保存
+    Camera("Camera", false),//图片保存
     download("download", false),//下载
     ;
     private String subFolder;
@@ -135,13 +135,15 @@ public enum Folders {
         return null;
     }
 
-    private String getPath(String type) {
+    public File getPublicFile(String type, String fileName, String defaultSuffix) {
+        String[] nameArray = getName(fileName, defaultSuffix);
         String path = Environment.getExternalStoragePublicDirectory(type) + "/" + subFolder + "/";
-        Logs.common.d("getPath:" + path);
+        Logs.common.d("getPath:" + nameArray[0]+nameArray[1]);
         File file = new File(path);
+        String fileName_=nameArray[0] + nameArray[1];
         if (file.mkdirs()) {
-            return path;
+            return new File(path + fileName_);
         }
-        return path;
+        return new File(path + fileName_);
     }
 }

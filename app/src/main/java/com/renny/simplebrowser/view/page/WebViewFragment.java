@@ -3,6 +3,8 @@ package com.renny.simplebrowser.view.page;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -40,6 +42,7 @@ import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 
 public class WebViewFragment extends BaseFragment implements X5WebView.onSelectItemListener, OnItemClickListener {
@@ -159,7 +162,6 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             public void onComplete(File file) {
                 if (file != null && file.exists()) {
                     result = CaptureActivity.handleResult(file.getPath());
-                    Logs.base.d("xxxx--" + result);
                     if (!TextUtils.isEmpty(result)) {
                         handlePictureDialog.setShowZxing(result);
                     }
@@ -221,14 +223,20 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             @Override
             public File onBackground() throws Exception {
                 File sourceFile = ImgHelper.syncLoadFile(imgUrl);
-                File file = Folders.gallery.getFile(Validator.getNameFromUrl(imgUrl),".jpeg");
+                File file= Folders.Camera.getPublicFile(Environment.DIRECTORY_DCIM,Validator.getNameFromUrl(imgUrl),".jpg");
                 FileUtil.copyFile(sourceFile, file);
+                Logs.common.d("getPath:" + file.getAbsolutePath());
                 return file;
             }
 
             @Override
             public void onComplete(final File file) {
                 if (file != null && file.exists()) {
+                    try {
+                        MediaStore.Images.Media.insertImage(getContext().getContentResolver(), file.getAbsolutePath(), "title", "description");
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     new AlertDialog.Builder(getContext())
                             .setMessage("保存成功")
                             .setPositiveButton("查看", new DialogInterface.OnClickListener() {
