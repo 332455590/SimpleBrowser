@@ -1,15 +1,13 @@
 package com.renny.simplebrowser.business.helper;
 
 
-import android.graphics.Bitmap;
-import android.text.TextUtils;
+import android.os.Environment;
 
 import com.renny.simplebrowser.App;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.globe.helper.FileUtil;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -22,7 +20,7 @@ public enum Folders {
     crash("logs/crash"),//错误日志
     img("image"),//图片下载
     gallery("download", false),//图片保存
-    download("download", false),//图片保存
+    download("download", false),//下载
     ;
     private String subFolder;
     private boolean isCache = true;
@@ -74,16 +72,17 @@ public enum Folders {
         return new File(getRootFolder(), subFolder);
     }
 
-
     public File getFile(String name) {
-        if (TextUtils.isEmpty(name)) {
-            name = System.currentTimeMillis() + ".temp";
-        }
+        return getFile(name, ".tmp");
+    }
+
+    public File getFile(String fileName, String defaultSuffix) {
+        String[] nameArray = getName(fileName, defaultSuffix);
         File folder = getFolder();
-        if (!folder.exists()) {
-            folder.mkdirs();
+        if (folder.mkdirs()) {
+            return new File(folder, nameArray[0] + nameArray[1]);
         }
-        return new File(folder, name);
+        return new File(folder, nameArray[0] + nameArray[1]);
     }
 
     public void cleanFolder() {
@@ -100,42 +99,49 @@ public enum Folders {
     }
 
     public File newTempFile() {
-        long time = System.currentTimeMillis();
+        String fileName = System.currentTimeMillis() + (int) (Math.random() * 1000) + ".temp";
+        return newTempFile(fileName);
+    }
+
+    public File newTempFile(String fileName) {
+        return newTempFile(fileName, ".temp");
+    }
+
+    public String[] getName(String fileName, String defaultSuffix) {
+        String[] nameArray = fileName.split("\\.");
+        String prefix;
+        String suffix;
+        if (nameArray.length == 2) {
+            prefix = nameArray[0];
+            suffix = "." + nameArray[1];
+        } else {
+            prefix = fileName;
+            suffix = defaultSuffix;
+        }
+        return new String[]{prefix, suffix};
+    }
+
+    public File newTempFile(String fileName, String defaultSuffix) {
+        String[] nameArray = getName(fileName, defaultSuffix);
         try {
             File folder = getFolder();
-            if (!folder.exists()) {
-                folder.mkdirs();
+            if (folder.mkdirs()) {
+                return File.createTempFile(nameArray[0], nameArray[1], folder);
             }
-            return File.createTempFile(time + "", ".temp", folder);
+            return File.createTempFile(nameArray[0], nameArray[1], folder);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-
-    public File newJpgFile(Bitmap bitmap) {
-
-        long time = System.currentTimeMillis();
-        try {
-            File folder = getFolder();
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            File file = File.createTempFile(time + "", ".jpg", folder);
-            try {
-                FileOutputStream out = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
-                out.flush();
-                out.close();
-                Logs.base.d("已经保存");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return file;
-        } catch (IOException e) {
-            e.printStackTrace();
+    private String getPath(String type) {
+        String path = Environment.getExternalStoragePublicDirectory(type) + "/" + subFolder + "/";
+        Logs.common.d("getPath:" + path);
+        File file = new File(path);
+        if (file.mkdirs()) {
+            return path;
         }
-        return null;
+        return path;
     }
 }

@@ -149,7 +149,8 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             @Override
             public File onBackground() throws Exception {
                 File sourceFile = ImgHelper.syncLoadFile(extra);
-                File file = Folders.gallery.getFile(Validator.getNameFromUrl(extra));
+                Logs.base.d("xxxx--" + extra);
+                File file = Folders.temp.newTempFile(Validator.getNameFromUrl(extra),".jpeg");
                 FileUtil.copyFile(sourceFile, file);
                 return file;
             }
@@ -220,7 +221,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             @Override
             public File onBackground() throws Exception {
                 File sourceFile = ImgHelper.syncLoadFile(imgUrl);
-                File file = Folders.gallery.getFile(Validator.getNameFromUrl(imgUrl));
+                File file = Folders.gallery.getFile(Validator.getNameFromUrl(imgUrl),".jpeg");
                 FileUtil.copyFile(sourceFile, file);
                 return file;
             }

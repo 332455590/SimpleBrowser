@@ -177,9 +177,8 @@ public class Validator {
     }
 
 
-    public static boolean checkColor(String color) {
-        if (TextUtils.isEmpty(color))
-            return false;
+    public static boolean checkColor(@NonNull String color) {
+
         return color.matches("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$");
     }
 
@@ -192,7 +191,11 @@ public class Validator {
         if (url.contains("?")) {
             temp = url.substring(0, url.indexOf("?"));
         }
-        return temp.substring(temp.lastIndexOf("/") + 1);
+        temp = temp.substring(temp.lastIndexOf("/") + 1);
+        if (TextUtils.isEmpty(temp)) {
+            temp = System.currentTimeMillis() + ".temp";
+        }
+        return temp;
     }
 
 
