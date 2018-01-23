@@ -30,10 +30,10 @@ public class X5WebViewClient extends WebViewClient {
                 view.loadUrl(url); //使得打开网页时不调用系统浏览器， 而是在本WebView中显示
                 return true;
             }
+            return false;
         } else {
             return jumpScheme(url);
         }
-        return super.shouldOverrideUrlLoading(view, url);
     }
 
     private boolean jumpScheme(String url) {

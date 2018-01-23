@@ -5,33 +5,65 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/title"
+        android:id="@+id/title_lay"
         android:layout_width="match_parent"
         android:layout_height="44dp">
 
-        <EditText
-            android:id="@+id/search_edit"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@color/transparent"
-            android:gravity="center_vertical"
-            android:hint="搜索历史记录"
-            android:inputType="text"
-            android:paddingLeft="@dimen/font36"
-            android:singleLine="true"
-            android:textSize="12sp"/>
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/bg_stroke_blue">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:layout_alignParentBottom="true"
-            android:background="@color/color_background_dark"/>
+            <EditText
+                android:id="@+id/search_edit"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:gravity="center_vertical"
+                android:hint="@string/hint_history"
+                android:inputType="text"
+                android:visibility="invisible"
+                android:paddingLeft="@dimen/font36"
+                android:singleLine="true"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/search_text"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:gravity="center_vertical"
+                android:hint="@string/hint_history"
+                android:paddingLeft="@dimen/font36"
+                android:singleLine="true"
+                android:textSize="12sp"/>
+
+            <ImageView
+                android:id="@+id/search_button"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@id/search_edit"
+                android:padding="5dp"
+                android:src="@drawable/ic_search_history"/>
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/search_delete"
+            android:layout_width="44dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_delete"/>
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/history_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/title"
+        android:layout_below="@+id/title_lay"
         android:overScrollMode="never"/>
 </RelativeLayout>

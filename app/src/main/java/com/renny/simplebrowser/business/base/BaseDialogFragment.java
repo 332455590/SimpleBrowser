@@ -13,7 +13,7 @@ import android.view.ViewGroup;
  * Created by Renny on 2018/1/11.
  */
 
-public abstract class BaseDialogFragment extends DialogFragment {
+public abstract class BaseDialogFragment extends DialogFragment implements View.OnClickListener{
     protected View rootView;
     protected Context mContext;
 
@@ -65,5 +65,10 @@ public abstract class BaseDialogFragment extends DialogFragment {
 
     public boolean isShowing() {
         return getDialog() != null && getDialog().isShowing();
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }

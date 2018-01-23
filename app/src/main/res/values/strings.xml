@@ -8,4 +8,5 @@
     <string name="action_download">下载</string>
     <string name="action_cancel">取消</string>
     <string name="dialog_download">您是否需要下载此文件？ (%1$s)</string>
+    <string name="hint_history">搜索历史记录</string>
 </resources>

@@ -1,12 +1,15 @@
 package com.renny.simplebrowser.business.webview;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
+import com.tencent.smtt.export.external.interfaces.JsResult;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
 
@@ -35,6 +38,24 @@ public class X5WebChromeClient extends WebChromeClient {
             viewGroup.removeView(myVideoView);
             viewGroup.addView(myNormalView);
         }
+    }
+
+    @Override
+    public boolean onJsAlert(final WebView view, String url, final String message, JsResult result) {
+                new AlertDialog.Builder(mContext)
+                        .setTitle("提示")
+                        .setMessage(message)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                view.reload();//重写刷新页面
+
+                            }
+                        })
+                        .setNegativeButton("取消",null)
+                        .show();
+        result.confirm();//这里必须调用，否则页面会阻塞造成假死
+        return true;
     }
 
     //获取图标

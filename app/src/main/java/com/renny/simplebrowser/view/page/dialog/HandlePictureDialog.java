@@ -1,4 +1,4 @@
-package com.renny.simplebrowser.view.dialog;
+package com.renny.simplebrowser.view.page.dialog;
 
 import android.app.Dialog;
 import android.graphics.Color;

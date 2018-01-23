@@ -32,7 +32,7 @@ import com.renny.simplebrowser.business.webview.X5WebViewClient;
 import com.renny.simplebrowser.globe.helper.FileUtil;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
-import com.renny.simplebrowser.view.dialog.HandlePictureDialog;
+import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshWebView;
@@ -78,7 +78,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         super.bindView(rootView, savedInstanceState);
         pullToRefreshWebView = rootView.findViewById(R.id.refreshLayout);
         mWebView = pullToRefreshWebView.getRefreshableView();
-        mWebView.getView().setOverScrollMode(View.OVER_SCROLL_NEVER);
+
     }
 
     public WebView getWebView() {
@@ -153,7 +153,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             public File onBackground() throws Exception {
                 File sourceFile = ImgHelper.syncLoadFile(extra);
                 Logs.base.d("xxxx--" + extra);
-                File file = Folders.temp.newTempFile(Validator.getNameFromUrl(extra),".jpeg");
+                File file = Folders.temp.newTempFile(Validator.getNameFromUrl(extra), ".jpeg");
                 FileUtil.copyFile(sourceFile, file);
                 return file;
             }
@@ -223,7 +223,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             @Override
             public File onBackground() throws Exception {
                 File sourceFile = ImgHelper.syncLoadFile(imgUrl);
-                File file= Folders.Camera.getPublicFile(Environment.DIRECTORY_DCIM,Validator.getNameFromUrl(imgUrl),".jpg");
+                File file = Folders.Camera.getPublicFile(Environment.DIRECTORY_DCIM, Validator.getNameFromUrl(imgUrl), ".jpg");
                 FileUtil.copyFile(sourceFile, file);
                 Logs.common.d("getPath:" + file.getAbsolutePath());
                 return file;

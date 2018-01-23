@@ -21,7 +21,7 @@ import com.renny.simplebrowser.business.permission.PermissionListener;
 import com.renny.simplebrowser.business.permission.Permissions;
 import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
 import com.renny.simplebrowser.view.adapter.ExtendMarkAdapter;
-import com.renny.simplebrowser.view.dialog.FullSheetDialogFragment;
+import com.renny.simplebrowser.view.page.dialog.FullSheetDialogFragment;
 import com.renny.simplebrowser.view.listener.GoPageListener;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListFooter;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListHeader;
