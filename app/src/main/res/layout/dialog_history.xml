@@ -24,11 +24,12 @@
                 android:background="@color/transparent"
                 android:gravity="center_vertical"
                 android:hint="@string/hint_history"
+                android:imeOptions="actionDone"
                 android:inputType="text"
-                android:visibility="invisible"
                 android:paddingLeft="@dimen/font36"
                 android:singleLine="true"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/search_text"

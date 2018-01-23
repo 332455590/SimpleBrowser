@@ -21,7 +21,7 @@ import com.renny.simplebrowser.business.permission.PermissionListener;
 import com.renny.simplebrowser.business.permission.Permissions;
 import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
 import com.renny.simplebrowser.view.adapter.ExtendMarkAdapter;
-import com.renny.simplebrowser.view.page.dialog.FullSheetDialogFragment;
+import com.renny.simplebrowser.view.page.dialog.HistoryDialogFragment;
 import com.renny.simplebrowser.view.listener.GoPageListener;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListFooter;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListHeader;
@@ -114,7 +114,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
             public void onItemClicked(int position, View view) {
                 switch (position) {
                     case 0:
-                        new FullSheetDialogFragment().show(getChildFragmentManager(), "dialog");
+                        new HistoryDialogFragment().show(getChildFragmentManager(), "dialog");
                         break;
                 }
 

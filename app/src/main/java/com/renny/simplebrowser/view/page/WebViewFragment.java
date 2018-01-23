@@ -2,6 +2,7 @@ package com.renny.simplebrowser.view.page;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -32,12 +33,13 @@ import com.renny.simplebrowser.business.webview.X5WebViewClient;
 import com.renny.simplebrowser.globe.helper.FileUtil;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
-import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
+import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshWebView;
 import com.renny.zxing.Activity.CaptureActivity;
 import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebIconDatabase;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
@@ -109,6 +111,15 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                     mHistoryDao = new HistoryDao();
                 }
                 mHistoryDao.addEntity(new History(System.currentTimeMillis(), webView.getUrl(), title));
+            }
+
+            @Override
+            public void onReceivedIcon(WebView view, Bitmap icon) {
+                super.onReceivedIcon(view, icon);
+                if (onReceivedTitleListener != null) {
+                    onReceivedTitleListener.onReceivedIcon(icon);
+                }
+                WebIconDatabase.getInstance().open(getContext().getCacheDir().getAbsolutePath()+"/icon/");
             }
         };
 
@@ -257,5 +268,6 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     public interface OnReceivedListener {
         void onReceivedTitle(String url, String title);
+        void onReceivedIcon(Bitmap icon);
     }
 }

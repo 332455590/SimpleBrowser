@@ -28,6 +28,7 @@ import com.renny.simplebrowser.business.db.dao.HistoryDao;
 import com.renny.simplebrowser.business.db.entity.History;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
 import com.renny.simplebrowser.business.helper.UIHelper;
+import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.view.adapter.HistoryAdapter;
 import com.renny.simplebrowser.view.event.WebviewEvent;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
@@ -40,14 +41,14 @@ import java.util.List;
  * Created by Renny on 2018/1/16.
  */
 
-public class FullSheetDialogFragment extends BaseDialogFragment {
+public class HistoryDialogFragment extends BaseDialogFragment {
     private BottomSheetBehavior mBehavior;
     HistoryDao mHistoryDao;
     RecyclerView mRecyclerView;
     EditText mEditText;
     TextView mTextView;
     RelativeLayout mSearchLayout;
-    ImageView searchBtn,deleteBtn;
+    ImageView searchBtn, deleteBtn;
 
     @NonNull
     @Override
@@ -63,10 +64,10 @@ public class FullSheetDialogFragment extends BaseDialogFragment {
     public void bindView(View rootView, Bundle savedInstanceState) {
         mRecyclerView = rootView.findViewById(R.id.history_list);
         mEditText = rootView.findViewById(R.id.search_edit);
-        mSearchLayout=rootView.findViewById(R.id.title_lay);
-        searchBtn=rootView.findViewById(R.id.search_button);
-        deleteBtn=rootView.findViewById(R.id.search_delete);
-        mTextView=rootView.findViewById(R.id.search_text);
+        mSearchLayout = rootView.findViewById(R.id.title_lay);
+        searchBtn = rootView.findViewById(R.id.search_button);
+        deleteBtn = rootView.findViewById(R.id.search_delete);
+        mTextView = rootView.findViewById(R.id.search_text);
     }
 
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class FullSheetDialogFragment extends BaseDialogFragment {
         historyAdapter.setOnClickListener(new HistoryAdapter.OnClickListener() {
             @Override
             public void onUrlClick(int position, View view) {
+                KeyboardUtils.hideSoftInput(getActivity(),mEditText);
                 EventBus.getDefault().post(new WebviewEvent(list.get(position).getUrl()));
                 mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
@@ -106,7 +108,7 @@ public class FullSheetDialogFragment extends BaseDialogFragment {
             public void onClick(View v) {
                 mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 mEditText.setVisibility(View.VISIBLE);
-                KeyboardUtils.showSoftInput(getActivity(),mEditText);
+                KeyboardUtils.showSoftInput(getActivity(), mEditText);
             }
         });
     }
@@ -114,7 +116,7 @@ public class FullSheetDialogFragment extends BaseDialogFragment {
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        int id =v.getId();
+        int id = v.getId();
 
     }
 
@@ -128,16 +130,17 @@ public class FullSheetDialogFragment extends BaseDialogFragment {
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
-                // Check Logs to see how bottom sheets behaves
+                Logs.common.d("newState"+newState);
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        KeyboardUtils.hideSoftInput(getActivity(),mEditText);
                         dismiss();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
                         expand();
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
+                        KeyboardUtils.hideSoftInput(getActivity(),mEditText);
                         reduce();
                         break;
                 }
@@ -167,7 +170,7 @@ public class FullSheetDialogFragment extends BaseDialogFragment {
         mEditText.setVisibility(View.VISIBLE);
         mTextView.setVisibility(View.INVISIBLE);
         RelativeLayout.LayoutParams LayoutParams = (RelativeLayout.LayoutParams) mEditText.getLayoutParams();
-        LayoutParams.width = mSearchLayout.getWidth()-UIHelper.dip2px(108);
+        LayoutParams.width = mSearchLayout.getWidth() - UIHelper.dip2px(108);
         mEditText.setLayoutParams(LayoutParams);
         //开始动画
         beginDelayedTransition(mSearchLayout);
@@ -175,7 +178,6 @@ public class FullSheetDialogFragment extends BaseDialogFragment {
 
     private void reduce() {
         //设置收缩状态时的布局
-        mEditText.setHint("搜索");
         mEditText.setVisibility(View.INVISIBLE);
         mTextView.setVisibility(View.VISIBLE);
         RelativeLayout.LayoutParams LayoutParams = (RelativeLayout.LayoutParams) mEditText.getLayoutParams();

@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.renny.simplebrowser.business.log.Logs;
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
 import com.tencent.smtt.export.external.interfaces.JsResult;
 import com.tencent.smtt.sdk.WebChromeClient;
@@ -62,12 +62,14 @@ public class X5WebChromeClient extends WebChromeClient {
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
         super.onReceivedIcon(view, icon);
+        view.getFavicon();
+        Logs.h5.d("webpage icon is " + icon);
     }
 
     @Override
     public void onReceivedTitle(WebView arg0, final String arg1) {
         super.onReceivedTitle(arg0, arg1);
-        Log.i("app", "webpage title is " + arg1);
+       Logs.h5.d("webpage title is " + arg1);
 
     }
 }

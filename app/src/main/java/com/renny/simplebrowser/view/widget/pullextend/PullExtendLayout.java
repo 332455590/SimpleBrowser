@@ -3,7 +3,6 @@ package com.renny.simplebrowser.view.widget.pullextend;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -652,7 +651,6 @@ public class PullExtendLayout extends LinearLayout implements IPullToExtend {
                         * mInterpolator.getInterpolation(normalizedTime / (float) oneSecond));
                 mCurrentY = mScrollFromY - deltaY;
                 setScrollTo(0, mCurrentY);
-                Log.d("setScrollTo", " " + mCurrentY);
 
                 if (null != mHeaderLayout && 0 != mHeaderHeight) {
                     mHeaderLayout.onPull(Math.abs(mCurrentY));

@@ -1,12 +1,14 @@
 package com.renny.simplebrowser.business.webview;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.URLUtil;
 
 import com.renny.simplebrowser.business.log.Logs;
+import com.tencent.smtt.sdk.CookieManager;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 
@@ -69,8 +71,11 @@ public class X5WebView extends WebView {
         String appCachePath = getContext().getCacheDir().getAbsolutePath();
         setting.setAppCachePath(appCachePath);//设置  Application Caches 缓存目录
         setting.setSavePassword(false);
-
-
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            //android5.0以后webview默认不在保存cookie所以会导致第三方登录状态无法保存
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.setAcceptThirdPartyCookies(this,true);
+        }
         setOnLongClickListener(new View.OnLongClickListener() {
 
             public boolean onLongClick(View v) {

@@ -1,6 +1,7 @@
 package com.renny.simplebrowser.view.page;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.ViewDragHelper;
@@ -34,7 +35,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     WebViewFragment webViewFragment;
     HomePageFragment mHomePageFragment;
     TextView titleView;
-    ImageView mark;
+    ImageView markBookImg;
     GestureLayout mGestureLayout;
     TextView mProgressView;
     FragmentManager mFragmentManager;
@@ -53,9 +54,9 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     protected void bindView(Bundle savedInstanceState) {
         titleView = findViewById(R.id.title);
         mGestureLayout = findViewById(R.id.gesture_layout);
-        mark = findViewById(R.id.mark);
+        markBookImg = findViewById(R.id.mark);
         mProgressView = findViewById(R.id.progressView);
-        mark.setOnClickListener(this);
+        markBookImg.setOnClickListener(this);
         titleView.setOnClickListener(this);
     }
 
@@ -134,18 +135,18 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
         switch (id) {
             case R.id.mark:
                 if (!TextUtils.isEmpty(url)) {
-                    if (mark.isSelected()) {
+                    if (markBookImg.isSelected()) {
                         mMarkDao.delete(url);
-                        mark.setSelected(false);
+                        markBookImg.setSelected(false);
                     } else {
                         mMarkDao.addEntity(new BookMark(title, url));
-                        mark.setSelected(true);
+                        markBookImg.setSelected(true);
                     }
                     mHomePageFragment.reloadMarkListData();
                 }
                 break;
             case R.id.title:
-                String content=titleView.getText().toString();
+                String content = titleView.getText().toString();
                 if (!TextUtils.isEmpty(content)) {
                     goSearchPage(url);
                 }
@@ -187,7 +188,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
                     mHomePageFragment).commit();
         }
         titleView.setText("");
-        mark.setVisibility(View.INVISIBLE);
+        markBookImg.setVisibility(View.INVISIBLE);
         isOnHomePage = true;
     }
 
@@ -195,9 +196,10 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     public void goSearchPage() {
         startActivityForResult(new Intent(WebViewActivity.this, SearchActivity.class), 123);
     }
+
     public void goSearchPage(String content) {
-        Intent intent=new Intent(WebViewActivity.this, SearchActivity.class);
-        intent.putExtra("url",content);
+        Intent intent = new Intent(WebViewActivity.this, SearchActivity.class);
+        intent.putExtra("url", content);
         startActivityForResult(intent, 123);
     }
 
@@ -247,10 +249,10 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     @Override
     public void onReceivedTitle(String url, String title) {
         Logs.base.d("onReceivedTitle:  " + title + "   " + url);
-        mark.setVisibility(View.VISIBLE);
+        markBookImg.setVisibility(View.VISIBLE);
         this.url = url;
         this.title = title;
-        mark.setSelected(mMarkDao.query(url));
+        markBookImg.setSelected(mMarkDao.query(url));
         if (!TextUtils.isEmpty(title)) {
             titleView.setText(title);
         } else {
@@ -258,7 +260,14 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
         }
         if (isOnHomePage) {
             titleView.setText("");
-            mark.setVisibility(View.INVISIBLE);
+            markBookImg.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onReceivedIcon(Bitmap icon) {
+        if (icon != null && !icon.isRecycled()) {
+            markBookImg.setImageBitmap(icon);
         }
     }
 
@@ -287,7 +296,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onWebviewEvent(WebviewEvent event) {
-        Logs.event.d("event--"+event.url);
+        Logs.event.d("event--" + event.url);
         goWebView(event.url);
     }
 }
