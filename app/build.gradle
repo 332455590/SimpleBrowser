@@ -34,5 +34,5 @@ dependencies {
     implementation project(':zxing')
     implementation 'com.github.mmin18:realtimeblurview:1.1.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation 'com.gyf.barlibrary:barlibrary:2.3.0'
+    implementation 'cn.bingoogolapple:bga-baseadapter:1.2.9@aar'
 }

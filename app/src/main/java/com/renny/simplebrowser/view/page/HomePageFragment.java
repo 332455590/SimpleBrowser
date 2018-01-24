@@ -7,11 +7,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseFragment;
-import com.renny.simplebrowser.business.base.CommonAdapter;
 import com.renny.simplebrowser.business.db.dao.BookMarkDao;
 import com.renny.simplebrowser.business.db.entity.BookMark;
 import com.renny.simplebrowser.business.helper.SearchHelper;
@@ -19,10 +19,11 @@ import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.permission.PermissionHelper;
 import com.renny.simplebrowser.business.permission.PermissionListener;
 import com.renny.simplebrowser.business.permission.Permissions;
+import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
-import com.renny.simplebrowser.view.adapter.ExtendMarkAdapter;
-import com.renny.simplebrowser.view.page.dialog.HistoryDialogFragment;
+import com.renny.simplebrowser.view.adapter.ExtendMarkAdapterNew;
 import com.renny.simplebrowser.view.listener.GoPageListener;
+import com.renny.simplebrowser.view.page.dialog.HistoryDialogFragment;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListFooter;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListHeader;
 import com.renny.simplebrowser.view.widget.pullextend.PullExtendLayout;
@@ -30,6 +31,9 @@ import com.renny.zxing.Activity.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.bingoogolapple.baseadapter.BGAOnItemChildClickListener;
+import cn.bingoogolapple.baseadapter.BGAOnItemChildLongClickListener;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -46,8 +50,8 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     RecyclerView listHeader, listFooter;
     List<String> mDatas = new ArrayList<>();
     BookMarkDao mMarkDao = new BookMarkDao();
-    ExtendMarkAdapter mExtendMarkAdapter;
-    List<BookMark> markList;
+    ExtendMarkAdapterNew mExtendMarkAdapter;
+    List<BookMark> markList=new ArrayList<>();
 
     @Override
     protected int getLayoutId() {
@@ -70,28 +74,28 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     }
 
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
-        markList = mMarkDao.queryForAll();
-        mExtendMarkAdapter = new ExtendMarkAdapter(markList);
+        mExtendMarkAdapter = new ExtendMarkAdapterNew(listFooter);
         reloadMarkListData();
-        mExtendMarkAdapter.setItemClickListener(new CommonAdapter.ItemClickListener() {
+        mExtendMarkAdapter.setOnItemChildClickListener(new BGAOnItemChildClickListener() {
             @Override
-            public void onItemClicked(int position, View view) {
+            public void onItemChildClick(ViewGroup parent, View childView, int position) {
                 if (mGoPageListener != null) {
                     mGoPageListener.onGoPage(markList.get(position).getUrl());
                 }
             }
         });
-        mExtendMarkAdapter.setLongClickListener(new ExtendMarkAdapter.ItemLongClickListener() {
+        mExtendMarkAdapter.setOnItemChildLongClickListener(new BGAOnItemChildLongClickListener() {
             @Override
-            public void onItemLongClicked(int position, View view) {
+            public boolean onItemChildLongClick(ViewGroup parent, View childView, int position) {
                 mMarkDao.delete(markList.get(position).getUrl());
-                mExtendMarkAdapter.removeData(position);
+                mExtendMarkAdapter.removeItem(position);
                 if (mExtendMarkAdapter.getItemCount() > 0) {
                     mPullExtendLayout.setPullLoadEnabled(true);
                 } else {
                     mPullExtendLayout.closeExtendHeadAndFooter();
                     mPullExtendLayout.setPullLoadEnabled(false);
                 }
+                return true;
             }
         });
         listFooter.setItemAnimator(new DefaultItemAnimator());
@@ -109,23 +113,28 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         mDatas.add("全屏浏览");
         mDatas.add("翻译");
         mDatas.add("切换UA");*/
-        listHeader.setAdapter(new ExtendHeadAdapter(mDatas).setItemClickListener(new CommonAdapter.ItemClickListener() {
+        ExtendHeadAdapter extendHeadAdapterNew = new ExtendHeadAdapter(listHeader);
+        extendHeadAdapterNew.addNewData(mDatas);
+        extendHeadAdapterNew.setOnItemChildClickListener(new BGAOnItemChildClickListener() {
             @Override
-            public void onItemClicked(int position, View view) {
+            public void onItemChildClick(ViewGroup parent, View childView, int position) {
                 switch (position) {
                     case 0:
                         new HistoryDialogFragment().show(getChildFragmentManager(), "dialog");
                         break;
+                    default:
+                        ToastHelper.makeToast("功能待实现！");
+                        break;
                 }
-
             }
-        }));
+        });
+        listHeader.setAdapter(extendHeadAdapterNew);
     }
 
     public void reloadMarkListData() {
         markList.clear();
         markList.addAll(mMarkDao.queryForAll());
-        mExtendMarkAdapter.notifyDataSetChanged();
+        mExtendMarkAdapter.setData(markList);
         if (mExtendMarkAdapter.getItemCount() > 0) {
             mPullExtendLayout.setPullLoadEnabled(true);
         } else {
