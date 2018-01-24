@@ -26,16 +26,22 @@ import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseDialogFragment;
 import com.renny.simplebrowser.business.db.dao.HistoryDao;
 import com.renny.simplebrowser.business.db.entity.History;
+import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
 import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.log.Logs;
-import com.renny.simplebrowser.view.adapter.HistoryAdapter;
+import com.renny.simplebrowser.globe.helper.DateUtil;
+import com.renny.simplebrowser.view.adapter.HistoryStickyAdapter;
 import com.renny.simplebrowser.view.event.WebviewEvent;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
+
+import cn.bingoogolapple.baseadapter.BGADivider;
+import cn.bingoogolapple.baseadapter.BGAOnItemChildClickListener;
+import cn.bingoogolapple.baseadapter.BGARVVerticalScrollHelper;
 
 /**
  * Created by Renny on 2018/1/16.
@@ -50,6 +56,8 @@ public class HistoryDialogFragment extends BaseDialogFragment {
     TextView mTextView;
     RelativeLayout mSearchLayout;
     ImageView searchBtn, deleteBtn;
+    HistoryStickyAdapter historyAdapter;
+    private BGARVVerticalScrollHelper mRecyclerViewScrollHelper;
 
     @NonNull
     @Override
@@ -74,18 +82,15 @@ public class HistoryDialogFragment extends BaseDialogFragment {
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
         mHistoryDao = new HistoryDao();
         final List<History> list = mHistoryDao.queryForAll();
-        final HistoryAdapter historyAdapter = new HistoryAdapter(list);
-        historyAdapter.setOnClickListener(new HistoryAdapter.OnClickListener() {
+        historyAdapter = new HistoryStickyAdapter(mRecyclerView);
+        historyAdapter.setData(list);
+        initStickyDivider();
+        historyAdapter.setOnItemChildClickListener(new BGAOnItemChildClickListener() {
             @Override
-            public void onUrlClick(int position, View view) {
-                KeyboardUtils.hideSoftInput(getActivity(),mEditText);
+            public void onItemChildClick(ViewGroup parent, View childView, int position) {
+                KeyboardUtils.hideSoftInput(getActivity(), mEditText);
                 EventBus.getDefault().post(new WebviewEvent(list.get(position).getUrl()));
                 mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-            }
-
-            @Override
-            public void onGoClick(int position, View view) {
-
             }
         });
         mRecyclerView.setAdapter(historyAdapter);
@@ -97,13 +102,7 @@ public class HistoryDialogFragment extends BaseDialogFragment {
             }
         });
 
-        deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mHistoryDao.deleteAll();
-                historyAdapter.clear();
-            }
-        });
+        deleteBtn.setOnClickListener(this);
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +117,55 @@ public class HistoryDialogFragment extends BaseDialogFragment {
     public void onClick(View v) {
         super.onClick(v);
         int id = v.getId();
+        switch (id) {
+            case R.id.search_delete:
+                mHistoryDao.deleteAll();
+                historyAdapter.clear();
+                Folders.icon.cleanFolder();
+                break;
+        }
 
+    }
+
+    private void initStickyDivider() {
+        final BGADivider.StickyDelegate stickyDelegate = new BGADivider.StickyDelegate() {
+            @Override
+            public void initCategoryAttr() {
+//                mCategoryBackgroundColor = getResources().getColor(R.color.category_backgroundColor);
+//                mCategoryTextColor = getResources().getColor(R.color.category_textColor);
+//                mCategoryTextSize = getResources().getDimensionPixelOffset(R.dimen.textSize_16);
+//                mCategoryPaddingLeft = getResources().getDimensionPixelOffset(R.dimen.size_level4);
+//                mCategoryHeight = getResources().getDimensionPixelOffset(R.dimen.size_level10);
+            }
+
+            @Override
+            protected boolean isCategoryFistItem(int position) {
+                return historyAdapter.isCategoryFistItem(position);
+            }
+
+            @Override
+            protected String getCategoryName(int position) {
+                return DateUtil.stampToDate(historyAdapter.getItem(position).getTime());
+            }
+
+            @Override
+            protected int getFirstVisibleItemPosition() {
+                return mRecyclerViewScrollHelper.findFirstVisibleItemPosition();
+            }
+        };
+
+        mRecyclerView.addItemDecoration(BGADivider.newDrawableDivider(R.drawable.shape_divider)
+                .setStartSkipCount(0)
+                .setMarginLeftResource(R.dimen.size_level3)
+                .setMarginRightResource(R.dimen.size_level9)
+                .setDelegate(stickyDelegate));
+
+        mRecyclerViewScrollHelper = BGARVVerticalScrollHelper.newInstance(mRecyclerView, new BGARVVerticalScrollHelper.SimpleDelegate() {
+            @Override
+            public int getCategoryHeight() {
+                return stickyDelegate.getCategoryHeight();
+            }
+        });
     }
 
     @Override
@@ -131,17 +178,17 @@ public class HistoryDialogFragment extends BaseDialogFragment {
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                Logs.common.d("newState"+newState);
+                Logs.common.d("newState" + newState);
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
-                        KeyboardUtils.hideSoftInput(getActivity(),mEditText);
+                        KeyboardUtils.hideSoftInput(getActivity(), mEditText);
                         dismiss();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
                         expand();
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
-                        KeyboardUtils.hideSoftInput(getActivity(),mEditText);
+                        KeyboardUtils.hideSoftInput(getActivity(), mEditText);
                         reduce();
                         break;
                 }
