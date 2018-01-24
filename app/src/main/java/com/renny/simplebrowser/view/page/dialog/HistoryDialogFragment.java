@@ -44,6 +44,7 @@ import java.util.List;
 public class HistoryDialogFragment extends BaseDialogFragment {
     private BottomSheetBehavior mBehavior;
     HistoryDao mHistoryDao;
+
     RecyclerView mRecyclerView;
     EditText mEditText;
     TextView mTextView;
@@ -181,7 +182,7 @@ public class HistoryDialogFragment extends BaseDialogFragment {
         mEditText.setVisibility(View.INVISIBLE);
         mTextView.setVisibility(View.VISIBLE);
         RelativeLayout.LayoutParams LayoutParams = (RelativeLayout.LayoutParams) mEditText.getLayoutParams();
-        LayoutParams.width = UIHelper.dip2px(100);
+        LayoutParams.width = UIHelper.dip2px(50);
         mEditText.setLayoutParams(LayoutParams);
         //开始动画
         beginDelayedTransition(mSearchLayout);

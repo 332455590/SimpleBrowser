@@ -7,19 +7,19 @@
     <RelativeLayout
         android:id="@+id/title_lay"
         android:layout_width="match_parent"
-        android:layout_height="44dp">
+        android:layout_height="50dp"
+        android:background="@color/background">
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_height="34dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
             android:background="@drawable/bg_stroke_blue">
 
             <EditText
                 android:id="@+id/search_edit"
-                android:layout_width="150dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:background="@color/transparent"
                 android:gravity="center_vertical"
@@ -33,11 +33,11 @@
 
             <TextView
                 android:id="@+id/search_text"
-                android:layout_width="150dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:background="@color/transparent"
                 android:gravity="center_vertical"
-                android:hint="@string/hint_history"
+                android:hint="@string/search"
                 android:paddingLeft="@dimen/font36"
                 android:singleLine="true"
                 android:textSize="12sp"/>
@@ -59,6 +59,13 @@
             android:layout_alignParentRight="true"
             android:padding="10dp"
             android:src="@drawable/ic_delete"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="@color/color_background_dark"
+            android:elevation="5dp"/>
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView

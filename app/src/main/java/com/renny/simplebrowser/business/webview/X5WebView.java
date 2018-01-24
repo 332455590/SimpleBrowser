@@ -5,10 +5,13 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.URLUtil;
 
+import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.log.Logs;
 import com.tencent.smtt.sdk.CookieManager;
+import com.tencent.smtt.sdk.WebIconDatabase;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 
@@ -57,7 +60,7 @@ public class X5WebView extends WebView {
         setting.setBuiltInZoomControls(true); //设置内置的缩放控件。若为false，则该WebView不可缩放
         setting.setDisplayZoomControls(false); //隐藏原生的缩放控件
         //其他细节操作
-        setting.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //关闭webview中缓存
+        setting.setCacheMode(WebSettings.LOAD_DEFAULT); //（默认）根据cache-control决定是否从网络上取数据。
         setting.setAllowFileAccess(true); //设置可以访问文件
         setting.setJavaScriptCanOpenWindowsAutomatically(false); //不支持通过JS打开新窗口
         setting.setLoadsImagesAutomatically(true); //支持自动加载图片
@@ -71,11 +74,12 @@ public class X5WebView extends WebView {
         String appCachePath = getContext().getCacheDir().getAbsolutePath();
         setting.setAppCachePath(appCachePath);//设置  Application Caches 缓存目录
         setting.setSavePassword(false);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //android5.0以后webview默认不在保存cookie所以会导致第三方登录状态无法保存
             CookieManager cookieManager = CookieManager.getInstance();
-            cookieManager.setAcceptThirdPartyCookies(this,true);
+            cookieManager.setAcceptThirdPartyCookies(this, true);
         }
+        WebIconDatabase.getInstance().open(Folders.icon.getFolder().getAbsolutePath());
         setOnLongClickListener(new View.OnLongClickListener() {
 
             public boolean onLongClick(View v) {
@@ -111,6 +115,15 @@ public class X5WebView extends WebView {
             }
 
         });
+    }
+
+    @Override
+    public void destroy() {
+        ViewGroup parent = ((ViewGroup) getParent());
+        if (parent != null) {
+            parent.removeAllViews();
+        }
+        super.destroy();
     }
 
     @Override

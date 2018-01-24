@@ -76,7 +76,7 @@ public class BitmapUtils {
     public static File saveToFile(Bitmap bitmap, File folder, String fileName) {
         if (bitmap != null) {
             if (!folder.exists()) {
-                folder.mkdir();
+                folder.mkdirs();
             }
             File file = new File(folder, fileName + JPG_SUFFIX);
             if (file.exists()) {

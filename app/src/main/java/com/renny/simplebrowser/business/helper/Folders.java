@@ -18,7 +18,7 @@ public enum Folders {
     cache("cache"),//
     temp("temp"),//临时目录
     crash("logs/crash"),//错误日志
-    img("image"),//图片下载
+    icon("icon"),//图片下载
     Camera("Camera", false),//图片保存
     download("download", false),//下载
     ;
@@ -63,7 +63,7 @@ public enum Folders {
             }
         }
         if (rootFolder != null) {
-            Logs.common.e("rootFolder:  " + rootFolder.getAbsolutePath());
+            Logs.common.d("rootFolder:  " + rootFolder.getAbsolutePath());
         }
         return rootFolder;
     }

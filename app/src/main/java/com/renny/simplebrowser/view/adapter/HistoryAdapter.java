@@ -1,15 +1,19 @@
 package com.renny.simplebrowser.view.adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.CommonAdapter;
 import com.renny.simplebrowser.business.base.ViewHolder;
 import com.renny.simplebrowser.business.db.entity.History;
+import com.renny.simplebrowser.business.helper.Folders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +40,7 @@ public class HistoryAdapter extends CommonAdapter<History> implements Filterable
     protected void convert(ViewHolder holder, final int position) {
         History data = getData(position);
         TextView textView = holder.getView(R.id.word);
+        final ImageView icon = holder.getView(R.id.icon);
         textView.setText(TextUtils.isEmpty(data.getTitle()) ? data.getUrl() : data.getTitle());
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,6 +50,16 @@ public class HistoryAdapter extends CommonAdapter<History> implements Filterable
                 }
             }
         });
+        icon.setImageResource(R.drawable.ic_history);
+        String[] strings = data.getUrl().split("/");
+        if (strings.length >= 2) {
+            String host = strings[2];
+            String path = Folders.icon.getFolder().getAbsolutePath() + "/" + host.replace(".", "") + ".jpg";
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            if (bitmap != null) {
+                icon.setImageBitmap(bitmap);
+            }
+        }
     }
 
     //重写getFilter()方法
