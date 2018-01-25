@@ -2,6 +2,7 @@ package com.renny.simplebrowser.view.page.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,9 +15,13 @@ import android.support.transition.TransitionSet;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MotionEventCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -45,14 +50,17 @@ import java.util.List;
 
 import cn.bingoogolapple.baseadapter.BGADivider;
 import cn.bingoogolapple.baseadapter.BGAOnItemChildClickListener;
+import cn.bingoogolapple.baseadapter.BGAOnRVItemChildTouchListener;
 import cn.bingoogolapple.baseadapter.BGARVVerticalScrollHelper;
+import cn.bingoogolapple.baseadapter.BGARecyclerViewHolder;
 
 /**
  * Created by Renny on 2018/1/16.
  */
 
-public class HistoryDialogFragment extends BaseDialogFragment {
+public class HistoryDialogFragment extends BaseDialogFragment implements BGAOnRVItemChildTouchListener {
     private BottomSheetBehavior mBehavior;
+     List<History> list;
     HistoryDao mHistoryDao;
 
     RecyclerView mRecyclerView;
@@ -62,7 +70,7 @@ public class HistoryDialogFragment extends BaseDialogFragment {
     ImageView searchBtn, deleteBtn;
     HistoryStickyAdapter historyAdapter;
     private BGARVVerticalScrollHelper mRecyclerViewScrollHelper;
-
+    private ItemTouchHelper mItemTouchHelper;
     public static HistoryDialogFragment getInstance(Context mContext, FragmentManager fm) {
         String tag = HistoryDialogFragment.class.getName();
         Fragment fragment = fm.findFragmentByTag(tag);
@@ -98,7 +106,7 @@ public class HistoryDialogFragment extends BaseDialogFragment {
 
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
         mHistoryDao = new HistoryDao();
-        final List<History> list = mHistoryDao.queryForAll();
+        list = mHistoryDao.queryForAll();
         historyAdapter = new HistoryStickyAdapter(mRecyclerView);
         historyAdapter.setData(list);
         initStickyDivider();
@@ -128,6 +136,10 @@ public class HistoryDialogFragment extends BaseDialogFragment {
                 KeyboardUtils.showSoftInput(getActivity(), mEditText);
             }
         });
+        // 初始化拖拽排序和滑动删除
+        mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback());
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+        historyAdapter.setOnRVItemChildTouchListener(this);
     }
 
     @Override
@@ -251,5 +263,76 @@ public class HistoryDialogFragment extends BaseDialogFragment {
         set.setDuration(300);
         TransitionManager.beginDelayedTransition(view, set);
     }
+    @Override
+    public boolean onRvItemChildTouch(BGARecyclerViewHolder holder, View childView, MotionEvent event) {
+        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+            mItemTouchHelper.startDrag(holder);
+        }
+        return false;
+    }
 
+    /**
+     * 该类参考：https://github.com/iPaulPro/Android-ItemTouchHelper-Demo
+     */
+    private class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
+        public static final float ALPHA_FULL = 1.0f;
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return false;
+        }
+
+        @Override
+        public boolean isItemViewSwipeEnabled() {
+            return true;
+        }
+
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+            int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+            return makeMovementFlags(dragFlags, swipeFlags);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source, RecyclerView.ViewHolder target) {
+            if (source.getItemViewType() != target.getItemViewType()) {
+                return false;
+            }
+            historyAdapter.moveItem(source, target);
+            return true;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            History history=list.get(viewHolder.getAdapterPosition());
+            mHistoryDao.delete(history.getUrl());
+            historyAdapter.removeItem(viewHolder);
+        }
+
+        @Override
+        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                View itemView = viewHolder.itemView;
+                float alpha = ALPHA_FULL - Math.abs(dX) / (float) itemView.getWidth();
+                ViewCompat.setAlpha(viewHolder.itemView, alpha);
+            }
+        }
+
+        @Override
+        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+            if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                viewHolder.itemView.setSelected(true);
+            }
+            super.onSelectedChanged(viewHolder, actionState);
+        }
+
+        @Override
+        public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
+            ViewCompat.setAlpha(viewHolder.itemView, ALPHA_FULL);
+            viewHolder.itemView.setSelected(false);
+        }
+    }
 }
