@@ -120,7 +120,8 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
             public void onItemChildClick(ViewGroup parent, View childView, int position) {
                 switch (position) {
                     case 0:
-                        new HistoryDialogFragment().show(getChildFragmentManager(), "dialog");
+                        HistoryDialogFragment.getInstance(getContext(),getChildFragmentManager())
+                                .show(getChildFragmentManager(),HistoryDialogFragment.class.getName());
                         break;
                     default:
                         ToastHelper.makeToast("功能待实现！");

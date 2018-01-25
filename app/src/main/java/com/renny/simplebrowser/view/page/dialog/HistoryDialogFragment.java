@@ -1,6 +1,7 @@
 package com.renny.simplebrowser.view.page.dialog;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -10,6 +11,9 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.transition.AutoTransition;
 import android.support.transition.TransitionManager;
 import android.support.transition.TransitionSet;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -58,6 +62,19 @@ public class HistoryDialogFragment extends BaseDialogFragment {
     ImageView searchBtn, deleteBtn;
     HistoryStickyAdapter historyAdapter;
     private BGARVVerticalScrollHelper mRecyclerViewScrollHelper;
+
+    public static HistoryDialogFragment getInstance(Context mContext, FragmentManager fm) {
+        String tag = HistoryDialogFragment.class.getName();
+        Fragment fragment = fm.findFragmentByTag(tag);
+        if (fragment == null) {
+            fragment = Fragment.instantiate(mContext, tag);
+            HistoryDialogFragment dialogFragment = (HistoryDialogFragment) fragment;
+            dialogFragment.setStyle(DialogFragment.STYLE_NO_TITLE, 0);//设置取消标题栏
+            return dialogFragment;
+        } else {
+            return (HistoryDialogFragment) fragment;
+        }
+    }
 
     @NonNull
     @Override
@@ -131,11 +148,6 @@ public class HistoryDialogFragment extends BaseDialogFragment {
         final BGADivider.StickyDelegate stickyDelegate = new BGADivider.StickyDelegate() {
             @Override
             public void initCategoryAttr() {
-//                mCategoryBackgroundColor = getResources().getColor(R.color.category_backgroundColor);
-//                mCategoryTextColor = getResources().getColor(R.color.category_textColor);
-//                mCategoryTextSize = getResources().getDimensionPixelOffset(R.dimen.textSize_16);
-//                mCategoryPaddingLeft = getResources().getDimensionPixelOffset(R.dimen.size_level4);
-//                mCategoryHeight = getResources().getDimensionPixelOffset(R.dimen.size_level10);
             }
 
             @Override
@@ -174,7 +186,6 @@ public class HistoryDialogFragment extends BaseDialogFragment {
         mBehavior = BottomSheetBehavior.from((View) rootView.getParent());
         //默认全屏展开
         mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        // Capturing the callbacks for bottom sheet
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -182,7 +193,7 @@ public class HistoryDialogFragment extends BaseDialogFragment {
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
                         KeyboardUtils.hideSoftInput(getActivity(), mEditText);
-                        dismiss();
+                        dismiss(isResumed());
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
                         expand();
