@@ -1,7 +1,7 @@
 package com.renny.simplebrowser.view.page;
 
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,11 +12,14 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseFragment;
+import com.renny.simplebrowser.business.db.dao.BookMarkDao;
 import com.renny.simplebrowser.business.db.dao.HistoryDao;
+import com.renny.simplebrowser.business.db.entity.BookMark;
 import com.renny.simplebrowser.business.db.entity.History;
 import com.renny.simplebrowser.business.helper.DeviceHelper;
 import com.renny.simplebrowser.business.helper.Folders;
@@ -34,7 +37,6 @@ import com.renny.simplebrowser.globe.helper.BitmapUtils;
 import com.renny.simplebrowser.globe.helper.FileUtil;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
-import com.renny.simplebrowser.view.event.SearchEvent;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
 import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
 import com.renny.simplebrowser.view.page.dialog.SearchTextDialog;
@@ -46,10 +48,6 @@ import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -59,10 +57,15 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     private X5WebView mWebView;
     PullToRefreshWebView pullToRefreshWebView;
     private String mUrl;
-    private OnReceivedListener onReceivedTitleListener;
     String result;
     String extra;
+    View search;
     HistoryDao mHistoryDao;
+    TextView titleView;
+    ImageView markBookImg;
+    TextView mProgressView;
+
+    BookMarkDao mMarkDao;
 
     public static WebViewFragment getInstance(String url) {
         WebViewFragment webViewFragment = new WebViewFragment();
@@ -88,6 +91,14 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         super.bindView(rootView, savedInstanceState);
         pullToRefreshWebView = rootView.findViewById(R.id.refreshLayout);
         mWebView = pullToRefreshWebView.getRefreshableView();
+        titleView = findViewById(R.id.title);
+        markBookImg = findViewById(R.id.mark);
+        mProgressView = findViewById(R.id.progressView);
+        markBookImg.setOnClickListener(this);
+        titleView.setOnClickListener(this);
+        search = findViewById(R.id.search_button);
+        findViewById(R.id.search_button).setOnClickListener(this);
+
 
     }
 
@@ -112,9 +123,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             @Override
             public void onReceivedTitle(WebView webView, String title) {
                 super.onReceivedTitle(webView, title);
-                if (onReceivedTitleListener != null) {
-                    onReceivedTitleListener.onReceivedTitle(webView.getUrl(), title);
-                }
+                titleView.setText(title);
                 if (mHistoryDao == null) {
                     mHistoryDao = new HistoryDao();
                 }
@@ -148,9 +157,8 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         mWebView.setWebChromeClient(webChromeClient);
         mWebView.setWebViewClient(webViewClient);
         mWebView.loadUrl(mUrl);
-        mWebView.setDownloadListener(new X5DownloadListener((WebViewActivity) getActivity(), mWebView));
+        mWebView.setDownloadListener(new X5DownloadListener(this, mWebView));
         mWebView.setOnSelectItemListener(this);
-
     }
 
     public void showSearchDialog() {
@@ -186,12 +194,13 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         searchTextDialog.show(getChildFragmentManager());
     }
 
-    @Override
-    public void onAttach(Context context) {
-        if (context instanceof OnReceivedListener) {
-            onReceivedTitleListener = (OnReceivedListener) context;
+
+    public void setMyProgress(int progress) {
+        Logs.base.d("onDownloading2:  " + progress);
+        mProgressView.setText(progress + "%");
+        if (progress == 100) {
+            mProgressView.setText(" ");
         }
-        super.onAttach(context);
     }
 
     @Override
@@ -316,26 +325,39 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
+    public void onClick(View v) {
+        int id = v.getId();
+        String url = mWebView.getUrl();
+        String title = mWebView.getTitle();
+        switch (id) {
+            case R.id.mark:
+                if (!TextUtils.isEmpty(url)) {
+                    if (markBookImg.isSelected()) {
+                        mMarkDao.delete(url);
+                        markBookImg.setSelected(false);
+                    } else {
+                        mMarkDao.addEntity(new BookMark(title, url));
+                        markBookImg.setSelected(true);
+                    }
+                }
+                break;
+            case R.id.title:
+                String content = titleView.getText().toString();
+                if (!TextUtils.isEmpty(content)) {
+                    goSearchPage(url);
+                }
+                break;
+            case R.id.search_button:
+                showSearchDialog();
+                break;
+
+        }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
+    public void goSearchPage(String content) {
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        intent.putExtra("url", content);
+        startActivityForResult(intent, 123);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSearchEvent(SearchEvent event) {
-        Logs.common.d("onSearchEvent--" + event.key);
-
-
-    }
-
-    public interface OnReceivedListener {
-        void onReceivedTitle(String url, String title);
-
-    }
 }

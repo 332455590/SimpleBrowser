@@ -7,7 +7,6 @@ import android.support.v4.widget.ViewDragHelper;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.renny.simplebrowser.R;
@@ -30,20 +29,17 @@ import java.util.List;
 /**
  * Created by Renny on 2018/1/2.
  */
-public class WebViewActivity extends BaseActivity implements WebViewFragment.OnReceivedListener {
+public class WebViewActivity extends BaseActivity {
     WebViewFragment webViewFragment;
     HomePageFragment mHomePageFragment;
-    TextView titleView;
-    ImageView markBookImg;
     GestureLayout mGestureLayout;
-    TextView mProgressView;
     FragmentManager mFragmentManager;
     private boolean isOnHomePage = false;
     private boolean fromBack = false;
     private long mExitTime = 0;
-    String url, title;
+
     BookMarkDao mMarkDao;
-    View search;
+
 
     @Override
     protected int getLayoutId() {
@@ -52,23 +48,9 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
 
     @Override
     protected void bindView(Bundle savedInstanceState) {
-        titleView = findViewById(R.id.title);
         mGestureLayout = findViewById(R.id.gesture_layout);
-        markBookImg = findViewById(R.id.mark);
-        mProgressView = findViewById(R.id.progressView);
-        search = findViewById(R.id.search_button);
-        findViewById(R.id.search_button).setOnClickListener(this);
-        markBookImg.setOnClickListener(this);
-        titleView.setOnClickListener(this);
     }
 
-    public void setMyProgress(int progress) {
-        Logs.base.d("onDownloading2:  " + progress);
-        mProgressView.setText(progress + "%");
-        if (progress == 100) {
-            mProgressView.setText(" ");
-        }
-    }
 
     @Override
     protected void afterViewBind(Bundle savedInstanceState) {
@@ -135,24 +117,6 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
-            case R.id.mark:
-                if (!TextUtils.isEmpty(url)) {
-                    if (markBookImg.isSelected()) {
-                        mMarkDao.delete(url);
-                        markBookImg.setSelected(false);
-                    } else {
-                        mMarkDao.addEntity(new BookMark(title, url));
-                        markBookImg.setSelected(true);
-                    }
-                    mHomePageFragment.reloadMarkListData();
-                }
-                break;
-            case R.id.title:
-                String content = titleView.getText().toString();
-                if (!TextUtils.isEmpty(content)) {
-                    goSearchPage(url);
-                }
-                break;
             case R.id.search_button:
                 if (!isOnHomePage) {
                     webViewFragment.showSearchDialog();
@@ -162,7 +126,6 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
 
 
     private void goWebView(String url) {
-        search.setVisibility(View.VISIBLE);
         if (webViewFragment == null || !TextUtils.isEmpty(url)) {
             webViewFragment = WebViewFragment.getInstance(url);
         }
@@ -170,14 +133,9 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
                 webViewFragment).commit();
         isOnHomePage = false;
         fromBack = false;
-        WebView webView = webViewFragment.getWebView();
-        if (webView != null) {
-            onReceivedTitle(webView.getUrl(), webView.getTitle());
-        }
     }
 
     private void goHomePage() {
-        search.setVisibility(View.INVISIBLE);
         if (mHomePageFragment == null) {
             mHomePageFragment = new HomePageFragment();
             mHomePageFragment.setGoPageListener(new GoPageListener() {
@@ -195,20 +153,12 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
             mFragmentManager.beginTransaction().replace(R.id.container,
                     mHomePageFragment).commit();
         }
-        titleView.setText("");
-        markBookImg.setVisibility(View.INVISIBLE);
         isOnHomePage = true;
     }
 
 
     public void goSearchPage() {
         startActivityForResult(new Intent(WebViewActivity.this, SearchActivity.class), 123);
-    }
-
-    public void goSearchPage(String content) {
-        Intent intent = new Intent(WebViewActivity.this, SearchActivity.class);
-        intent.putExtra("url", content);
-        startActivityForResult(intent, 123);
     }
 
     private void returnLastPage() {
@@ -218,7 +168,6 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
             WebView webView = webViewFragment.getWebView();
             if (webView.canGoBack()) {
                 webView.goBack();
-                onReceivedTitle(webView.getUrl(), webView.getTitle());
             } else {
                 goHomePage();
             }
@@ -229,7 +178,6 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
         WebView webView = webViewFragment.getWebView();
         if (webView.canGoForward()) {
             webView.goForward();
-            onReceivedTitle(webView.getUrl(), webView.getTitle());
         }
     }
 
@@ -251,24 +199,6 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
                 home.addCategory(Intent.CATEGORY_HOME);
                 startActivity(home);
             }
-        }
-    }
-
-    @Override
-    public void onReceivedTitle(String url, String title) {
-        Logs.base.d("onReceivedTitle:  " + title + "   " + url);
-        markBookImg.setVisibility(View.VISIBLE);
-        this.url = url;
-        this.title = title;
-        markBookImg.setSelected(mMarkDao.query(url));
-        if (!TextUtils.isEmpty(title)) {
-            titleView.setText(title);
-        } else {
-            titleView.setText(url);
-        }
-        if (isOnHomePage) {
-            titleView.setText("");
-            markBookImg.setVisibility(View.INVISIBLE);
         }
     }
 

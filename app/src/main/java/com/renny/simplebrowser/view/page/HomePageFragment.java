@@ -132,6 +132,12 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         listHeader.setAdapter(extendHeadAdapterNew);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadMarkListData();
+    }
+
     public void reloadMarkListData() {
         markList.clear();
         markList.addAll(mMarkDao.queryForAll());

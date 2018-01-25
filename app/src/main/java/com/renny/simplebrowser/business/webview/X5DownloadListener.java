@@ -16,7 +16,7 @@ import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.globe.helper.DownloadUtil;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
-import com.renny.simplebrowser.view.page.WebViewActivity;
+import com.renny.simplebrowser.view.page.WebViewFragment;
 import com.tencent.smtt.sdk.WebView;
 
 import java.io.File;
@@ -26,11 +26,11 @@ import java.io.File;
  */
 
 public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener {
-    private WebViewActivity mActivity;
+    private WebViewFragment webViewFragment;
     private WebView mWebView;
 
-    public X5DownloadListener(WebViewActivity activity, WebView webView) {
-        mActivity = activity;
+    public X5DownloadListener(WebViewFragment webViewFragment, WebView webView) {
+        this.webViewFragment = webViewFragment;
         mWebView = webView;
     }
 
@@ -42,7 +42,7 @@ public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener
         final String downloadSize;
         final String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
         if (contentLength > 0) {
-            downloadSize = Formatter.formatFileSize(mActivity, contentLength);
+            downloadSize = Formatter.formatFileSize(webViewFragment.getActivity(), contentLength);
         } else {
             downloadSize = UIHelper.getString(R.string.unknown_size);
         }
@@ -59,13 +59,13 @@ public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity); // dialog
-        String message = mActivity.getString(R.string.dialog_download, downloadSize);
+        AlertDialog.Builder builder = new AlertDialog.Builder(webViewFragment.getActivity()); // dialog
+        String message = UIHelper.getString(R.string.dialog_download, downloadSize);
         builder.setTitle(fileName)
                 .setMessage(message)
-                .setPositiveButton(mActivity.getResources().getString(R.string.action_download),
+                .setPositiveButton(UIHelper.getString(R.string.action_download),
                         dialogClickListener)
-                .setNegativeButton(mActivity.getResources().getString(R.string.action_cancel),
+                .setNegativeButton(UIHelper.getString(R.string.action_cancel),
                         dialogClickListener).show();
     }
 
@@ -83,7 +83,7 @@ public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener
                                 .setAction("打开", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        DeviceHelper.openFile(mActivity, file, mimetype);
+                                        DeviceHelper.openFile(webViewFragment.getActivity(), file, mimetype);
                                     }
                                 });
                         snackbar.setText(content);
@@ -101,7 +101,7 @@ public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener
                         Logs.base.d("onDownloading:  " + progress);
                         if (progress != preProgress) {
                             preProgress = progress;
-                            mActivity.setMyProgress(progress);
+                            webViewFragment.setMyProgress(progress);
                         }
                     }
 

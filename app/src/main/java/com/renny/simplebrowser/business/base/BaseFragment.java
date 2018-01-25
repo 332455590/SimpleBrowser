@@ -3,6 +3,7 @@ package com.renny.simplebrowser.business.base;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,7 +37,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             rootView = inflater.inflate(getLayoutId(), container, false);
             bindView(rootView, savedInstanceState);
             afterViewBind(rootView, savedInstanceState);
-        }else {
+        } else {
             ViewGroup parent = (ViewGroup) rootView.getParent();
             if (parent != null) {
                 parent.removeView(rootView);
@@ -53,6 +54,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
 
     }
+
     @Override
     public Context getContext() {
         if (mActivity != null) {
@@ -64,7 +66,11 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     protected abstract int getLayoutId();
 
     public void bindView(View rootView, Bundle savedInstanceState) {
+    }
 
+    @Nullable
+    public final <T extends View> T findViewById(@IdRes int id) {
+        return rootView.findViewById(id);
     }
 
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
