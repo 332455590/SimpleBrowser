@@ -19,8 +19,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".view.page.WebViewActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -42,6 +42,7 @@
         </activity>
         <activity
             android:name=".view.page.SearchActivity"
+            android:configChanges="orientation|screenSize|keyboard"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
         </activity>
     </application>

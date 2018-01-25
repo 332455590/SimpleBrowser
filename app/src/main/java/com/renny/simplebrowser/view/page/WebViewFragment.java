@@ -34,17 +34,25 @@ import com.renny.simplebrowser.globe.helper.BitmapUtils;
 import com.renny.simplebrowser.globe.helper.FileUtil;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
+import com.renny.simplebrowser.view.event.SearchEvent;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
 import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
+import com.renny.simplebrowser.view.page.dialog.SearchTextDialog;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshWebView;
 import com.renny.zxing.Activity.CaptureActivity;
+import com.tencent.smtt.export.external.interfaces.IX5WebViewBase;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 
 public class WebViewFragment extends BaseFragment implements X5WebView.onSelectItemListener, OnItemClickListener {
@@ -119,7 +127,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 final String[] strings = view.getUrl().split("/");
                 if (strings.length >= 2) {
                     String host = strings[2];
-                  BitmapUtils.saveToFile(icon, Folders.icon.getFolder(),host.replace(".",""));
+                    BitmapUtils.saveToFile(icon, Folders.icon.getFolder(), host.replace(".", ""));
                 }
             }
         };
@@ -142,8 +150,41 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         mWebView.loadUrl(mUrl);
         mWebView.setDownloadListener(new X5DownloadListener((WebViewActivity) getActivity(), mWebView));
         mWebView.setOnSelectItemListener(this);
+
     }
 
+    public void showSearchDialog() {
+        final SearchTextDialog searchTextDialog = SearchTextDialog.getInstance(getActivity(), getChildFragmentManager());
+        searchTextDialog.setFindWordListener(new SearchTextDialog.findWordListener() {
+            @Override
+            public int findAll(String word) {
+                mWebView.findAllAsync(word);
+                mWebView.setFindListener(new IX5WebViewBase.FindListener() {
+                    @Override
+                    public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches,
+                                                     boolean isDoneCounting) {
+                        Logs.common.d("onFindResultReceived    " + activeMatchOrdinal + "   "
+                                + "   " + numberOfMatches + "   " + isDoneCounting);
+                        if (isDoneCounting) {
+                            searchTextDialog.onFindResultReceived(activeMatchOrdinal, numberOfMatches);
+                        }
+                    }
+                });
+                return mWebView.findAll(word);
+            }
+
+            @Override
+            public void findNext() {
+                mWebView.findNext(true);
+            }
+
+            @Override
+            public void findLast() {
+                mWebView.findNext(false);
+            }
+        });
+        searchTextDialog.show(getChildFragmentManager());
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -154,9 +195,11 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     }
 
     @Override
-    public void onSelected(int x, int y, int type, final String extra) {
+    public void onImgSelected(int x, int y, int type, final String extra) {
         this.extra = extra;
-        final HandlePictureDialog handlePictureDialog = HandlePictureDialog.getInstance(x, y, extra);
+        ArrayList<String> itemList = new ArrayList<>();
+        itemList.add("保存图片");
+        final HandlePictureDialog handlePictureDialog = HandlePictureDialog.getInstance(x, y, itemList);
         handlePictureDialog.show(getChildFragmentManager());
         DeviceHelper.vibrate(30);
         handlePictureDialog.setOnItemClickListener(this);
@@ -175,11 +218,16 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 if (file != null && file.exists()) {
                     result = CaptureActivity.handleResult(file.getPath());
                     if (!TextUtils.isEmpty(result)) {
-                        handlePictureDialog.setShowZxing(result);
+                        handlePictureDialog.addListData("识别图中二维码");
                     }
                 }
             }
         });
+    }
+
+    @Override
+    public void onTextSelected(int x, int y, int type, String extra) {
+        ToastHelper.makeToast(extra);
     }
 
     @Override
@@ -267,10 +315,27 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSearchEvent(SearchEvent event) {
+        Logs.common.d("onSearchEvent--" + event.key);
+
+
+    }
 
     public interface OnReceivedListener {
         void onReceivedTitle(String url, String title);
 
-        void onReceivedIcon(Bitmap icon);
     }
 }

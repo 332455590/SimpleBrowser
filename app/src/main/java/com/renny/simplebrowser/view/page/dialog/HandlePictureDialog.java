@@ -16,14 +16,15 @@ import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseDialogFragment;
-import com.renny.simplebrowser.business.base.CommonAdapter;
-import com.renny.simplebrowser.business.base.ViewHolder;
 import com.renny.simplebrowser.business.helper.UIHelper;
-import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.bingoogolapple.baseadapter.BGAOnItemChildClickListener;
+import cn.bingoogolapple.baseadapter.BGARecyclerViewAdapter;
+import cn.bingoogolapple.baseadapter.BGAViewHolderHelper;
 
 /**
  * Created by Renny on 2018/1/10.
@@ -33,16 +34,16 @@ public class HandlePictureDialog extends BaseDialogFragment {
     private RecyclerView mRecyclerView;
     private int LocationX = 0;
     private int LocationY = 0;
-    final List<String> list = new ArrayList<>();
-    private CommonAdapter<String> commonAdapter;
-    private String result;
+     List<String> listData = new ArrayList<>();
+    private listAdapter commonAdapter;
     OnItemClickListener mOnItemClickListener;
 
-    public static HandlePictureDialog getInstance(int locationX, int locationY, String extra) {
+    public static HandlePictureDialog getInstance(int locationX, int locationY,ArrayList<String> listData) {
         HandlePictureDialog listDialog = new HandlePictureDialog();
         Bundle bundle = new Bundle();
         bundle.putInt("intX", locationX);
         bundle.putInt("intY", locationY);
+        bundle.putStringArrayList("list", listData);
         listDialog.setArguments(bundle);
         return listDialog;
     }
@@ -59,11 +60,12 @@ public class HandlePictureDialog extends BaseDialogFragment {
     protected void initParams(Bundle bundle) {
         LocationX = bundle.getInt("intX");
         LocationY = bundle.getInt("intY");
+        listData = bundle.getStringArrayList("list");
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.popup_list;
+        return R.layout.dialog_list;
     }
 
 
@@ -71,43 +73,27 @@ public class HandlePictureDialog extends BaseDialogFragment {
         mRecyclerView = rootView.findViewById(R.id.popup_list);
     }
 
-    public String getResult() {
-        return result;
+
+    public void addListData(List<String> list) {
+        commonAdapter.addMoreData(list);
     }
 
-
-
-    public void setShowZxing(String result) {
-        this.result = result;
-        Logs.base.d("识别图中二维码" + result);
-        commonAdapter.addData("识别图中二维码");
-        commonAdapter.notifyDataSetChanged();
+    public void addListData(String data) {
+        commonAdapter.addLastItem(data);
     }
 
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
-        list.add("保存图片");
-        commonAdapter = new CommonAdapter<String>(R.layout.item_popup_list, list) {
+        commonAdapter = new listAdapter(mRecyclerView);
+        commonAdapter.setOnItemChildClickListener(new BGAOnItemChildClickListener() {
             @Override
-            protected void convert(ViewHolder holder, final int position) {
-                TextView tv = holder.getView(R.id.item_title);
-                tv.setText(list.get(position));
-                tv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mItemClickListener.onItemClicked(position, view);
-                    }
-                });
-            }
-        };
-        commonAdapter.setItemClickListener(new CommonAdapter.ItemClickListener() {
-            @Override
-            public void onItemClicked(int position, View view) {
+            public void onItemChildClick(ViewGroup parent, View childView, int position) {
                 if (mOnItemClickListener != null) {
                     mOnItemClickListener.onItemClicked(position);
                 }
                 dismiss();
             }
         });
+        commonAdapter.setData(listData);
         mRecyclerView.setAdapter(commonAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
@@ -132,6 +118,21 @@ public class HandlePictureDialog extends BaseDialogFragment {
                 window.setAttributes(lp);
                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             }
+        }
+    }
+    public static class listAdapter extends BGARecyclerViewAdapter<String> {
+        public listAdapter(RecyclerView recyclerView) {
+            super(recyclerView, R.layout.item_popup_list);
+        }
+        @Override
+        public void setItemChildListener(final BGAViewHolderHelper helper, int viewType) {
+            helper.setItemChildClickListener(R.id.item_title);
+        }
+
+        @Override
+        public void fillData(BGAViewHolderHelper helper, int position, String model) {
+            TextView textView=helper.getView(R.id.item_title);
+            textView.setText(model);
         }
     }
 

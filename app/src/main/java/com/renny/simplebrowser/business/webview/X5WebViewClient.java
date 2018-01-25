@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.renny.simplebrowser.business.toast.ToastHelper;
+import com.renny.simplebrowser.business.log.Logs;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
@@ -45,7 +45,7 @@ public class X5WebViewClient extends WebViewClient {
             intent.putExtra("referer", url);
             mContext.startActivity(intent);
         } catch (Exception e) {
-         ToastHelper.makeToast("您所打开的第三方App未安装！");
+            Logs.common.d("您所打开的第三方App未安装！");
             return false;
         }
 

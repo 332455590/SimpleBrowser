@@ -8,10 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
 
-import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.log.Logs;
 import com.tencent.smtt.sdk.CookieManager;
-import com.tencent.smtt.sdk.WebIconDatabase;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 
@@ -79,18 +77,22 @@ public class X5WebView extends WebView {
             CookieManager cookieManager = CookieManager.getInstance();
             cookieManager.setAcceptThirdPartyCookies(this, true);
         }
-        WebIconDatabase.getInstance().open(Folders.icon.getFolder().getAbsolutePath());
+       // WebIconDatabase.getInstance().open(Folders.icon.getFolder().getAbsolutePath());
         setOnLongClickListener(new View.OnLongClickListener() {
 
             public boolean onLongClick(View v) {
                 WebView.HitTestResult result = getHitTestResult();
+
                 if (null == result)
                     return false;
                 int type = result.getType();
-
+                String url = result.getExtra();
                 switch (type) {
                     case WebView.HitTestResult.EDIT_TEXT_TYPE: // 选中的文字类型
-                        break;
+                        if (mOnSelectItemListener != null && url != null && URLUtil.isValidUrl(url)) {
+                            mOnSelectItemListener.onTextSelected(touchX, touchY, result.getType(), url);
+                        }
+                        return true;
                     case WebView.HitTestResult.PHONE_TYPE: // 处理拨号
                         break;
                     case WebView.HitTestResult.EMAIL_TYPE: // 处理Email
@@ -101,9 +103,8 @@ public class X5WebView extends WebView {
                         break;
                     case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE: // 带有链接的图片类型
                     case WebView.HitTestResult.IMAGE_TYPE: // 处理长按图片的菜单项
-                        String url = result.getExtra();
                         if (mOnSelectItemListener != null && url != null && URLUtil.isValidUrl(url)) {
-                            mOnSelectItemListener.onSelected(touchX, touchY, result.getType(), url);
+                            mOnSelectItemListener.onImgSelected(touchX, touchY, result.getType(), url);
                         }
                         return true;
                     case WebView.HitTestResult.UNKNOWN_TYPE: //未知
@@ -134,6 +135,7 @@ public class X5WebView extends WebView {
     }
 
     public interface onSelectItemListener {
-        void onSelected(int x, int y, int type, String extra);
+        void onImgSelected(int x, int y, int type, String extra);
+        void onTextSelected(int x, int y, int type, String extra);
     }
 }

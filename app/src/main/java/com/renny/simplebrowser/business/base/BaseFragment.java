@@ -53,6 +53,13 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
 
     }
+    @Override
+    public Context getContext() {
+        if (mActivity != null) {
+            return mActivity;
+        }
+        return super.getContext();
+    }
 
     protected abstract int getLayoutId();
 

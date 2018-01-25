@@ -1,7 +1,6 @@
 package com.renny.simplebrowser.view.page;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.ViewDragHelper;
@@ -44,6 +43,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     private long mExitTime = 0;
     String url, title;
     BookMarkDao mMarkDao;
+    View search;
 
     @Override
     protected int getLayoutId() {
@@ -56,6 +56,8 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
         mGestureLayout = findViewById(R.id.gesture_layout);
         markBookImg = findViewById(R.id.mark);
         mProgressView = findViewById(R.id.progressView);
+        search = findViewById(R.id.search_button);
+        findViewById(R.id.search_button).setOnClickListener(this);
         markBookImg.setOnClickListener(this);
         titleView.setOnClickListener(this);
     }
@@ -151,11 +153,16 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
                     goSearchPage(url);
                 }
                 break;
+            case R.id.search_button:
+                if (!isOnHomePage) {
+                    webViewFragment.showSearchDialog();
+                }
         }
     }
 
 
     private void goWebView(String url) {
+        search.setVisibility(View.VISIBLE);
         if (webViewFragment == null || !TextUtils.isEmpty(url)) {
             webViewFragment = WebViewFragment.getInstance(url);
         }
@@ -170,6 +177,7 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
     }
 
     private void goHomePage() {
+        search.setVisibility(View.INVISIBLE);
         if (mHomePageFragment == null) {
             mHomePageFragment = new HomePageFragment();
             mHomePageFragment.setGoPageListener(new GoPageListener() {
@@ -264,12 +272,6 @@ public class WebViewActivity extends BaseActivity implements WebViewFragment.OnR
         }
     }
 
-    @Override
-    public void onReceivedIcon(Bitmap icon) {
-        if (icon != null && !icon.isRecycled()) {
-            markBookImg.setImageBitmap(icon);
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

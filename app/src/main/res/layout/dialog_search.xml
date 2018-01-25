@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:background="@color/background">
+
+    <ImageView
+        android:id="@+id/close_dialog"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center_vertical"
+        android:padding="14dp"
+        android:src="@drawable/ic_close"/>
+
+    <View
+        android:layout_width="1px"
+        android:layout_height="match_parent"
+        android:background="@color/color_line"/>
+
+    <EditText
+        android:id="@+id/search_edit"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_white_radius"
+        android:paddingLeft="5dp"/>
+
+    <TextView
+        android:id="@+id/text_info"
+        android:layout_width="44dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="2/3"/>
+
+    <ImageView
+        android:id="@+id/forward_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="6dp"
+        android:src="@drawable/ic_left"/>
+
+    <ImageView
+        android:id="@+id/next_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginRight="15dp"
+        android:padding="6dp"
+        android:src="@drawable/ic_right"/>
+</LinearLayout>
