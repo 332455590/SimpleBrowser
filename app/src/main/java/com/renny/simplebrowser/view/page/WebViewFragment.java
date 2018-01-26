@@ -172,6 +172,10 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             @Override
             public void onPageFinished(WebView webView, String s) {
                 super.onPageFinished(webView, s);
+                if (mMarkDao == null) {
+                    mMarkDao = new BookMarkDao();
+                }
+                markBookImg.setSelected(mMarkDao.query(webView.getUrl()));
                 pullToRefreshWebView.onPullDownRefreshComplete();
             }
         };
@@ -203,7 +207,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             TransitionManager.beginDelayedTransition(mViewGroup, new Slide(Gravity.TOP));
         }
         searchLayout.setVisibility(View.VISIBLE);
-        String content=mEditText.getText().toString();
+        String content = mEditText.getText().toString();
         if (TextUtils.isEmpty(content)) {
             searchInfo.setVisibility(View.INVISIBLE);
         } else {
@@ -385,7 +389,11 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 }
                 break;
             case R.id.search_button:
-                showSearchDialog();
+                if (searchLayout.getVisibility() == View.VISIBLE) {
+                    closeSearchDialog();
+                } else {
+                    showSearchDialog();
+                }
                 break;
             case R.id.forward_btn:
                 mWebView.findNext(false);
@@ -396,16 +404,18 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 KeyboardUtils.hideSoftInput(getActivity(), mEditText);
                 break;
             case R.id.close_dialog:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    TransitionManager.beginDelayedTransition(mViewGroup, new Slide(Gravity.TOP));
-                }
-                searchLayout.setVisibility(View.GONE);
-                KeyboardUtils.hideSoftInput(getActivity(), mEditText);
-                mWebView.clearMatches();
+                closeSearchDialog();
                 break;
 
         }
     }
 
-
+    private void closeSearchDialog() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionManager.beginDelayedTransition(mViewGroup, new Slide(Gravity.TOP));
+        }
+        searchLayout.setVisibility(View.GONE);
+        KeyboardUtils.hideSoftInput(getActivity(), mEditText);
+        mWebView.clearMatches();
+    }
 }
