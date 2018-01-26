@@ -3,15 +3,22 @@ package com.renny.simplebrowser.view.page;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
+import android.transition.Slide;
+import android.transition.TransitionManager;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +31,7 @@ import com.renny.simplebrowser.business.db.entity.History;
 import com.renny.simplebrowser.business.helper.DeviceHelper;
 import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.helper.ImgHelper;
+import com.renny.simplebrowser.business.helper.KeyboardUtils;
 import com.renny.simplebrowser.business.helper.SearchHelper;
 import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.helper.Validator;
@@ -38,8 +46,8 @@ import com.renny.simplebrowser.globe.helper.FileUtil;
 import com.renny.simplebrowser.globe.task.ITaskWithResult;
 import com.renny.simplebrowser.globe.task.TaskHelper;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
+import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
 import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
-import com.renny.simplebrowser.view.page.dialog.SearchTextDialog;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshWebView;
 import com.renny.zxing.Activity.CaptureActivity;
@@ -65,6 +73,11 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     ImageView markBookImg;
     TextView mProgressView;
 
+    EditText mEditText;
+    ImageView forwardBtn, nextBtn;
+    TextView searchInfo;
+    View searchLayout;
+    ViewGroup mViewGroup;
     BookMarkDao mMarkDao;
 
     public static WebViewFragment getInstance(String url) {
@@ -91,6 +104,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         super.bindView(rootView, savedInstanceState);
         pullToRefreshWebView = rootView.findViewById(R.id.refreshLayout);
         mWebView = pullToRefreshWebView.getRefreshableView();
+        mViewGroup = findViewById(R.id.webview_parent);
         titleView = findViewById(R.id.title);
         markBookImg = findViewById(R.id.mark);
         mProgressView = findViewById(R.id.progressView);
@@ -98,7 +112,14 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         titleView.setOnClickListener(this);
         search = findViewById(R.id.search_button);
         findViewById(R.id.search_button).setOnClickListener(this);
-
+        mEditText = findViewById(R.id.search_edit);
+        forwardBtn = findViewById(R.id.forward_btn);
+        nextBtn = findViewById(R.id.next_btn);
+        searchInfo = findViewById(R.id.text_info);
+        searchLayout = findViewById(R.id.search_layout);
+        forwardBtn.setOnClickListener(this);
+        nextBtn.setOnClickListener(this);
+        findViewById(R.id.close_dialog).setOnClickListener(this);
 
     }
 
@@ -159,39 +180,51 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         mWebView.loadUrl(mUrl);
         mWebView.setDownloadListener(new X5DownloadListener(this, mWebView));
         mWebView.setOnSelectItemListener(this);
+
+        mEditText.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mEditText.getText().toString())) {
+                    searchInfo.setVisibility(View.INVISIBLE);
+                } else {
+                    searchInfo.setVisibility(View.VISIBLE);
+                }
+                String content = s.toString();
+                if (!TextUtils.isEmpty(content)) {
+                    mWebView.findAllAsync(content);
+                }
+            }
+        });
+
     }
 
     public void showSearchDialog() {
-        final SearchTextDialog searchTextDialog = SearchTextDialog.getInstance(getActivity(), getChildFragmentManager());
-        searchTextDialog.setFindWordListener(new SearchTextDialog.findWordListener() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionManager.beginDelayedTransition(mViewGroup, new Slide(Gravity.TOP));
+        }
+        searchLayout.setVisibility(View.VISIBLE);
+        String content=mEditText.getText().toString();
+        if (TextUtils.isEmpty(content)) {
+            searchInfo.setVisibility(View.INVISIBLE);
+        } else {
+            mWebView.findAllAsync(content);
+            mWebView.clearMatches();
+            searchInfo.setVisibility(View.VISIBLE);
+        }
+        KeyboardUtils.showSoftInput(getContext(), mEditText);
+        mWebView.setFindListener(new IX5WebViewBase.FindListener() {
             @Override
-            public int findAll(String word) {
-                mWebView.findAllAsync(word);
-                mWebView.setFindListener(new IX5WebViewBase.FindListener() {
-                    @Override
-                    public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches,
-                                                     boolean isDoneCounting) {
-                        Logs.common.d("onFindResultReceived    " + activeMatchOrdinal + "   "
-                                + "   " + numberOfMatches + "   " + isDoneCounting);
-                        if (isDoneCounting) {
-                            searchTextDialog.onFindResultReceived(activeMatchOrdinal, numberOfMatches);
-                        }
+            public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches,
+                                             boolean isDoneCounting) {
+                if (isDoneCounting) {
+                    if (numberOfMatches != 0) {
+                        searchInfo.setText(String.format("%d/%d", (activeMatchOrdinal + 1), numberOfMatches));
+                    } else {
+                        searchInfo.setText("0/0");
                     }
-                });
-                return mWebView.findAll(word);
-            }
-
-            @Override
-            public void findNext() {
-                mWebView.findNext(true);
-            }
-
-            @Override
-            public void findLast() {
-                mWebView.findNext(false);
+                }
             }
         });
-        searchTextDialog.show(getChildFragmentManager());
     }
 
 
@@ -331,6 +364,9 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         String title = mWebView.getTitle();
         switch (id) {
             case R.id.mark:
+                if (mMarkDao == null) {
+                    mMarkDao = new BookMarkDao();
+                }
                 if (!TextUtils.isEmpty(url)) {
                     if (markBookImg.isSelected()) {
                         mMarkDao.delete(url);
@@ -342,22 +378,34 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 }
                 break;
             case R.id.title:
-                String content = titleView.getText().toString();
-                if (!TextUtils.isEmpty(content)) {
-                    goSearchPage(url);
+                if (!TextUtils.isEmpty(url)) {
+                    Intent intent = new Intent(getActivity(), SearchActivity.class);
+                    intent.putExtra("url", url);
+                    startActivityForResult(intent, 123);
                 }
                 break;
             case R.id.search_button:
                 showSearchDialog();
                 break;
+            case R.id.forward_btn:
+                mWebView.findNext(false);
+                KeyboardUtils.hideSoftInput(getActivity(), mEditText);
+                break;
+            case R.id.next_btn:
+                mWebView.findNext(true);
+                KeyboardUtils.hideSoftInput(getActivity(), mEditText);
+                break;
+            case R.id.close_dialog:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    TransitionManager.beginDelayedTransition(mViewGroup, new Slide(Gravity.TOP));
+                }
+                searchLayout.setVisibility(View.GONE);
+                KeyboardUtils.hideSoftInput(getActivity(), mEditText);
+                mWebView.clearMatches();
+                break;
 
         }
     }
 
-    public void goSearchPage(String content) {
-        Intent intent = new Intent(getActivity(), SearchActivity.class);
-        intent.putExtra("url", content);
-        startActivityForResult(intent, 123);
-    }
 
 }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.ViewDragHelper;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -113,16 +112,6 @@ public class WebViewActivity extends BaseActivity {
         });
     }
 
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        switch (id) {
-            case R.id.search_button:
-                if (!isOnHomePage) {
-                    webViewFragment.showSearchDialog();
-                }
-        }
-    }
 
 
     private void goWebView(String url) {

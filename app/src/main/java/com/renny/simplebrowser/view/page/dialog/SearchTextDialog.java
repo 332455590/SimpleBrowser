@@ -23,7 +23,6 @@ import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseDialogFragment;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
 import com.renny.simplebrowser.business.helper.UIHelper;
-import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
 
 /**
@@ -87,8 +86,7 @@ public class SearchTextDialog extends BaseDialogFragment {
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (!TextUtils.isEmpty(content) && mFindWordListener != null) {
-                    int count = mFindWordListener.findAll(content);
-                    Logs.common.d("count--" + count);
+                     mFindWordListener.findAll(content);
                 }
             }
         });
@@ -140,7 +138,7 @@ public class SearchTextDialog extends BaseDialogFragment {
     }
 
     public interface findWordListener {
-        int findAll(String word);
+        void findAll(String word);
 
         void findNext();
 
