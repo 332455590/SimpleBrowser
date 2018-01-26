@@ -1,5 +1,6 @@
 package com.renny.simplebrowser.business.base;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 /**
  * Created by Renny on 2018/1/11.
@@ -98,5 +100,20 @@ public abstract class BaseDialogFragment extends AppCompatDialogFragment impleme
         if (isShowing()) {
             super.dismiss();
         }
+    }
+
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                initDialogStyle(dialog,window);
+            }
+        }
+    }
+
+    protected void initDialogStyle(Dialog dialog,Window window){
+
     }
 }
