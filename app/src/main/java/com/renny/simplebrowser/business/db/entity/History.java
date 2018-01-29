@@ -2,6 +2,7 @@ package com.renny.simplebrowser.business.db.entity;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.renny.simplebrowser.globe.helper.DateUtil;
 
 /**
  * Created by Renny on 2018/1/15.
@@ -10,8 +11,8 @@ import com.j256.ormlite.table.DatabaseTable;
 public class History {
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField(columnName = "time")
-    private long time;
+    @DatabaseField(columnName = "date")
+    private String date;
     @DatabaseField(columnName = "url")
     private String url;
     @DatabaseField(columnName = "title")
@@ -20,19 +21,22 @@ public class History {
     public History() {
     }
 
-    public History(long time, String url, String title) {
-        this.time = time;
+    public History(String date, String url, String title) {
+        this.date = date;
         this.url = url;
         this.title = title;
     }
 
 
-    public long getTime() {
-        return time;
+    public String getDate() {
+        String year= String.valueOf(DateUtil.getSysYear());
+        if (date.startsWith(year))
+            return date.substring(5);
+        return date;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getUrl() {

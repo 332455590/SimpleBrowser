@@ -48,6 +48,25 @@ public class HistoryDao extends BaseDao<History> {
         return entityList;
     }
 
+    /**
+     * 查询今天记录
+     */
+    public void queryToheavy(String date, String url) {
+        List<History> entityList;
+        try {
+            QueryBuilder<History, Integer> queryBuilder = getDao().queryBuilder();
+            queryBuilder.where().eq("date", date).and().eq("url", url);
+            entityList = queryBuilder.query();
+            if (entityList != null && !entityList.isEmpty()){
+                DeleteBuilder<History, Integer> deleteBuilder = getDao().deleteBuilder();
+                deleteBuilder.where().eq("date", date).and().eq("url", url);
+                deleteBuilder.delete();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public List<History> queryForPage(long offset, long limit) {
         return null;

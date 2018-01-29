@@ -31,7 +31,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     private HashMap<Class, Dao> mDaoHashMap = new HashMap<>();
 
     private DBHelper(Context context) {
-        super(context, TABLE_NAME, null, 4);
+        super(context, TABLE_NAME, null, 5);
         mClassList.add(BookMark.class);
         mClassList.add(History.class);
     }

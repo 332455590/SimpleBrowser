@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.db.entity.History;
 import com.renny.simplebrowser.business.helper.Folders;
-import com.renny.simplebrowser.globe.helper.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,8 +72,8 @@ public class HistoryStickyAdapter extends BGARecyclerViewAdapter<History> implem
         if (position == 0) {
             return true;
         }
-        String currentTopc = DateUtil.stampToDate(getItem(position).getTime());
-        String preTopc = DateUtil.stampToDate(getItem(position - 1).getTime());
+        String currentTopc = getItem(position).getDate();
+        String preTopc = getItem(position - 1).getDate();
         // 当前条目的分类和上一个条目的分类不相等时，当前条目为该分类下的第一个条目
         return !TextUtils.equals(currentTopc, preTopc);
 
@@ -82,7 +81,7 @@ public class HistoryStickyAdapter extends BGARecyclerViewAdapter<History> implem
 
     public int getPositionForCategory(int category) {
         for (int i = 0; i < getItemCount(); i++) {
-            String sortStr = DateUtil.stampToDate(getItem(i).getTime());
+            String sortStr = getItem(i).getDate();
             char firstChar = sortStr.toUpperCase().charAt(0);
             if (firstChar == category) {
                 return i;

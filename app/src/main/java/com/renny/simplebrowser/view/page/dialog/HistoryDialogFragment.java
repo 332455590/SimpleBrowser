@@ -39,7 +39,6 @@ import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
 import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.log.Logs;
-import com.renny.simplebrowser.globe.helper.DateUtil;
 import com.renny.simplebrowser.view.adapter.HistoryStickyAdapter;
 import com.renny.simplebrowser.view.event.WebviewEvent;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
@@ -169,7 +168,7 @@ public class HistoryDialogFragment extends BaseDialogFragment implements BGAOnRV
 
             @Override
             protected String getCategoryName(int position) {
-                return DateUtil.stampToDate(historyAdapter.getItem(position).getTime());
+                return historyAdapter.getItem(position).getDate();
             }
 
             @Override

@@ -31,6 +31,7 @@ import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
 import com.renny.simplebrowser.globe.helper.BitmapUtils;
+import com.renny.simplebrowser.globe.helper.DateUtil;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
 import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
 import com.renny.simplebrowser.view.presenter.WebViewPresenter;
@@ -76,7 +77,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     @Override
     protected void initPresenter() {
-        mWebViewPresenter=new WebViewPresenter(this);
+        mWebViewPresenter = new WebViewPresenter(this);
     }
 
     @Override
@@ -131,7 +132,10 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 if (mHistoryDao == null) {
                     mHistoryDao = new HistoryDao();
                 }
-                mHistoryDao.addEntity(new History(System.currentTimeMillis(), webView.getUrl(), title));
+                String date = DateUtil.getDate();
+                mHistoryDao.queryToheavy(date, webView.getUrl());
+                mHistoryDao.addEntity(new History(DateUtil.getDate(), webView.getUrl(), title));
+
             }
 
             @Override
@@ -205,7 +209,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                                              boolean isDoneCounting) {
                 if (isDoneCounting) {
                     if (numberOfMatches != 0) {
-                        searchInfo.setText(String.format(Locale.CHINA,"%d/%d", (activeMatchOrdinal + 1), numberOfMatches));
+                        searchInfo.setText(String.format(Locale.CHINA, "%d/%d", (activeMatchOrdinal + 1), numberOfMatches));
                     } else {
                         searchInfo.setText("0/0");
                     }
