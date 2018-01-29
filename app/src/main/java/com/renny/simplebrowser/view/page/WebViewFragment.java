@@ -33,6 +33,7 @@ import com.renny.simplebrowser.business.webview.X5WebViewClient;
 import com.renny.simplebrowser.globe.helper.BitmapUtils;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
 import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
+import com.renny.simplebrowser.view.presenter.WebViewPresenter;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshWebView;
 import com.tencent.smtt.export.external.interfaces.IX5WebViewBase;
@@ -44,7 +45,6 @@ import java.util.Locale;
 
 
 public class WebViewFragment extends BaseFragment implements X5WebView.onSelectItemListener {
-
     X5WebView mWebView;
     PullToRefreshWebView pullToRefreshWebView;
     TextView titleTv;
@@ -54,6 +54,8 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     TextView searchInfo;
     View searchLayout;
     ViewGroup mViewGroup;
+
+    WebViewPresenter mWebViewPresenter;
 
     private HistoryDao mHistoryDao;
     private String targetUrl;
@@ -72,6 +74,10 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         return R.layout.fragment_webview;
     }
 
+    @Override
+    protected void initPresenter() {
+        mWebViewPresenter=new WebViewPresenter(this);
+    }
 
     @Override
     protected void initParams(Bundle bundle) {

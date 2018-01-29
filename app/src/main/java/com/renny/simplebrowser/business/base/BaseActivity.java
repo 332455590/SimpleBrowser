@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.renny.simplebrowser.business.permission.PermissionActivity;
+import com.renny.simplebrowser.globe.thread.task.IGroup;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  * Created by Renny on 2018/1/4.
  */
 
-public abstract class BaseActivity extends PermissionActivity implements View.OnClickListener {
+public abstract class BaseActivity extends PermissionActivity implements View.OnClickListener,IGroup {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,10 @@ public abstract class BaseActivity extends PermissionActivity implements View.On
     @Override
     public void onClick(View v) {
 
+    }
+    @Override
+    public String groupName() {
+        return getLocalClassName() + this.toString();
     }
 
     private Bundle getParams(Intent intent) {

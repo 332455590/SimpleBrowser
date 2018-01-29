@@ -85,6 +85,11 @@ public class HandlePictureDialog extends BaseDialogFragment {
     }
 
     @Override
+    protected void initPresenter() {
+        super.initPresenter();
+    }
+
+    @Override
     protected void initDialogStyle(Dialog dialog, Window window) {
         super.initDialogStyle(dialog, window);
         WindowManager.LayoutParams lp = window.getAttributes();

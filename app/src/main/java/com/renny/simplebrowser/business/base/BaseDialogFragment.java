@@ -12,11 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import com.renny.simplebrowser.globe.task.TaskHelper;
+import com.renny.simplebrowser.globe.thread.task.IGroup;
+
 /**
  * Created by Renny on 2018/1/11.
  */
 
-public abstract class BaseDialogFragment extends AppCompatDialogFragment implements View.OnClickListener {
+public abstract class BaseDialogFragment extends AppCompatDialogFragment implements View.OnClickListener, IGroup {
     protected View rootView;
     protected Context mContext;
 
@@ -25,6 +28,7 @@ public abstract class BaseDialogFragment extends AppCompatDialogFragment impleme
         if (getArguments() != null) {
             initParams(getArguments());
         }
+        initPresenter();
         if (rootView == null) {
             rootView = inflater.inflate(getLayoutId(), container, false);
             bindView(rootView, savedInstanceState);
@@ -82,10 +86,17 @@ public abstract class BaseDialogFragment extends AppCompatDialogFragment impleme
             dismissAllowingStateLoss();
         }
     }
+    protected void initPresenter() {
 
+    }
     @Override
     public void onClick(View v) {
 
+    }
+
+    @Override
+    public String groupName() {
+        return getClass().getSimpleName() + this.toString();
     }
 
     @Override
@@ -108,12 +119,18 @@ public abstract class BaseDialogFragment extends AppCompatDialogFragment impleme
         if (dialog != null) {
             Window window = dialog.getWindow();
             if (window != null) {
-                initDialogStyle(dialog,window);
+                initDialogStyle(dialog, window);
             }
         }
     }
 
-    protected void initDialogStyle(Dialog dialog,Window window){
+    @Override
+    public void onDestroy() {
+        TaskHelper.cancelGroup(groupName());
+        super.onDestroy();
+    }
+
+    protected void initDialogStyle(Dialog dialog, Window window) {
 
     }
 }

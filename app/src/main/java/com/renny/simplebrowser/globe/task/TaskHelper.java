@@ -5,6 +5,7 @@ import com.renny.simplebrowser.BuildConfig;
 import com.renny.simplebrowser.business.http.request.HttpRequest;
 import com.renny.simplebrowser.business.http.response.HttpResultParse;
 import com.renny.simplebrowser.business.log.Logs;
+import com.renny.simplebrowser.globe.http.bean.Result;
 import com.renny.simplebrowser.globe.http.reponse.IResult;
 import com.renny.simplebrowser.globe.http.request.Api;
 import com.renny.simplebrowser.globe.lang.Maps;
@@ -58,30 +59,89 @@ public class TaskHelper {
         return asyncTask;
     }
 
+    public static <T> AsyncTaskInstance<T> submitTask(String taskName, String groupName, ITaskBackground<T> task, ITaskCallback<T> callback) {
+        AsyncTaskInstance<T> asyncTask = AsyncTaskInstance.build(task, callback)
+                .taskName(taskName)
+                .groupName(groupName)
+                .serialExecute(false);
+        taskScheduler.submit(asyncTask);
+        return asyncTask;
+    }
+
+    /**
+     * 串行提交任务
+     *
+     * @param taskName
+     * @param task
+     * @param <T>
+     */
+    public static <T> AsyncTaskInstance<T> submitTaskSerial(String taskName, String groupName, ITaskBackground<T> task, ITaskCallback<T> callback) {
+        AsyncTaskInstance<T> asyncTask = AsyncTaskInstance.build(task, callback)
+                .taskName(taskName)
+                .groupName(groupName)
+                .serialExecute(true);
+        taskScheduler.submit(asyncTask);
+        return asyncTask;
+    }
+
     /**
      * 在默认分组请求api
      *
      * @param iApi
      * @param apiCallback
      */
-    public static <T>AsyncTaskInstance apiCall(final Api iApi, final Map<String, String> params, final ITaskCallback<IResult<T>> apiCallback) {
+    public static <T> AsyncTaskInstance apiCall(final Api iApi, final Map<String, String> params, final ITaskCallback<IResult<T>> apiCallback) {
         String taskName = "execute " + iApi.getUrl();
         AsyncTaskInstance asyncTask = AsyncTaskInstance.build(new ITaskBackground<IResult<T>>() {
             @Override
             public IResult<T> onBackground() throws Exception {
-                okhttp3.Response response = null;
+                okhttp3.Response response;
                 try {
                     HttpRequest request = new HttpRequest(iApi, params);
                     response = request.Call();
                     return HttpResultParse.parseResult(iApi, response);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    apiCallback.onException(e);
+                    return Result.fail("  ", "IOException");
                 }
-                return null;
+
             }
         }, apiCallback)
                 .taskName(taskName)
+                .serialExecute(false);
+        taskScheduler.submit(asyncTask);
+        return asyncTask;
+    }
+
+    /**
+     * api请求
+     *
+     * @param iGroup      分组
+     * @param iApi
+     * @param params      参数
+     * @param apiCallback
+     */
+    public static <T> AsyncTaskInstance apiCall(final IGroup iGroup, final Api iApi,
+                                                final Map<String, String> params,
+                                                final ITaskCallback apiCallback) {
+        String taskName = "execute " + iApi.getUrl();
+        AsyncTaskInstance asyncTask = AsyncTaskInstance.build(new ITaskBackground<IResult<T>>() {
+            @Override
+            public IResult onBackground() throws Exception {
+                okhttp3.Response response;
+                try {
+                    HttpRequest request = new HttpRequest(iApi, params);
+                    response = request.Call();
+                    return HttpResultParse.parseResult(iApi, response);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Result.fail("  ", "IOException");
+                }
+                return Result.fail(" ", " ");
+            }
+        }, apiCallback)
+                .taskName(taskName)
+                .groupName(iGroup.groupName())
                 .serialExecute(false);
         taskScheduler.submit(asyncTask);
         return asyncTask;
@@ -93,21 +153,21 @@ public class TaskHelper {
      * @param iApi
      * @param apiCallback
      */
-    public static <T>AsyncTaskInstance apiCall(final Api iApi, final ITaskCallback<IResult<T>> apiCallback) {
+    public static <T> AsyncTaskInstance apiCall(final Api iApi, final ITaskCallback<IResult<T>> apiCallback) {
         String taskName = "execute " + iApi.getUrl();
         AsyncTaskInstance asyncTask = AsyncTaskInstance.build(new ITaskBackground<IResult<T>>() {
             @Override
             public IResult<T> onBackground() throws Exception {
-                okhttp3.Response response = null;
+                okhttp3.Response response;
                 try {
                     HttpRequest request = new HttpRequest(iApi, Maps.mapNull);
                     response = request.Call();
                     return HttpResultParse.parseResult(iApi, response);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    apiCallback.onException(e);
+                    return Result.fail("  ", "IOException");
                 }
-                return null;
+
             }
         }, apiCallback)
                 .taskName(taskName)
@@ -115,8 +175,6 @@ public class TaskHelper {
         taskScheduler.submit(asyncTask);
         return asyncTask;
     }
-
-
 
 
 }

@@ -11,13 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.renny.simplebrowser.globe.task.TaskHelper;
+import com.renny.simplebrowser.globe.thread.task.IGroup;
+
 /**
  * Created by Renny on 2018/1/3.
  */
 
-public abstract class BaseFragment extends Fragment implements View.OnClickListener {
+public abstract class BaseFragment extends Fragment implements View.OnClickListener, IGroup {
     protected Activity mActivity;
     protected boolean mIsLoadedData = false;
+
 
     @Override
     public void onAttach(Context context) {
@@ -33,6 +37,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         if (getArguments() != null) {
             initParams(getParams(getArguments()));
         }
+        initPresenter();
         if (rootView == null) {
             rootView = inflater.inflate(getLayoutId(), container, false);
             bindView(rootView, savedInstanceState);
@@ -50,9 +55,24 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
     }
 
+    protected void initPresenter() {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        TaskHelper.cancelGroup(groupName());
+        super.onDestroy();
+    }
+
     @Override
     public void onClick(View v) {
 
+    }
+
+    @Override
+    public String groupName() {
+        return getClass().getSimpleName() + this.toString();
     }
 
     @Override
