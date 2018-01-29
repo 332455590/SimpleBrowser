@@ -40,6 +40,8 @@ import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
+import java.util.Locale;
+
 
 public class WebViewFragment extends BaseFragment implements X5WebView.onSelectItemListener {
 
@@ -197,10 +199,12 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                                              boolean isDoneCounting) {
                 if (isDoneCounting) {
                     if (numberOfMatches != 0) {
-                        searchInfo.setText(String.format("%d/%d", (activeMatchOrdinal + 1), numberOfMatches));
+                        searchInfo.setText(String.format(Locale.CHINA,"%d/%d", (activeMatchOrdinal + 1), numberOfMatches));
                     } else {
                         searchInfo.setText("0/0");
                     }
+                } else {
+                    searchInfo.setText("");
                 }
             }
         });

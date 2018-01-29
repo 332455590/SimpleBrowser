@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/web_contain"
     android:layout_width="match_parent"
@@ -20,4 +20,4 @@
     </com.renny.simplebrowser.view.widget.GestureLayout>
 
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

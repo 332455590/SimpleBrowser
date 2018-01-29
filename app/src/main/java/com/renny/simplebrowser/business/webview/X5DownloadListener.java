@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
 import android.view.View;
 import android.webkit.URLUtil;
+import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.helper.DeviceHelper;
@@ -87,6 +88,8 @@ public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener
                                     }
                                 });
                         snackbar.setText(content);
+                        View view = snackbar.getView();//获取Snackbar的view
+                        ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(UIHelper.getColor(R.color.white));//获取Snackbar的message控件，修改字体颜色
                         snackbar.setActionTextColor(Color.parseColor("#FFFFFF"));  //设置Snackbar上的字体颜色
                         snackbar.show();
                     }

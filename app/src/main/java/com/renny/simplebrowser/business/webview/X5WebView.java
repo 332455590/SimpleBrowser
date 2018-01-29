@@ -77,7 +77,7 @@ public class X5WebView extends WebView {
             CookieManager cookieManager = CookieManager.getInstance();
             cookieManager.setAcceptThirdPartyCookies(this, true);
         }
-       // WebIconDatabase.getInstance().open(Folders.icon.getFolder().getAbsolutePath());
+        // setting.setSupportMultipleWindows(true);
         setOnLongClickListener(new View.OnLongClickListener() {
 
             public boolean onLongClick(View v) {
@@ -136,6 +136,7 @@ public class X5WebView extends WebView {
 
     public interface onSelectItemListener {
         void onImgSelected(int x, int y, int type, String extra);
+
         void onTextSelected(int x, int y, int type, String extra);
     }
 }

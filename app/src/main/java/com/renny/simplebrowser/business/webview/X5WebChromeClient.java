@@ -3,6 +3,7 @@ package com.renny.simplebrowser.business.webview;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;

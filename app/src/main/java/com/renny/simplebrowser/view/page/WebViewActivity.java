@@ -113,7 +113,6 @@ public class WebViewActivity extends BaseActivity {
     }
 
 
-
     private void goWebView(String url) {
         if (webViewFragment == null || !TextUtils.isEmpty(url)) {
             webViewFragment = WebViewFragment.getInstance(url);
@@ -220,4 +219,6 @@ public class WebViewActivity extends BaseActivity {
         Logs.event.d("event--" + event.url);
         goWebView(event.url);
     }
+
+
 }
