@@ -21,8 +21,8 @@ import com.renny.simplebrowser.business.helper.SearchHelper;
 import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.http.constants.Apis;
 import com.renny.simplebrowser.business.toast.ToastHelper;
-import com.renny.simplebrowser.globe.http.callback.ApiCallback;
 import com.renny.simplebrowser.globe.http.reponse.IResult;
+import com.renny.simplebrowser.globe.task.ApiCallback;
 import com.renny.simplebrowser.globe.task.TaskHelper;
 import com.renny.simplebrowser.view.adapter.HostAdapter;
 import com.renny.simplebrowser.view.adapter.KeyListAdapter;
@@ -117,6 +117,7 @@ public class SearchActivity extends BaseActivity {
                     HashMap<String, String> params = new HashMap<>();
                     params.put("wd", s.toString());
                     TaskHelper.apiCall(Apis.searchSuggestion, params, new ApiCallback<List<String>>() {
+
                         @Override
                         public void onSuccess(IResult<List<String>> result) {
                             final List<String> resultList = result.data();

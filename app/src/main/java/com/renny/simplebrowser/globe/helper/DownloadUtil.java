@@ -57,6 +57,7 @@ public class DownloadUtil {
                     is = response.body().byteStream();
                     long total = response.body().contentLength();
                     final File file = Folders.download.getFile(fileName);
+
                     if (file.exists()) {
                         ThreadHelper.postMain(new Runnable() {
                             @Override

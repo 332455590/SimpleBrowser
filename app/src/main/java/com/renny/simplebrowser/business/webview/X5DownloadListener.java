@@ -15,7 +15,7 @@ import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.globe.helper.DownloadUtil;
-import com.renny.simplebrowser.globe.task.ITaskWithResult;
+import com.renny.simplebrowser.globe.task.SimpleTask;
 import com.renny.simplebrowser.globe.task.TaskHelper;
 import com.renny.simplebrowser.view.page.WebViewFragment;
 import com.tencent.smtt.sdk.WebView;
@@ -72,10 +72,9 @@ public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener
 
     private void downloadStart(final String url, String contentDisposition, final String mimetype) {
         final String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
-        TaskHelper.submitResult(new ITaskWithResult<String>() {
+        TaskHelper.submitTask("download", new SimpleTask<Object>() {
             @Override
-            public String onBackground() throws Exception {
-                Logs.base.d("download:  " + url);
+            public Object onBackground() throws Exception {
                 DownloadUtil.get().download(url, fileName, new DownloadUtil.OnDownloadListener() {
                     @Override
                     public void onDownloadSuccess(final boolean exist, final File file) {
@@ -115,5 +114,6 @@ public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener
                 return null;
             }
         });
+
     }
 }

@@ -20,7 +20,7 @@ public enum Folders {
     crash("logs/crash"),//错误日志
     icon("icon"),//图片下载
     Camera("Camera", false),//图片保存
-    download("download", false),//下载
+    download("download", false)//下载
     ;
     private String subFolder;
     private boolean isCache = true;
@@ -45,13 +45,12 @@ public enum Folders {
     }
 
     public File getRootFolder() {
-        if (rootFolder == null) {
-            if (!isCache) {
-                rootFolder = App.getContext().getExternalFilesDir("data");//默认外部缓存
-            } else {
-                rootFolder = App.getContext().getExternalCacheDir();//默认外部缓存
 
-            }
+        if (!isCache) {
+            rootFolder = App.getContext().getExternalFilesDir(null);//默认外部缓存
+        } else {
+            rootFolder = App.getContext().getExternalCacheDir();//默认外部缓存
+
         }
 
         if (rootFolder == null) {
@@ -62,6 +61,7 @@ public enum Folders {
                 rootFolder = App.getContext().getCacheDir();//内部存储
             }
         }
+
         if (rootFolder != null) {
             Logs.common.d("rootFolder:  " + rootFolder.getAbsolutePath());
         }
@@ -138,9 +138,9 @@ public enum Folders {
     public File getPublicFile(String type, String fileName, String defaultSuffix) {
         String[] nameArray = getName(fileName, defaultSuffix);
         String path = Environment.getExternalStoragePublicDirectory(type) + "/" + subFolder + "/";
-        Logs.common.d("getPath:" + nameArray[0]+nameArray[1]);
+        Logs.common.d("getPath:" + nameArray[0] + nameArray[1]);
         File file = new File(path);
-        String fileName_=nameArray[0] + nameArray[1];
+        String fileName_ = nameArray[0] + nameArray[1];
         if (file.mkdirs()) {
             return new File(path + fileName_);
         }

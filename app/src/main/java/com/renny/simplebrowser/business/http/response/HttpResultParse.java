@@ -6,10 +6,11 @@ import com.renny.simplebrowser.business.http.response.parses.ParseDefault;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.globe.http.IHttpCell;
 import com.renny.simplebrowser.globe.http.bean.Result;
-import com.renny.simplebrowser.globe.http.callback.ApiCallback;
+import com.renny.simplebrowser.globe.http.reponse.IResult;
 import com.renny.simplebrowser.globe.http.reponse.IResultParse;
 import com.renny.simplebrowser.globe.http.request.Api;
 import com.renny.simplebrowser.globe.http.request.IApi;
+import com.renny.simplebrowser.globe.task.ApiCallback;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -67,6 +68,45 @@ public class HttpResultParse {
         } else {
             apiCallback.onFailure(result);
         }
+
+    }
+
+    public static  IResult parseResult(IApi api, okhttp3.Response response) {
+        if (response == null) {
+            return null;
+        }
+        ResponseBody responseBody = response.body();
+        if (responseBody == null) {
+            return null;
+        }
+        String json;
+        try {
+            json = responseBody.string();
+        } catch (IOException e) {
+            return null;
+        }
+        long startTime1 = System.currentTimeMillis();
+        Type type = api.getResultType();
+        Result result = null;
+        if (api instanceof Api) {
+            Api api2 = (Api) api;
+            IHttpCell iHttpCell = api2.getIHttpCell();
+            IResultParse iResultParse = iHttpCell.getResultParse();
+            if (iResultParse == null) {
+                iResultParse = new ParseDefault();
+            }
+            result = iResultParse.parseResult(api2, json, type);
+            if (api2.isNeedJson()) {
+                result.setJson(json);
+            }
+        }
+        long endTime1 = System.currentTimeMillis();
+        long useTime1 = endTime1 - startTime1;
+        Logs.component.d("解析用时：" + useTime1);
+        if (result == null) {
+            return null;
+        }
+        return result;
 
     }
 

@@ -33,7 +33,7 @@ import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.globe.helper.FileUtil;
-import com.renny.simplebrowser.globe.task.ITaskWithResult;
+import com.renny.simplebrowser.globe.task.SimpleTask;
 import com.renny.simplebrowser.globe.task.TaskHelper;
 import com.renny.zxing.Activity.CaptureActivity;
 import com.tencent.smtt.sdk.WebView;
@@ -125,7 +125,7 @@ public class HandlePictureDialog extends BaseDialogFragment {
         mListAdapter.setData(listData);
         mRecyclerView.setAdapter(mListAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        TaskHelper.submitResult(new ITaskWithResult<File>() {
+        TaskHelper.submitTask("qrcode",new SimpleTask<File>() {
             @Override
             public File onBackground() throws Exception {
                 File sourceFile = ImgHelper.syncLoadFile(ImgUrl);
@@ -200,7 +200,7 @@ public class HandlePictureDialog extends BaseDialogFragment {
     }
 
     private void downLoad(final String imgUrl) {
-        TaskHelper.submitResult(new ITaskWithResult<File>() {
+        TaskHelper.submitTask("保存",new SimpleTask<File>() {
             @Override
             public File onBackground() throws Exception {
                 File sourceFile = ImgHelper.syncLoadFile(imgUrl);
