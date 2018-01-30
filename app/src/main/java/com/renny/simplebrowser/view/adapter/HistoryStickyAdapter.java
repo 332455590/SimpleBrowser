@@ -43,7 +43,6 @@ public class HistoryStickyAdapter extends BGARecyclerViewAdapter<History> implem
         TextView textView = helper.getView(R.id.word);
         final ImageView icon = helper.getView(R.id.icon);
         textView.setText(TextUtils.isEmpty(data.getTitle()) ? data.getUrl() : data.getTitle());
-        icon.setImageResource(R.drawable.ic_history);
         String[] strings = data.getUrl().split("/");
         if (strings.length >= 2) {
             String host = strings[2];
