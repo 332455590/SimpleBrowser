@@ -3,6 +3,7 @@ package com.renny.simplebrowser.globe.task;
 import com.renny.simplebrowser.business.base.ILoading;
 import com.renny.simplebrowser.business.http.constants.ResultCode;
 import com.renny.simplebrowser.business.log.Logs;
+import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.globe.exception.NetworkNotAvailableException;
 import com.renny.simplebrowser.globe.http.bean.Result;
 import com.renny.simplebrowser.globe.http.reponse.IResult;
@@ -57,6 +58,14 @@ public class ApiCallback<T> extends SimpleCallback<IResult<T>> implements IApiCa
     }
 
     public void onFailure(IResult result) {
+        switch (result.code()) {
+            case ResultCode.LOCAL_NET_NOT_AVAILABLE:
+            case ResultCode.LOCAL_NET_EXCEPTION:
+            case ResultCode.ERROR_SERVER_DATA_ERROR:
+            case ResultCode.LOCAL_EXCEPTION:
+                ToastHelper.makeToast("网络异常");
+                break;
+        }
         Logs.common.e("onFailure" + result.code() + "--" + result.msg());
     }
 
