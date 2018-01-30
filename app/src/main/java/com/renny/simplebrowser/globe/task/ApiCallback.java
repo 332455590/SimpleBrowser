@@ -17,7 +17,7 @@ import java.net.SocketException;
 public class ApiCallback<T> extends SimpleCallback<IResult<T>> implements IApiCallback<T> {
 
 
-    public ApiCallback() {
+    protected ApiCallback() {
     }
 
     public ApiCallback(ILoading iLoading) {

@@ -22,7 +22,6 @@ import com.renny.simplebrowser.business.db.dao.HistoryDao;
 import com.renny.simplebrowser.business.db.entity.BookMark;
 import com.renny.simplebrowser.business.db.entity.History;
 import com.renny.simplebrowser.business.helper.DeviceHelper;
-import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
@@ -30,7 +29,6 @@ import com.renny.simplebrowser.business.webview.X5DownloadListener;
 import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
-import com.renny.simplebrowser.globe.helper.BitmapUtils;
 import com.renny.simplebrowser.globe.helper.DateUtil;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
 import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
@@ -139,13 +137,9 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             }
 
             @Override
-            public void onReceivedIcon(final WebView view, final Bitmap icon) {
-                super.onReceivedIcon(view, icon);
-                final String[] strings = view.getUrl().split("/");
-                if (strings.length >= 2) {
-                    String host = strings[2];
-                    BitmapUtils.saveToFile(icon, Folders.icon.getFolder(), host.replace(".", ""));
-                }
+            public void onReceivedIcon(final WebView webView, final Bitmap icon) {
+                super.onReceivedIcon(webView, icon);
+                mWebViewPresenter.saveIcon(webView.getUrl(), webView.getFavicon());
             }
         };
 
@@ -223,7 +217,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     public void setMyProgress(int progress) {
         Logs.base.d("onDownloading2:  " + progress);
-        downloadTv.setText(progress + "%");
+        downloadTv.setText(String.format("%s%%", String.valueOf(progress)));
         if (progress == 100) {
             downloadTv.setText(" ");
         }

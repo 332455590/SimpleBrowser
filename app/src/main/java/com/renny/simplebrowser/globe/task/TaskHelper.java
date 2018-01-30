@@ -75,6 +75,21 @@ public class TaskHelper {
      * @param task
      * @param <T>
      */
+    public static <T> AsyncTaskInstance<T> submitTaskSerial(String taskName, ITask<T> task) {
+        AsyncTaskInstance<T> asyncTask = AsyncTaskInstance.build(task, task)
+                .taskName(taskName)
+                .groupName(IGroup.DEFAULT_GROUP_NAME)
+                .serialExecute(true);
+        taskScheduler.submit(asyncTask);
+        return asyncTask;
+    }
+  /**
+     * 串行提交任务
+     *
+     * @param taskName
+     * @param task
+     * @param <T>
+     */
     public static <T> AsyncTaskInstance<T> submitTaskSerial(String taskName, String groupName, ITaskBackground<T> task, ITaskCallback<T> callback) {
         AsyncTaskInstance<T> asyncTask = AsyncTaskInstance.build(task, callback)
                 .taskName(taskName)

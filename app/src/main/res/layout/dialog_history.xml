@@ -7,12 +7,12 @@
     <RelativeLayout
         android:id="@+id/title_lay"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:background="@color/background">
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="34dp"
+            android:layout_height="30dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
             android:background="@drawable/bg_stroke_blue">
@@ -47,7 +47,7 @@
                 android:layout_width="44dp"
                 android:layout_height="match_parent"
                 android:layout_toRightOf="@id/search_edit"
-                android:padding="5dp"
+                android:padding="6dp"
                 android:src="@drawable/ic_search_history"/>
 
         </RelativeLayout>
