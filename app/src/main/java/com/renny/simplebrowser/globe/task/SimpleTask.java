@@ -22,7 +22,8 @@ import com.renny.simplebrowser.business.base.ILoading;
  * <p>
  */
 public abstract class SimpleTask<Result> extends SimpleCallback<Result> implements ITask<Result> {
-    public SimpleTask() {
+
+    protected SimpleTask() {
     }
 
     public SimpleTask(ILoading iLoading) {

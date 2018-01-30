@@ -24,7 +24,6 @@ public class ApiCallback<T> extends SimpleCallback<IResult<T>> implements IApiCa
     }
 
 
-
     @Override
     public final void onException(Throwable t) {
         if (t instanceof NetworkNotAvailableException) {
@@ -39,7 +38,7 @@ public class ApiCallback<T> extends SimpleCallback<IResult<T>> implements IApiCa
     }
 
     @Override
-    public final void onComplete(IResult result) {
+    public final void onComplete(IResult<T> result) {
         if (result != null) {
             if (result.success()) {
                 onSuccess(result);
@@ -57,8 +56,8 @@ public class ApiCallback<T> extends SimpleCallback<IResult<T>> implements IApiCa
         super.onAfterCall();
     }
 
-    public void onFailure(IResult<String> result) {
-
+    public void onFailure(IResult result) {
+        Logs.common.e("onFailure" + result.code() + "--" + result.msg());
     }
 
 

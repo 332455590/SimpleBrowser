@@ -11,10 +11,9 @@ import com.renny.simplebrowser.globe.exception.ViewNotBindException;
 import com.renny.simplebrowser.globe.helper.ThreadHelper;
 import com.renny.simplebrowser.globe.thread.task.ITaskCallback;
 
-/**
- * Created by yh on 2016/4/28.
- */
+
 public class SimpleCallback<T> implements ITaskCallback<T> {
+
     public ILoading iLoading;
 
     public void setLoading(ILoading iLoading) {

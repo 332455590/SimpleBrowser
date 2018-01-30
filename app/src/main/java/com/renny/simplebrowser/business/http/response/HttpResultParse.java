@@ -73,11 +73,11 @@ public class HttpResultParse {
 
     public static  IResult parseResult(IApi api, okhttp3.Response response) {
         if (response == null) {
-            return Result.fail("  ","response--null");
+            return Result.fail("1","response--null");
         }
         ResponseBody responseBody = response.body();
         if (responseBody == null) {
-            return Result.fail("  ","responseBody--null");
+            return Result.fail("2","responseBody--null");
         }
         String json;
         try {
@@ -104,9 +104,9 @@ public class HttpResultParse {
         long useTime1 = endTime1 - startTime1;
         Logs.component.d("解析用时：" + useTime1);
         if (result == null) {
-            return Result.fail("  ","result--null");
+            return Result.fail("3","result--null");
         }
-        return Result.fail("  ","parseResult--null");
+        return result;
 
     }
 
