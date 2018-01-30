@@ -56,7 +56,7 @@ public final class TaskScheduler {
          * @see AbstractTaskInstance#compareTo(IPriorityTask)
          */
         BlockingQueue<Runnable> poolWorkQueue = new PriorityBlockingQueue<>(QUEUE_SIZE);
-        this.executor = new PriorityThreadPoolExecutor(
+        executor = new PriorityThreadPoolExecutor(
                 CORE_POOL_SIZE,
                 MAXIMUM_POOL_SIZE,
                 KEEP_ALIVE, TimeUnit.SECONDS,
@@ -127,7 +127,7 @@ public final class TaskScheduler {
     }
 
     public void stopTask(AbstractTaskInstance task) {
-        if(!task.isCancelled()) {
+        if (!task.isCancelled()) {
             task.cancel(true);//手动取消也会会触发一次done()
             task.setStatus(ITaskInstance.STATUS_CANCEL);
             LogHelper.task().w("task was canceled, \ntask=%s \ngroup=%s", task.taskName(),

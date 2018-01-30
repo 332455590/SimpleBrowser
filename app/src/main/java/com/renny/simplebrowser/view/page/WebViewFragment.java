@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.transition.Slide;
@@ -67,6 +68,12 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         webViewFragment.setArguments(args);
         return webViewFragment;
     }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mWebView.saveState(outState);
+    }
+
 
     @Override
     protected int getLayoutId() {
@@ -110,6 +117,9 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     }
 
     public void afterViewBind(View rootView, Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mWebView.restoreState(savedInstanceState);
+        }
         pullToRefreshWebView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<X5WebView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<X5WebView> refreshView) {

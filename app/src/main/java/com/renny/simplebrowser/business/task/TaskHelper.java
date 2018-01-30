@@ -1,4 +1,4 @@
-package com.renny.simplebrowser.globe.task;
+package com.renny.simplebrowser.business.task;
 
 
 import com.renny.simplebrowser.BuildConfig;
@@ -140,7 +140,7 @@ public class TaskHelper {
                                                 final Map<String, String> params,
                                                 final ITaskCallback apiCallback) {
         String taskName = "execute " + iApi.getUrl();
-        AsyncTaskInstance asyncTask = AsyncTaskInstance.build(new ITaskBackground<IResult<T>>() {
+        AsyncTaskInstance asyncTask = AsyncTaskInstance.build(new ITaskBackground<IResult>() {
             @Override
             public IResult onBackground() throws Exception {
                 okhttp3.Response response;

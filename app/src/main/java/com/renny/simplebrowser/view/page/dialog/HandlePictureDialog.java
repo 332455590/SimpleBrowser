@@ -33,8 +33,8 @@ import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.globe.helper.FileUtil;
-import com.renny.simplebrowser.globe.task.SimpleTask;
-import com.renny.simplebrowser.globe.task.TaskHelper;
+import com.renny.simplebrowser.business.task.SimpleTask;
+import com.renny.simplebrowser.business.task.TaskHelper;
 import com.renny.zxing.Activity.CaptureActivity;
 import com.tencent.smtt.sdk.WebView;
 
@@ -130,11 +130,10 @@ public class HandlePictureDialog extends BaseDialogFragment {
         mListAdapter.setData(listData);
         mRecyclerView.setAdapter(mListAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        TaskHelper.submitTask("qrcode",new SimpleTask<File>() {
+        TaskHelper.submitTask("qr code",new SimpleTask<File>() {
             @Override
             public File onBackground() throws Exception {
                 File sourceFile = ImgHelper.syncLoadFile(ImgUrl);
-                Logs.base.d("xxxx--" + ImgUrl);
                 File file = Folders.temp.newTempFile(Validator.getNameFromUrl(ImgUrl), ".jpeg");
                 FileUtil.copyFile(sourceFile, file);
                 return file;
@@ -228,12 +227,19 @@ public class HandlePictureDialog extends BaseDialogFragment {
                             .setPositiveButton("查看", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    dismiss();
                                     DeviceHelper.openFile(getContext(), file);
                                 }
                             })
-                            .setNegativeButton("取消", null)
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dismiss();
+                                }
+                            })
                             .show();
                 } else {
+                    dismiss();
                     ToastHelper.makeToast("保存失败");
                 }
             }

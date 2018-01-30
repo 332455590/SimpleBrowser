@@ -6,8 +6,8 @@ import com.renny.simplebrowser.business.base.BasePresenter;
 import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.globe.helper.BitmapUtils;
-import com.renny.simplebrowser.globe.task.SimpleTask;
-import com.renny.simplebrowser.globe.task.TaskHelper;
+import com.renny.simplebrowser.business.task.SimpleTask;
+import com.renny.simplebrowser.business.task.TaskHelper;
 import com.renny.simplebrowser.view.page.WebViewFragment;
 
 import java.io.File;

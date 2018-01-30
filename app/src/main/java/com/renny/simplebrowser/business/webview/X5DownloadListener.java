@@ -15,8 +15,8 @@ import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.globe.helper.DownloadUtil;
-import com.renny.simplebrowser.globe.task.SimpleTask;
-import com.renny.simplebrowser.globe.task.TaskHelper;
+import com.renny.simplebrowser.business.task.SimpleTask;
+import com.renny.simplebrowser.business.task.TaskHelper;
 import com.renny.simplebrowser.view.page.WebViewFragment;
 import com.tencent.smtt.sdk.WebView;
 

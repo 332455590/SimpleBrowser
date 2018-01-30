@@ -2,19 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:background="@drawable/item_selector">
+                android:layout_height="50dp">
 
     <TextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:background="@drawable/item_selector"
         android:gravity="center_vertical"
         android:maxLines="1"
         android:paddingLeft="@dimen/margin_father_left"
         android:paddingRight="@dimen/margin_father_right"
         android:textColor="@color/color_text_major"
-        android:textSize="16sp"
-        tools:text="this is item 1"/>
+        android:textSize="14sp"
+        tools:text="保存图片"/>
 
 </RelativeLayout>

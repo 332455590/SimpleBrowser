@@ -1,4 +1,4 @@
-package com.renny.simplebrowser.globe.task;
+package com.renny.simplebrowser.business.task;
 
 import com.renny.simplebrowser.business.base.ILoading;
 import com.renny.simplebrowser.business.http.constants.ResultCode;

@@ -10,7 +10,7 @@ import com.renny.simplebrowser.globe.http.reponse.IResult;
 import com.renny.simplebrowser.globe.http.reponse.IResultParse;
 import com.renny.simplebrowser.globe.http.request.Api;
 import com.renny.simplebrowser.globe.http.request.IApi;
-import com.renny.simplebrowser.globe.task.ApiCallback;
+import com.renny.simplebrowser.business.task.ApiCallback;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

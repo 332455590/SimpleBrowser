@@ -4,8 +4,8 @@ import android.content.ContentResolver;
 
 import com.renny.simplebrowser.globe.helper.ContextHelper;
 import com.renny.simplebrowser.globe.http.request.Api;
-import com.renny.simplebrowser.globe.task.ITask;
-import com.renny.simplebrowser.globe.task.TaskHelper;
+import com.renny.simplebrowser.business.task.ITask;
+import com.renny.simplebrowser.business.task.TaskHelper;
 import com.renny.simplebrowser.globe.thread.task.AsyncTaskInstance;
 import com.renny.simplebrowser.globe.thread.task.IGroup;
 import com.renny.simplebrowser.globe.thread.task.ITaskBackground;
