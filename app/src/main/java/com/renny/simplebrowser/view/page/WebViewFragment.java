@@ -251,10 +251,10 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     @Override
     public void onLinkSelected(int x, int y, int type, final String extra) {
-        ToastHelper.makeToast(extra);
         ArrayList<String> titleList = new ArrayList<>();
-        titleList.add("复制链接");
-        titleList.add("在新标签页打开链接");
+        titleList.add("复制链接地址");
+        titleList.add("新窗口打开");
+        titleList.add("页内查找");
         HandleListDialog handleListDialog = HandleListDialog.getInstance(x, y, titleList);
         handleListDialog.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -265,7 +265,10 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                         ToastHelper.makeToast("内容已复制");
                         break;
                     case 1:
-                        EventHelper.post(new WebViewEvent(extra,true));
+                        EventHelper.post(new WebViewEvent(extra, true));
+                        break;
+                    case 2:
+                        showSearchDialog();
                         break;
                 }
             }
