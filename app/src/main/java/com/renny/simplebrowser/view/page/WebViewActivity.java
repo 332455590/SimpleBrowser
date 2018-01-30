@@ -95,7 +95,7 @@ public class WebViewActivity extends BaseActivity {
                     returnLastPage();
                 } else if (edgeFlags == ViewDragHelper.EDGE_RIGHT) {
                     if (isOnHomePage) {
-                        goWebView(null);
+                        goWebView();
                     } else {
                         goNextPage();
                     }
@@ -112,6 +112,13 @@ public class WebViewActivity extends BaseActivity {
         });
     }
 
+
+    private void goWebView() {
+        mFragmentManager.beginTransaction().replace(R.id.container,
+                webViewFragment).commit();
+        isOnHomePage = false;
+        fromBack = false;
+    }
 
     private void goWebView(String url) {
         if (webViewFragment == null || !TextUtils.isEmpty(url)) {
@@ -151,7 +158,7 @@ public class WebViewActivity extends BaseActivity {
 
     private void returnLastPage() {
         if (fromBack && isOnHomePage) {
-            goWebView(null);
+            goWebView();
         } else {
             WebView webView = webViewFragment.getWebView();
             if (webView.canGoBack()) {
