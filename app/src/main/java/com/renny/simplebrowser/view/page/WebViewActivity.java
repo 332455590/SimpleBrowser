@@ -2,6 +2,7 @@ package com.renny.simplebrowser.view.page;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.ViewDragHelper;
 import android.text.TextUtils;
@@ -12,24 +13,26 @@ import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseActivity;
 import com.renny.simplebrowser.business.db.dao.BookMarkDao;
 import com.renny.simplebrowser.business.db.entity.BookMark;
+import com.renny.simplebrowser.business.helper.EventHelper;
 import com.renny.simplebrowser.business.log.Logs;
-import com.renny.simplebrowser.view.event.WebviewEvent;
+import com.renny.simplebrowser.view.event.WebViewEvent;
 import com.renny.simplebrowser.view.listener.GoPageListener;
 import com.renny.simplebrowser.view.widget.GestureLayout;
 import com.tencent.smtt.sdk.WebBackForwardList;
 import com.tencent.smtt.sdk.WebView;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Renny on 2018/1/2.
  */
 public class WebViewActivity extends BaseActivity {
-    WebViewFragment webViewFragment;
+    List<Fragment> mFragmentList = new ArrayList<>();
+    WebViewFragment currentFragment;
     HomePageFragment mHomePageFragment;
     GestureLayout mGestureLayout;
     FragmentManager mFragmentManager;
@@ -66,10 +69,10 @@ public class WebViewActivity extends BaseActivity {
         mGestureLayout.setGestureListener(new GestureLayout.GestureListener() {
             @Override
             public boolean dragStartedEnable(int edgeFlags, ImageView view) {
-                if (webViewFragment == null) {
+                if (currentFragment == null) {
                     return false;
                 }
-                WebView webView = webViewFragment.getWebView();
+                WebView webView = currentFragment.getWebView();
                 if (webView == null) {
                     return false;
                 }
@@ -115,17 +118,21 @@ public class WebViewActivity extends BaseActivity {
 
     private void goWebView() {
         mFragmentManager.beginTransaction().replace(R.id.container,
-                webViewFragment).commit();
+                currentFragment).commit();
         isOnHomePage = false;
         fromBack = false;
     }
 
-    private void goWebView(String url) {
-        if (webViewFragment == null || !TextUtils.isEmpty(url)) {
-            webViewFragment = WebViewFragment.getInstance(url);
+    private void goWebView(String url, boolean newBlock) {
+        if (currentFragment == null || newBlock) {
+            WebViewFragment webViewFragment = WebViewFragment.getInstance(url);
+            mFragmentList.add(webViewFragment);
+            currentFragment = webViewFragment;
+        } else {
+            currentFragment.loadUrl(url);
         }
         mFragmentManager.beginTransaction().replace(R.id.container,
-                webViewFragment).commit();
+                currentFragment).commit();
         isOnHomePage = false;
         fromBack = false;
     }
@@ -137,7 +144,7 @@ public class WebViewActivity extends BaseActivity {
                 @Override
                 public void onGoPage(String url) {
                     if (!TextUtils.isEmpty(url)) {
-                        goWebView(url);
+                        goWebView(url, false);
                     } else {
                         goHomePage();
                     }
@@ -160,7 +167,7 @@ public class WebViewActivity extends BaseActivity {
         if (fromBack && isOnHomePage) {
             goWebView();
         } else {
-            WebView webView = webViewFragment.getWebView();
+            WebView webView = currentFragment.getWebView();
             if (webView.canGoBack()) {
                 webView.goBack();
             } else {
@@ -170,7 +177,7 @@ public class WebViewActivity extends BaseActivity {
     }
 
     private void goNextPage() {
-        WebView webView = webViewFragment.getWebView();
+        WebView webView = currentFragment.getWebView();
         if (webView.canGoForward()) {
             webView.goForward();
         }
@@ -179,7 +186,7 @@ public class WebViewActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (!isOnHomePage) {
-            WebView webView = webViewFragment.getWebView();
+            WebView webView = currentFragment.getWebView();
             if (webView.canGoBack()) {
                 webView.goBack();
             } else {
@@ -197,34 +204,33 @@ public class WebViewActivity extends BaseActivity {
         }
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && data != null) {
             String result = data.getStringExtra("url");
-            if (!TextUtils.isEmpty(result)) {
-                goWebView(result);
-            }
+            goWebView(result, false);
         }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        EventHelper.register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+        EventHelper.unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onWebviewEvent(WebviewEvent event) {
+    public void onWebviewEvent(WebViewEvent event) {
         Logs.event.d("event--" + event.url);
-        goWebView(event.url);
+
+        goWebView(event.url, event.newBlock);
+
     }
 
 

@@ -15,6 +15,7 @@ import com.tencent.smtt.sdk.WebView;
 
 /**
  * Created by Renny on 2018/1/8.
+ *
  */
 
 public class X5WebView extends WebView {
@@ -89,10 +90,7 @@ public class X5WebView extends WebView {
                 String url = result.getExtra();
                 switch (type) {
                     case WebView.HitTestResult.EDIT_TEXT_TYPE: // 选中的文字类型
-                        if (mOnSelectItemListener != null && url != null && URLUtil.isValidUrl(url)) {
-                            mOnSelectItemListener.onTextSelected(touchX, touchY, result.getType(), url);
-                        }
-                        return true;
+                       break;
                     case WebView.HitTestResult.PHONE_TYPE: // 处理拨号
                         break;
                     case WebView.HitTestResult.EMAIL_TYPE: // 处理Email
@@ -100,7 +98,10 @@ public class X5WebView extends WebView {
                     case WebView.HitTestResult.GEO_TYPE: // 　地图类型
                         break;
                     case WebView.HitTestResult.SRC_ANCHOR_TYPE: // 超链接
-                        break;
+                        if (mOnSelectItemListener != null && url != null && URLUtil.isValidUrl(url)) {
+                            mOnSelectItemListener.onLinkSelected(touchX, touchY, result.getType(), url);
+                        }
+                        return true;
                     case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE: // 带有链接的图片类型
                     case WebView.HitTestResult.IMAGE_TYPE: // 处理长按图片的菜单项
                         if (mOnSelectItemListener != null && url != null && URLUtil.isValidUrl(url)) {
@@ -137,6 +138,6 @@ public class X5WebView extends WebView {
     public interface onSelectItemListener {
         void onImgSelected(int x, int y, int type, String extra);
 
-        void onTextSelected(int x, int y, int type, String extra);
+        void onLinkSelected(int x, int y, int type, String extra);
     }
 }

@@ -23,7 +23,9 @@ import com.renny.simplebrowser.business.db.dao.HistoryDao;
 import com.renny.simplebrowser.business.db.entity.BookMark;
 import com.renny.simplebrowser.business.db.entity.History;
 import com.renny.simplebrowser.business.helper.DeviceHelper;
+import com.renny.simplebrowser.business.helper.EventHelper;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
+import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.business.webview.X5DownloadListener;
@@ -31,7 +33,10 @@ import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
 import com.renny.simplebrowser.globe.helper.DateUtil;
+import com.renny.simplebrowser.view.event.WebViewEvent;
+import com.renny.simplebrowser.view.listener.OnItemClickListener;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
+import com.renny.simplebrowser.view.page.dialog.HandleListDialog;
 import com.renny.simplebrowser.view.page.dialog.HandlePictureDialog;
 import com.renny.simplebrowser.view.presenter.WebViewPresenter;
 import com.renny.simplebrowser.view.widget.pullrefresh.PullToRefreshBase;
@@ -41,6 +46,7 @@ import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 
@@ -68,6 +74,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         webViewFragment.setArguments(args);
         return webViewFragment;
     }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -243,10 +250,32 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     }
 
     @Override
-    public void onTextSelected(int x, int y, int type, String extra) {
+    public void onLinkSelected(int x, int y, int type, final String extra) {
         ToastHelper.makeToast(extra);
+        ArrayList<String> titleList = new ArrayList<>();
+        titleList.add("复制链接");
+        titleList.add("在新标签页打开链接");
+        HandleListDialog handleListDialog = HandleListDialog.getInstance(x, y, titleList);
+        handleListDialog.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClicked(int position) {
+                switch (position) {
+                    case 0:
+                        UIHelper.clipContent(extra);
+                        ToastHelper.makeToast("内容已复制");
+                        break;
+                    case 1:
+                        EventHelper.post(new WebViewEvent(extra,true));
+                        break;
+                }
+            }
+        });
+        handleListDialog.show(getChildFragmentManager());
     }
 
+    public void loadUrl(String targetUrl) {
+        mWebView.loadUrl(targetUrl);
+    }
 
     @Override
     public void onClick(View v) {

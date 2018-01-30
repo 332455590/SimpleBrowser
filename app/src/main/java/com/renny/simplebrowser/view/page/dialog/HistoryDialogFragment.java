@@ -35,15 +35,14 @@ import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseDialogFragment;
 import com.renny.simplebrowser.business.db.dao.HistoryDao;
 import com.renny.simplebrowser.business.db.entity.History;
+import com.renny.simplebrowser.business.helper.EventHelper;
 import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
 import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.view.adapter.HistoryStickyAdapter;
-import com.renny.simplebrowser.view.event.WebviewEvent;
+import com.renny.simplebrowser.view.event.WebViewEvent;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -113,7 +112,7 @@ public class HistoryDialogFragment extends BaseDialogFragment implements BGAOnRV
             @Override
             public void onItemChildClick(ViewGroup parent, View childView, int position) {
                 KeyboardUtils.hideSoftInput(getActivity(), mEditText);
-                EventBus.getDefault().post(new WebviewEvent(list.get(position).getUrl()));
+                EventHelper.post(new WebViewEvent(list.get(position).getUrl()));
                 mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
