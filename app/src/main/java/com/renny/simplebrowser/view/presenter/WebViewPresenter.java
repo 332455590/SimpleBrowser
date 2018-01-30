@@ -30,7 +30,7 @@ public class WebViewPresenter extends BasePresenter<WebViewFragment> {
                 final String[] strings = url.split("/");
                 if (strings.length >= 2) {
                     String host = strings[2].replace(".", "");
-                    file = BitmapUtils.saveToFile(icon, Folders.icon.getFolder(), host + (int) (Math.random() * 1000));
+                    file = BitmapUtils.saveToFile(icon, Folders.icon.getFolder(), host);
                 }
                 return file;
             }
