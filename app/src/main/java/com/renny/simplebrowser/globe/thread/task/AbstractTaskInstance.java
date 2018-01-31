@@ -77,6 +77,7 @@ public abstract class AbstractTaskInstance<Result> extends FutureTask<Result> im
             } else {
                 LogHelper.task().d("task(%s) result is null,callback.onComplete will not call",
                         taskName());
+                onException("onComplete", new NullPointerException());
             }
         } catch (Throwable throwable) {
             onException("onComplete", throwable);

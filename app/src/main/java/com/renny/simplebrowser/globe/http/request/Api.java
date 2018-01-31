@@ -5,9 +5,15 @@ import com.renny.simplebrowser.business.http.constants.Hosts;
 import com.renny.simplebrowser.globe.http.IHttpCell;
 import com.renny.simplebrowser.globe.http.parambuilder.IParamBuilder;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 /**
  * Created by yh on 2016/5/5.
@@ -55,6 +61,14 @@ public final class Api implements IApi {
 
     @Override
     public Type getResultType() {
+        OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象。
+        MediaType fileType = MediaType.parse("File/*");//数据类型为json格式，
+        File file = new File("path");//file对象.
+        RequestBody body = RequestBody.create(fileType , file );
+        Request request = new Request.Builder()
+                .url("http://www.baidu.com")
+                .post(body)
+                .build();
         return type;
     }
 
