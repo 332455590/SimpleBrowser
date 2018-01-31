@@ -37,11 +37,11 @@ public class RecyclerActivity extends AppCompatActivity {
         for (int i = 0; i < 80; i++) {
             headerList.add("item" + i);
         }
-        CommonAdapter adapter = new CommonAdapter<String>(android.R.layout.simple_expandable_list_item_1, headerList) {
+        CommonAdapter adapter = new CommonAdapter<String>(R.layout.list_item, headerList) {
             @Override
             protected void convert(ViewHolder holder, final int position) {
                 String data = headerList.get(position);
-                TextView textView = holder.getView(android.R.id.text1);
+                TextView textView = holder.getView(R.id.text1);
                 textView.setText(data);
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override

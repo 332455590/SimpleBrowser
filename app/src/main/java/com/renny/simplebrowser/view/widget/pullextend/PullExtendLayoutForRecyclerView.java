@@ -250,7 +250,7 @@ public class PullExtendLayoutForRecyclerView extends LinearLayout implements IPu
             default:
                 break;
         }
-        return handled || super.dispatchTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
     }
     @Override
     public void setPullRefreshEnabled(boolean pullRefreshEnabled) {
