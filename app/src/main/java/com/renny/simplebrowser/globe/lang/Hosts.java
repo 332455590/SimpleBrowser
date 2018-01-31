@@ -9,4 +9,6 @@ public interface Hosts {
 
     String HTTPS = "https";
 
+    String BLANK = "about:blank";
+
 }

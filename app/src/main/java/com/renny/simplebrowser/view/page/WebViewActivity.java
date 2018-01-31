@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.ViewDragHelper;
-import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -124,12 +123,16 @@ public class WebViewActivity extends BaseActivity {
     }
 
     private void goWebView(String url, boolean newBlock) {
+        goWebView(url, newBlock, false);
+    }
+
+    private void goWebView(String url, boolean newBlock, boolean needClearHistory) {
         if (currentFragment == null || newBlock) {
             WebViewFragment webViewFragment = WebViewFragment.getInstance(url);
             mFragmentList.add(webViewFragment);
             currentFragment = webViewFragment;
         } else {
-            currentFragment.loadUrl(url);
+            currentFragment.loadUrl(url, needClearHistory);
         }
         mFragmentManager.beginTransaction().replace(R.id.container,
                 currentFragment).commit();
@@ -143,11 +146,7 @@ public class WebViewActivity extends BaseActivity {
             mHomePageFragment.setGoPageListener(new GoPageListener() {
                 @Override
                 public void onGoPage(String url) {
-                    if (!TextUtils.isEmpty(url)) {
-                        goWebView(url, false);
-                    } else {
-                        goHomePage();
-                    }
+                    goWebView(url, false, true);
                 }
             });
             mFragmentManager.beginTransaction().add(R.id.container, mHomePageFragment).commit();

@@ -33,6 +33,7 @@ import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
 import com.renny.simplebrowser.globe.helper.DateUtil;
+import com.renny.simplebrowser.globe.lang.Hosts;
 import com.renny.simplebrowser.view.event.WebViewEvent;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
@@ -66,6 +67,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     private HistoryDao mHistoryDao;
     private String targetUrl;
     private BookMarkDao mMarkDao;
+    boolean needClearHistory = false;
 
     public static WebViewFragment getInstance(String url) {
         WebViewFragment webViewFragment = new WebViewFragment();
@@ -165,6 +167,15 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
                 pullToRefreshWebView.onPullDownRefreshComplete();
+            }
+
+            @Override
+            public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+                super.doUpdateVisitedHistory(view, url, isReload);
+                if (needClearHistory && !TextUtils.equals(view.getUrl(), Hosts.BLANK)) {
+                    needClearHistory = false;
+                    view.clearHistory();//清除历史记录
+                }
             }
 
             @Override
@@ -276,7 +287,11 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         handleListDialog.show(getChildFragmentManager());
     }
 
-    public void loadUrl(String targetUrl) {
+    public void loadUrl(String targetUrl, boolean needClearHistory) {
+        this.needClearHistory = needClearHistory;
+        if (needClearHistory) {
+            mWebView.loadUrl(Hosts.BLANK);
+        }
         mWebView.loadUrl(targetUrl);
     }
 
