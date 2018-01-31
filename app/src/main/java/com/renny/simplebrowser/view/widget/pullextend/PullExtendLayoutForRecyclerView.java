@@ -12,6 +12,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 
+import com.renny.simplebrowser.business.log.Logs;
+
 
 /**
  * 这个实现了下拉刷新和上拉加载更多的功能
@@ -208,9 +210,11 @@ public class PullExtendLayoutForRecyclerView extends LinearLayout implements IPu
         }
     }
 
+    boolean handled = false;
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        boolean handled = false;
+        handled = false;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mLastMotionY = ev.getY();
@@ -245,13 +249,31 @@ public class PullExtendLayoutForRecyclerView extends LinearLayout implements IPu
                         resetFooterLayout();
                     }
                 }
+                handled = false;
                 break;
 
             default:
                 break;
         }
+
+
         return super.dispatchTouchEvent(ev);
     }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return handled || super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Logs.common.d("bbb--"+getScrollYValue());
+        if (getScrollYValue()==0){
+          mRefreshableView.onTouchEvent(event);
+        }
+        return super.onTouchEvent(event);
+    }
+
     @Override
     public void setPullRefreshEnabled(boolean pullRefreshEnabled) {
         mPullRefreshEnabled = pullRefreshEnabled;
