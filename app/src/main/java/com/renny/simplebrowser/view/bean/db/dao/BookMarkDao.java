@@ -1,9 +1,9 @@
-package com.renny.simplebrowser.business.db.dao;
+package com.renny.simplebrowser.view.bean.db.dao;
 
 import android.support.annotation.NonNull;
 
 import com.j256.ormlite.stmt.DeleteBuilder;
-import com.renny.simplebrowser.business.db.entity.BookMark;
+import com.renny.simplebrowser.view.bean.db.entity.BookMark;
 
 import java.sql.SQLException;
 import java.util.List;

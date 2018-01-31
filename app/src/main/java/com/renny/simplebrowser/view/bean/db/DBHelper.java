@@ -1,4 +1,4 @@
-package com.renny.simplebrowser.business.db;
+package com.renny.simplebrowser.view.bean.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,8 +7,8 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.renny.simplebrowser.business.db.entity.BookMark;
-import com.renny.simplebrowser.business.db.entity.History;
+import com.renny.simplebrowser.view.bean.db.entity.BookMark;
+import com.renny.simplebrowser.view.bean.db.entity.History;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

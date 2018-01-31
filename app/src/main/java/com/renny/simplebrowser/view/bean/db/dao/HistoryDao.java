@@ -1,10 +1,10 @@
-package com.renny.simplebrowser.business.db.dao;
+package com.renny.simplebrowser.view.bean.db.dao;
 
 import android.support.annotation.NonNull;
 
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.renny.simplebrowser.business.db.entity.History;
+import com.renny.simplebrowser.view.bean.db.entity.History;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

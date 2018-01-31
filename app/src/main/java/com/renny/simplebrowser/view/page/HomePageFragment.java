@@ -12,8 +12,8 @@ import android.widget.Toast;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseFragment;
-import com.renny.simplebrowser.business.db.dao.BookMarkDao;
-import com.renny.simplebrowser.business.db.entity.BookMark;
+import com.renny.simplebrowser.view.bean.db.dao.BookMarkDao;
+import com.renny.simplebrowser.view.bean.db.entity.BookMark;
 import com.renny.simplebrowser.business.helper.SearchHelper;
 import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.permission.PermissionHelper;

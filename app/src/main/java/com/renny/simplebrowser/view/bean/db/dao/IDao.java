@@ -1,4 +1,4 @@
-package com.renny.simplebrowser.business.db.dao;
+package com.renny.simplebrowser.view.bean.db.dao;
 
 import android.support.annotation.NonNull;
 

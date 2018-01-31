@@ -1,4 +1,4 @@
-package com.renny.simplebrowser.business.db.entity;
+package com.renny.simplebrowser.view.bean.db.entity;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

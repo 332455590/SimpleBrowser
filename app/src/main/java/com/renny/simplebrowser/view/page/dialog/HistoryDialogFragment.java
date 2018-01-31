@@ -33,8 +33,8 @@ import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseDialogFragment;
-import com.renny.simplebrowser.business.db.dao.HistoryDao;
-import com.renny.simplebrowser.business.db.entity.History;
+import com.renny.simplebrowser.view.bean.db.dao.HistoryDao;
+import com.renny.simplebrowser.view.bean.db.entity.History;
 import com.renny.simplebrowser.business.helper.EventHelper;
 import com.renny.simplebrowser.business.helper.Folders;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
@@ -58,7 +58,7 @@ import cn.bingoogolapple.baseadapter.BGARecyclerViewHolder;
 
 public class HistoryDialogFragment extends BaseDialogFragment implements BGAOnRVItemChildTouchListener {
     private BottomSheetBehavior mBehavior;
-     List<History> list;
+    List<History> list;
     HistoryDao mHistoryDao;
 
     RecyclerView mRecyclerView;
@@ -69,6 +69,7 @@ public class HistoryDialogFragment extends BaseDialogFragment implements BGAOnRV
     HistoryStickyAdapter historyAdapter;
     private BGARVVerticalScrollHelper mRecyclerViewScrollHelper;
     private ItemTouchHelper mItemTouchHelper;
+
     public static HistoryDialogFragment getInstance(Context mContext, FragmentManager fm) {
         String tag = HistoryDialogFragment.class.getName();
         Fragment fragment = fm.findFragmentByTag(tag);
@@ -86,6 +87,43 @@ public class HistoryDialogFragment extends BaseDialogFragment implements BGAOnRV
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new BottomSheetDialog(getContext(), getTheme());
+    }
+
+    @Override
+    protected void initDialogStyle(Dialog dialog, Window window) {
+        super.initDialogStyle(dialog, window);
+        mBehavior = BottomSheetBehavior.from((View) rootView.getParent());
+        //默认全屏展开
+        mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                Logs.common.d("newState" + newState);
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        KeyboardUtils.hideSoftInput(getActivity(), mEditText);
+                        dismiss(isResumed());
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        expand();
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        KeyboardUtils.hideSoftInput(getActivity(), mEditText);
+                        reduce();
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        window.setAttributes(lp);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
     @Override
@@ -190,48 +228,6 @@ public class HistoryDialogFragment extends BaseDialogFragment implements BGAOnRV
         });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mBehavior = BottomSheetBehavior.from((View) rootView.getParent());
-        //默认全屏展开
-        mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                Logs.common.d("newState" + newState);
-                switch (newState) {
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        KeyboardUtils.hideSoftInput(getActivity(), mEditText);
-                        dismiss(isResumed());
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        expand();
-                        break;
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-                        KeyboardUtils.hideSoftInput(getActivity(), mEditText);
-                        reduce();
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
-        Dialog dialog = getDialog();
-        if (dialog != null) {
-            Window window = dialog.getWindow();
-            if (window != null) {
-                WindowManager.LayoutParams lp = window.getAttributes();
-                lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                window.setAttributes(lp);
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            }
-        }
-    }
 
     private void expand() {
         //设置伸展状态时的布局
@@ -261,6 +257,7 @@ public class HistoryDialogFragment extends BaseDialogFragment implements BGAOnRV
         set.setDuration(300);
         TransitionManager.beginDelayedTransition(view, set);
     }
+
     @Override
     public boolean onRvItemChildTouch(BGARecyclerViewHolder holder, View childView, MotionEvent event) {
         if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
@@ -303,7 +300,7 @@ public class HistoryDialogFragment extends BaseDialogFragment implements BGAOnRV
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            History history=list.get(viewHolder.getAdapterPosition());
+            History history = list.get(viewHolder.getAdapterPosition());
             mHistoryDao.delete(history.getUrl());
             historyAdapter.removeItem(viewHolder);
         }

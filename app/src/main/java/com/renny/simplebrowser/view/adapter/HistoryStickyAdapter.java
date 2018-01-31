@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
-import com.renny.simplebrowser.business.db.entity.History;
+import com.renny.simplebrowser.view.bean.db.entity.History;
 import com.renny.simplebrowser.business.helper.Folders;
 
 import java.util.ArrayList;

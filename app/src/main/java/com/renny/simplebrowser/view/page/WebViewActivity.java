@@ -10,8 +10,8 @@ import android.widget.Toast;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseActivity;
-import com.renny.simplebrowser.business.db.dao.BookMarkDao;
-import com.renny.simplebrowser.business.db.entity.BookMark;
+import com.renny.simplebrowser.view.bean.db.dao.BookMarkDao;
+import com.renny.simplebrowser.view.bean.db.entity.BookMark;
 import com.renny.simplebrowser.business.helper.EventHelper;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.view.event.WebViewEvent;

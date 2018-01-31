@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
-import com.renny.simplebrowser.business.db.entity.BookMark;
+import com.renny.simplebrowser.view.bean.db.entity.BookMark;
 
 import cn.bingoogolapple.baseadapter.BGARecyclerViewAdapter;
 import cn.bingoogolapple.baseadapter.BGAViewHolderHelper;
