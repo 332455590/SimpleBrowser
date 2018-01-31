@@ -47,6 +47,7 @@ public class RecyclerActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         ToastHelper.makeToast("  点击了"+position);
+
                     }
                 });
             }
