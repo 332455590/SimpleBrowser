@@ -22,11 +22,12 @@ import java.util.List;
 public class RecyclerActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     RecyclerView listHeader;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler);
-        PullExtendLayoutForRecyclerView pullExtendLayoutForRecyclerView=findViewById(R.id.parent);
+        PullExtendLayoutForRecyclerView pullExtendLayoutForRecyclerView = findViewById(R.id.parent);
         pullExtendLayoutForRecyclerView.setPullLoadEnabled(false);
         ExtendListHeader mPullNewHeader = findViewById(R.id.extend_header);
         listHeader = mPullNewHeader.getRecyclerView();
@@ -36,14 +37,22 @@ public class RecyclerActivity extends AppCompatActivity {
         for (int i = 0; i < 80; i++) {
             headerList.add("item" + i);
         }
-        mRecyclerView.setAdapter(new CommonAdapter(android.R.layout.simple_expandable_list_item_1, headerList) {
+        CommonAdapter adapter = new CommonAdapter<String>(android.R.layout.simple_expandable_list_item_1, headerList) {
             @Override
-            protected void convert(ViewHolder holder, int position) {
+            protected void convert(ViewHolder holder, final int position) {
                 String data = headerList.get(position);
                 TextView textView = holder.getView(android.R.id.text1);
                 textView.setText(data);
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ToastHelper.makeToast("  点击了"+position);
+                    }
+                });
             }
-        });
+        };
+
+        mRecyclerView.setAdapter(adapter);
 
         final List<String> mDatas = new ArrayList<>();
         mDatas.add("历史记录");
@@ -59,7 +68,7 @@ public class RecyclerActivity extends AppCompatActivity {
         mDatas.add("全屏浏览");
         mDatas.add("翻译");
         mDatas.add("切换UA");
-        listHeader.setLayoutManager(new LinearLayoutManager(this,OrientationHelper.HORIZONTAL,false));
+        listHeader.setLayoutManager(new LinearLayoutManager(this, OrientationHelper.HORIZONTAL, false));
         listHeader.setAdapter(new ExtendHeadAdapter(mDatas).setItemClickListener(new CommonAdapter.ItemClickListener() {
             @Override
             public void onItemClicked(int position, View view) {
