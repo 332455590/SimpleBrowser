@@ -184,6 +184,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 if (mMarkDao == null) {
                     mMarkDao = new BookMarkDao();
                 }
+
                 markBookImg.setSelected(mMarkDao.query(webView.getUrl()));
                 pullToRefreshWebView.onPullDownRefreshComplete();
             }
