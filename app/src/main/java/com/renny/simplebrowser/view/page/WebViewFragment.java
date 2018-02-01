@@ -18,22 +18,23 @@ import android.widget.TextView;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.BaseFragment;
-import com.renny.simplebrowser.view.bean.db.dao.BookMarkDao;
-import com.renny.simplebrowser.view.bean.db.dao.HistoryDao;
-import com.renny.simplebrowser.view.bean.db.entity.BookMark;
-import com.renny.simplebrowser.view.bean.db.entity.History;
 import com.renny.simplebrowser.business.helper.DeviceHelper;
 import com.renny.simplebrowser.business.helper.EventHelper;
 import com.renny.simplebrowser.business.helper.KeyboardUtils;
 import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
+import com.renny.simplebrowser.business.webview.InJavaScriptLocalObj;
 import com.renny.simplebrowser.business.webview.X5DownloadListener;
 import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
 import com.renny.simplebrowser.globe.helper.DateUtil;
 import com.renny.simplebrowser.globe.lang.Hosts;
+import com.renny.simplebrowser.view.bean.db.dao.BookMarkDao;
+import com.renny.simplebrowser.view.bean.db.dao.HistoryDao;
+import com.renny.simplebrowser.view.bean.db.entity.BookMark;
+import com.renny.simplebrowser.view.bean.db.entity.History;
 import com.renny.simplebrowser.view.event.WebViewEvent;
 import com.renny.simplebrowser.view.listener.OnItemClickListener;
 import com.renny.simplebrowser.view.listener.SimpleTextWatcher;
@@ -184,15 +185,19 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 if (mMarkDao == null) {
                     mMarkDao = new BookMarkDao();
                 }
+                webView.loadUrl("javascript:window.local_obj.showSource('<head>'+" + "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
                 markBookImg.setSelected(mMarkDao.query(webView.getUrl()));
                 pullToRefreshWebView.onPullDownRefreshComplete();
             }
         };
+        mWebView.addJavascriptInterface(new InJavaScriptLocalObj(), "local_obj");
         mWebView.setWebChromeClient(webChromeClient);
         mWebView.setWebViewClient(webViewClient);
         mWebView.loadUrl(targetUrl);
         mWebView.setDownloadListener(new X5DownloadListener(this, mWebView));
         mWebView.setOnSelectItemListener(this);
+
+
 
         searchEdit.addTextChangedListener(new SimpleTextWatcher() {
             @Override
@@ -290,7 +295,8 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     public void loadUrl(String targetUrl, boolean needClearHistory) {
         this.needClearHistory = needClearHistory;
         if (needClearHistory) {
-            mWebView.loadUrl(Hosts.BLANK);
+           // mWebView.loadUrl(Hosts.BLANK);
+            mWebView.clearView();
         }
         mWebView.loadUrl(targetUrl);
     }

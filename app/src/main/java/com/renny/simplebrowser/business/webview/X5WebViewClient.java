@@ -20,6 +20,22 @@ public class X5WebViewClient extends WebViewClient {
         mContext = context;
     }
 
+  /*  @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+        url = url.toLowerCase();
+        if (!ADFilterTool.hasAd(mContext, url)) {
+            return super.shouldInterceptRequest(view, url);//正常加载
+        } else {
+            return new WebResourceResponse (null, null, null);//含有广告资源屏蔽请求
+        }
+    }*/
+
+    @Override
+    public void onPageFinished(WebView webView, String s) {
+        super.onPageFinished(webView, s);
+        Logs.h5.d("x5WebView--onPageFinished");
+    }
+
     /**
      * 防止加载网页时调起系统浏览器
      */
