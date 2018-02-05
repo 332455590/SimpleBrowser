@@ -12,11 +12,10 @@ import android.widget.TextView;
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.helper.DeviceHelper;
 import com.renny.simplebrowser.business.helper.UIHelper;
-import com.renny.simplebrowser.business.log.Logs;
-import com.renny.simplebrowser.business.toast.ToastHelper;
-import com.renny.simplebrowser.globe.helper.DownloadUtil;
 import com.renny.simplebrowser.business.task.SimpleTask;
 import com.renny.simplebrowser.business.task.TaskHelper;
+import com.renny.simplebrowser.business.toast.ToastHelper;
+import com.renny.simplebrowser.globe.helper.DownloadUtil;
 import com.renny.simplebrowser.view.page.WebViewFragment;
 import com.tencent.smtt.sdk.WebView;
 
@@ -72,46 +71,43 @@ public class X5DownloadListener implements com.tencent.smtt.sdk.DownloadListener
 
     private void downloadStart(final String url, String contentDisposition, final String mimetype) {
         final String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
-        TaskHelper.submitTask("download", new SimpleTask<Object>() {
+        TaskHelper.submitTask("download", new SimpleTask<File>() {
             @Override
-            public Object onBackground() throws Exception {
-                DownloadUtil.get().download(url, fileName, new DownloadUtil.OnDownloadListener() {
-                    @Override
-                    public void onDownloadSuccess(final boolean exist, final File file) {
-                        String content = exist ? "文件已存在，是否立即打开文件？" : "下载成功，是否立即打开文件？";
-                        Snackbar snackbar = Snackbar.make(mWebView, content, Snackbar.LENGTH_LONG)
-                                .setAction("打开", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        DeviceHelper.openFile(webViewFragment.getActivity(), file, mimetype);
-                                    }
-                                });
-                        snackbar.setText(content);
-                        View view = snackbar.getView();//获取Snackbar的view
-                        ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(UIHelper.getColor(R.color.white));//获取Snackbar的message控件，修改字体颜色
-                        snackbar.setActionTextColor(Color.parseColor("#FFFFFF"));  //设置Snackbar上的字体颜色
-                        snackbar.show();
-                    }
+            public void onProgressInfo(Object progressInfo) {
+                int progress = (int) progressInfo;
+                if (progress != preProgress) {
+                    preProgress = progress;
+                    webViewFragment.setMyProgress(progress);
+                }
+            }
 
-                    @Override
-                    public void onDownloadStart() {
-                        ToastHelper.makeToast("开始下载");
-                    }
+            @Override
+            public File onBackground() throws Exception {
+                return DownloadUtil.get().download(url, fileName, this);
+            }
 
-                    @Override
-                    public void onDownloading(final int progress) {
-                        Logs.base.d("onDownloading:  " + progress);
-                        if (progress != preProgress) {
-                            preProgress = progress;
-                            webViewFragment.setMyProgress(progress);
-                        }
-                    }
+            @Override
+            public void onException(Throwable throwable) {
+                super.onException(throwable);
+                ToastHelper.makeToast("下载失败");
+            }
 
-                    @Override
-                    public void onDownloadFailed() {
-                    }
-                });
-                return null;
+            @Override
+            public void onComplete(final File result) {
+                String content = "下载成功，是否立即打开文件？";
+                Snackbar snackbar = Snackbar.make(mWebView, content, Snackbar.LENGTH_LONG)
+                        .setAction("打开", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DeviceHelper.openFile(webViewFragment.getActivity(), result, mimetype);
+                            }
+                        });
+                snackbar.setText(content);
+                View view = snackbar.getView();//获取Snackbar的view
+                ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(UIHelper.getColor(R.color.white));//获取Snackbar的message控件，修改字体颜色
+                snackbar.setActionTextColor(Color.parseColor("#FFFFFF"));  //设置Snackbar上的字体颜色
+                snackbar.show();
+                super.onComplete(result);
             }
         });
 

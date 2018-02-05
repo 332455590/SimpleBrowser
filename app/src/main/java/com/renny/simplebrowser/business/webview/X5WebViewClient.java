@@ -16,8 +16,28 @@ public class X5WebViewClient extends WebViewClient {
 
     private Context mContext;
 
-    public X5WebViewClient(Context context) {
+    protected X5WebViewClient(Context context) {
         mContext = context;
+    }
+
+/*
+    @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+        WebResourceResponse response = super.shouldInterceptRequest(view, url);
+        try {
+            response = new WebResourceResponse("text/javascript", "UTF-8", mContext.getAssets().open("hidden.js"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("ard", "response错误1");
+        }
+        return response;
+    }
+*/
+
+    @Override
+    public void onPageFinished(WebView webView, String s) {
+        super.onPageFinished(webView, s);
+        Logs.h5.d("x5WebView--onPageFinished");
     }
 
     /**

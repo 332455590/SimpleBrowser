@@ -10,4 +10,7 @@
     <string name="dialog_download">您是否需要下载此文件？ (%1$s)</string>
     <string name="hint_history">搜索历史记录</string>
     <string name="search">搜索</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

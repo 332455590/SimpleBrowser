@@ -22,6 +22,13 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     protected Activity mActivity;
     protected boolean mIsLoadedData = false;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            initParams(getParams(getArguments()));
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -34,9 +41,6 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (getArguments() != null) {
-            initParams(getParams(getArguments()));
-        }
         initPresenter();
         if (rootView == null) {
             rootView = inflater.inflate(getLayoutId(), container, false);
