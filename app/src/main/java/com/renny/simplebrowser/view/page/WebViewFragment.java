@@ -81,6 +81,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         Bundle args = new Bundle();
         args.putString("url", url);
         webViewFragment.setArguments(args);
+
         return webViewFragment;
     }
 
