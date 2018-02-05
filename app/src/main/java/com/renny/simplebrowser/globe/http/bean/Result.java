@@ -22,6 +22,13 @@ public class Result<T> implements IResult<T> {
         result.resultDes = msg;
         return result;
     }
+ public static Result fail( String msg) {
+        Result result = new Result();
+        result.result = result;
+        result.success = false;
+        result.resultDes = msg;
+        return result;
+    }
 
 
     public static Result success(Object body) {

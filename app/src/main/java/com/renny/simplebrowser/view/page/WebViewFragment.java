@@ -1,6 +1,7 @@
 package com.renny.simplebrowser.view.page;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.transition.Slide;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ import com.renny.simplebrowser.business.webview.X5DownloadListener;
 import com.renny.simplebrowser.business.webview.X5WebChromeClient;
 import com.renny.simplebrowser.business.webview.X5WebView;
 import com.renny.simplebrowser.business.webview.X5WebViewClient;
+import com.renny.simplebrowser.globe.helper.ContextHelper;
 import com.renny.simplebrowser.globe.helper.DateUtil;
 import com.renny.simplebrowser.globe.lang.Hosts;
 import com.renny.simplebrowser.view.bean.db.dao.BookMarkDao;
@@ -48,6 +51,9 @@ import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -185,7 +191,8 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
                 if (mMarkDao == null) {
                     mMarkDao = new BookMarkDao();
                 }
-                webView.loadUrl("javascript:window.local_obj.showSource('<head>'+" + "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                webView.loadUrl("javascript:" + buildJs());
+                webView.loadUrl("javascript:window.local_obj.showSource(123);");
                 markBookImg.setSelected(mMarkDao.query(webView.getUrl()));
                 pullToRefreshWebView.onPullDownRefreshComplete();
             }
@@ -196,7 +203,6 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
         mWebView.loadUrl(targetUrl);
         mWebView.setDownloadListener(new X5DownloadListener(this, mWebView));
         mWebView.setOnSelectItemListener(this);
-
 
 
         searchEdit.addTextChangedListener(new SimpleTextWatcher() {
@@ -214,6 +220,33 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
             }
         });
 
+    }
+
+    private String buildJs() {
+        AssetManager assetManager = ContextHelper.getAppContext().getAssets();
+        InputStream inputStream = null;
+        try {
+            inputStream = assetManager.open("hidden.js");
+        } catch (IOException e) {
+            Log.e("tag", e.getMessage());
+        }
+        return readTextFile(inputStream);
+    }
+
+    private String readTextFile(InputStream inputStream) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte buf[] = new byte[1024];
+        int len;
+        try {
+            while ((len = inputStream.read(buf)) != -1) {
+                outputStream.write(buf, 0, len);
+            }
+            outputStream.close();
+            inputStream.close();
+        } catch (IOException e) {
+            Log.e("tag", e.getMessage());
+        }
+        return outputStream.toString();
     }
 
     public void showSearchDialog() {
@@ -258,6 +291,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     @Override
     public void onImgSelected(int x, int y, int type, final String extra) {
+        Logs.h5.d("extra--" + extra);
         final HandlePictureDialog handlePictureDialog = HandlePictureDialog.getInstance(x, y, extra);
         handlePictureDialog.setWebView(mWebView);
         handlePictureDialog.show(getChildFragmentManager());
@@ -265,8 +299,10 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
 
     }
 
+
     @Override
     public void onLinkSelected(int x, int y, int type, final String extra) {
+        Logs.h5.d("extra--" + extra);
         ArrayList<String> titleList = new ArrayList<>();
         titleList.add("复制链接地址");
         titleList.add("新窗口打开");
@@ -295,7 +331,7 @@ public class WebViewFragment extends BaseFragment implements X5WebView.onSelectI
     public void loadUrl(String targetUrl, boolean needClearHistory) {
         this.needClearHistory = needClearHistory;
         if (needClearHistory) {
-           // mWebView.loadUrl(Hosts.BLANK);
+            // mWebView.loadUrl(Hosts.BLANK);
             mWebView.clearView();
         }
         mWebView.loadUrl(targetUrl);

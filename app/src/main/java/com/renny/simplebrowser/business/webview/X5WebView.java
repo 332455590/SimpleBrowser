@@ -87,7 +87,8 @@ public class X5WebView extends WebView {
                 if (null == result)
                     return false;
                 int type = result.getType();
-                String url = result.getExtra();
+                String extra = result.getExtra();
+                Logs.h5.d("extra--" + extra);
                 switch (type) {
                     case WebView.HitTestResult.EDIT_TEXT_TYPE: // 选中的文字类型
                        break;
@@ -98,14 +99,14 @@ public class X5WebView extends WebView {
                     case WebView.HitTestResult.GEO_TYPE: // 　地图类型
                         break;
                     case WebView.HitTestResult.SRC_ANCHOR_TYPE: // 超链接
-                        if (mOnSelectItemListener != null && url != null && URLUtil.isValidUrl(url)) {
-                            mOnSelectItemListener.onLinkSelected(touchX, touchY, result.getType(), url);
+                        if (mOnSelectItemListener != null && extra != null && URLUtil.isValidUrl(extra)) {
+                            mOnSelectItemListener.onLinkSelected(touchX, touchY, result.getType(), extra);
                         }
                         return true;
                     case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE: // 带有链接的图片类型
                     case WebView.HitTestResult.IMAGE_TYPE: // 处理长按图片的菜单项
-                        if (mOnSelectItemListener != null && url != null && URLUtil.isValidUrl(url)) {
-                            mOnSelectItemListener.onImgSelected(touchX, touchY, result.getType(), url);
+                        if (mOnSelectItemListener != null && extra != null && URLUtil.isValidUrl(extra)) {
+                            mOnSelectItemListener.onImgSelected(touchX, touchY, result.getType(), extra);
                         }
                         return true;
                     case WebView.HitTestResult.UNKNOWN_TYPE: //未知
