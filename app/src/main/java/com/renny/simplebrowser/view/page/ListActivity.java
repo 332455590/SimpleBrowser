@@ -5,9 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,7 +39,12 @@ public class ListActivity extends AppCompatActivity {
         mExtendListHeader = headView.findViewById(R.id.extend_header);
         mListView.addHeaderView(headView);
         mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getData()));
-
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        int height = metric.heightPixels;   // 屏幕高度（像素）
+        ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
+        lp.height = height;
+        mExtendListHeader.setLayoutParams(lp);
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
