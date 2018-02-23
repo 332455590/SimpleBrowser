@@ -33,6 +33,8 @@
         </activity>
         <activity android:name=".view.page.RecyclerActivity">
         </activity>
+        <activity android:name=".view.page.ListActivity">
+        </activity>
     </application>
 
 </manifest>

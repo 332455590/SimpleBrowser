@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.DecelerateInterpolator;
@@ -135,6 +136,7 @@ public class PullExtendLayoutForRecyclerView extends LinearLayout implements IPu
      * @param context context
      */
     private void init(Context context) {
+        mTouchSlop = (int) (ViewConfiguration.get(context).getScaledTouchSlop());
         ViewGroup.LayoutParams layoutParams = mRefreshableView.getLayoutParams();
         layoutParams.height = 10;
         mRefreshableView.setLayoutParams(layoutParams);
@@ -210,6 +212,10 @@ public class PullExtendLayoutForRecyclerView extends LinearLayout implements IPu
         }
     }
 
+    /**
+     * 移动点的保护范围值
+     */
+    private int mTouchSlop;
     boolean handled = false;
 
     @Override
@@ -217,23 +223,28 @@ public class PullExtendLayoutForRecyclerView extends LinearLayout implements IPu
         handled = false;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                handled = false;
                 mLastMotionY = ev.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
                 final float deltaY = ev.getY() - mLastMotionY;
+                final float absDiff = Math.abs(deltaY);
                 if (ev.getY() > Math.abs(getScrollYValue())) {
-                    mLastMotionY = ev.getY();
-                    if (isPullRefreshEnabled() && isReadyForPullDown(deltaY)) {
-                        pullHeaderLayout(deltaY / offsetRadio);
-                        handled = true;
-                        if (null != mFooterLayout && 0 != mFooterHeight) {
-                            mFooterLayout.setState(IExtendLayout.State.RESET);
-                        }
-                    } else if (isPullLoadEnabled() && isReadyForPullUp(deltaY)) {
-                        pullFooterLayout(deltaY / offsetRadio);
-                        handled = true;
-                        if (null != mHeaderLayout && 0 != mHeaderHeight) {
-                            mHeaderLayout.setState(IExtendLayout.State.RESET);
+                    if (Math.abs(getScrollYValue()) !=
+                            headerListHeight || Math.abs(getScrollYValue()) == headerListHeight && absDiff > mTouchSlop) {
+                        mLastMotionY = ev.getY();
+                        if (isPullRefreshEnabled() && isReadyForPullDown(deltaY)) {
+                            pullHeaderLayout(deltaY / offsetRadio);
+                            handled = true;
+                            if (null != mFooterLayout && 0 != mFooterHeight) {
+                                mFooterLayout.setState(IExtendLayout.State.RESET);
+                            }
+                        } else if (isPullLoadEnabled() && isReadyForPullUp(deltaY)) {
+                            pullFooterLayout(deltaY / offsetRadio);
+                            handled = true;
+                            if (null != mHeaderLayout && 0 != mHeaderHeight) {
+                                mHeaderLayout.setState(IExtendLayout.State.RESET);
+                            }
                         }
                     }
                 }
@@ -267,9 +278,9 @@ public class PullExtendLayoutForRecyclerView extends LinearLayout implements IPu
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Logs.common.d("bbb--"+getScrollYValue());
-        if (getScrollYValue()==0){
-          mRefreshableView.onTouchEvent(event);
+        Logs.common.d("bbb--" + getScrollYValue());
+        if (getScrollYValue() == 0) {
+            mRefreshableView.onTouchEvent(event);
         }
         return super.onTouchEvent(event);
     }
