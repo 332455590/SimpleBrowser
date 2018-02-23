@@ -74,10 +74,8 @@ public class ListActivity extends AppCompatActivity {
                     int headerListHeight = mExtendListHeader.getListSize();
                     if (scrollY < headerListHeight / 2) {
                         mListView.smoothScrollBy(scrollY, 500);
-                    } else if (scrollY < headerListHeight) {
-                        mListView.smoothScrollBy(scrollY - headerListHeight, 1000);
-                    } else if (scrollY > headerListHeight) {
-                        mListView.smoothScrollBy(scrollY - headerListHeight, 1000);
+                    } else if (scrollY < headerListHeight || scrollY > headerListHeight) {
+                        mListView.smoothScrollBy(scrollY - headerListHeight, 500);
                     }
                 }
             }
