@@ -70,13 +70,16 @@ public class ListActivity extends AppCompatActivity {
             public void onActionUp() {
                 if (mListView.getFirstVisiblePosition() == 0) {
                     View firstVisibleItemView = mListView.getChildAt(1);
-                    int scrollY = firstVisibleItemView.getTop();
-                    int headerListHeight = mExtendListHeader.getListSize();
-                    if (scrollY < headerListHeight / 2) {
-                        mListView.smoothScrollBy(scrollY, 500);
-                    } else if (scrollY < headerListHeight || scrollY > headerListHeight) {
-                        mListView.smoothScrollBy(scrollY - headerListHeight, 500);
+                    if (firstVisibleItemView != null) {
+                        int scrollY = firstVisibleItemView.getTop();
+                        int headerListHeight = mExtendListHeader.getListSize();
+                        if (scrollY < headerListHeight / 2) {
+                            mListView.smoothScrollBy(scrollY, 500);
+                        } else if (scrollY < headerListHeight || scrollY > headerListHeight) {
+                            mListView.smoothScrollBy(scrollY - headerListHeight, 500);
+                        }
                     }
+
                 }
             }
         });
