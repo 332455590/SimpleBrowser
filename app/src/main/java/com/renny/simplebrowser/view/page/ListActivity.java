@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.CommonAdapter;
-import com.renny.simplebrowser.business.log.Logs;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListHeaderNew;
@@ -40,20 +39,19 @@ public class ListActivity extends AppCompatActivity {
         final View footView = LayoutInflater.from(this).inflate(R.layout.list_view_header_layout, mListView, false);
         mExtendListHeader = headView.findViewById(R.id.extend_header);
         mListView.addHeaderView(headView);
-        mListView.addFooterView(footView,null,false);
+        mListView.addFooterView(footView, null, false);
         mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getData()));
         mListView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
-                lp.height = mListView.getHeight()-1;
+                lp.height = mListView.getHeight() - 1;
                 mExtendListHeader.setLayoutParams(lp);
-                Logs.base.d("zzzz--"+footView.getTop());
-      if (footView.getTop()!=0){
-          ViewGroup.LayoutParams lp2 = footView.getLayoutParams();
-          lp2.height = lp.height-footView.getTop();
-          footView.setLayoutParams(lp2);
-      }
+                if (footView.getTop() != 0) {
+                    ViewGroup.LayoutParams lp2 = footView.getLayoutParams();
+                    lp2.height = lp.height - footView.getTop();
+                    footView.setLayoutParams(lp2);
+                }
                 mListView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
