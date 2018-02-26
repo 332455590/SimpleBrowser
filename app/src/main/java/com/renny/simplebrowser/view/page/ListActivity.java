@@ -40,12 +40,25 @@ public class ListActivity extends AppCompatActivity {
         mExtendListHeader = headView.findViewById(R.id.extend_header);
         mListView.addHeaderView(headView);
         mListView.addFooterView(footView, null, false);
-        mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getData()));
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getData()) {
+            @Override
+            public void notifyDataSetChanged() {
+                if (footView.getTop() != 0) {
+                    ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
+                    lp.height = mListView.getHeight() - 1;
+                    ViewGroup.LayoutParams lp2 = footView.getLayoutParams();
+                    lp2.height = lp.height - footView.getTop();
+                    footView.setLayoutParams(lp2);
+                }
+                super.notifyDataSetChanged();
+            }
+        };
+        mListView.setAdapter(arrayAdapter);
         mListView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
-                lp.height = mListView.getHeight() - 1;
+                lp.height = mListView.getHeight();
                 mExtendListHeader.setLayoutParams(lp);
                 if (footView.getTop() != 0) {
                     ViewGroup.LayoutParams lp2 = footView.getLayoutParams();
@@ -87,9 +100,9 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onActionUp() {
                 if (mListView.getFirstVisiblePosition() == 0) {
-                    View firstVisibleItemView = mListView.getChildAt(1);
+                    View firstVisibleItemView = mListView.getChildAt(0);
                     if (firstVisibleItemView != null) {
-                        int scrollY = firstVisibleItemView.getTop();
+                        int scrollY = firstVisibleItemView.getBottom();
                         int headerListHeight = mExtendListHeader.getListSize();
                         if (scrollY < headerListHeight / 2) {
                             mListView.smoothScrollBy(scrollY, 500);
