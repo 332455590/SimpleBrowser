@@ -12,12 +12,13 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.CommonAdapter;
+import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
+import com.renny.simplebrowser.view.adapter.MyAdapter;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListHeaderNew;
 import com.renny.simplebrowser.view.widget.pullextend.HeaderListView;
 
@@ -29,6 +30,7 @@ public class ListActivity extends AppCompatActivity {
     HeaderListView mListView;
     ExtendListHeaderNew mExtendListHeader;
     RecyclerView listHeader;
+    List<String> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,23 +38,30 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         mListView = findViewById(R.id.list);
         final View headView = LayoutInflater.from(this).inflate(R.layout.list_view_header_layout, mListView, false);
-        final View footView = LayoutInflater.from(this).inflate(R.layout.list_view_header_layout, mListView, false);
+        final View footView = LayoutInflater.from(ListActivity.this).inflate(R.layout.list_view_footer_layout, mListView, false);
+        mListView.addFooterView(footView, null, false);
         mExtendListHeader = headView.findViewById(R.id.extend_header);
         mListView.addHeaderView(headView);
-        mListView.addFooterView(footView, null, false);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getData()) {
-            @Override
-            public void notifyDataSetChanged() {
-                if (footView.getTop() != 0) {
-                    ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
-                    lp.height = mListView.getHeight() - 1;
-                    ViewGroup.LayoutParams lp2 = footView.getLayoutParams();
-                    lp2.height = lp.height - footView.getTop();
-                    footView.setLayoutParams(lp2);
-                }
-                super.notifyDataSetChanged();
+
+        getData();
+        final MyAdapter arrayAdapter = new MyAdapter(list, this);
+
+     /*   @Override
+        public void notifyDataSetChanged () {
+            super.notifyDataSetChanged();
+            Logs.h5.d("xxxx--" + footView.getTop());
+            ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
+            lp.height = mListView.getHeight();
+            ViewGroup.LayoutParams lp2 = footView.getLayoutParams();
+            if (footView.getTop() != 0) {
+                lp2.height = lp.height - footView.getTop();
+            } else {
+                lp2.height = 0;
             }
-        };
+            footView.setLayoutParams(lp2);
+
+        }*/
+
         mListView.setAdapter(arrayAdapter);
         mListView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -60,15 +69,15 @@ public class ListActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
                 lp.height = mListView.getHeight();
                 mExtendListHeader.setLayoutParams(lp);
-                if (footView.getTop() != 0) {
-                    ViewGroup.LayoutParams lp2 = footView.getLayoutParams();
-                    lp2.height = lp.height - footView.getTop();
+                if (arrayAdapter.getCount() * UIHelper.dip2px(40) < lp.height) {
+                    ViewGroup.LayoutParams lp2 = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,lp.height - arrayAdapter.getCount() * UIHelper.dip2px(40)+UIHelper.dip2px(180));
                     footView.setLayoutParams(lp2);
                 }
+                mListView.setSelection(1);
                 mListView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
-        mListView.setSelection(1);
+
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -76,7 +85,8 @@ public class ListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                                 int totalItemCount) {
                 View firstVisibleItemView = mListView.getChildAt(1);
                 if (firstVisibleItem != 0) {
                     boolean eq = firstVisibleItemView == headView;
@@ -115,7 +125,9 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+
+        {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ToastHelper.makeToast("点击了+第" + position);
@@ -136,19 +148,24 @@ public class ListActivity extends AppCompatActivity {
         mDatas.add("全屏浏览");
         mDatas.add("翻译");
         mDatas.add("切换UA");
-        listHeader.setLayoutManager(new LinearLayoutManager(this, OrientationHelper.HORIZONTAL, false));
-        listHeader.setAdapter(new ExtendHeadAdapter(mDatas).setItemClickListener(new CommonAdapter.ItemClickListener() {
-            @Override
-            public void onItemClicked(int position, View view) {
-                ToastHelper.makeToast(mDatas.get(position) + " 功能待实现");
-            }
-        }));
+        listHeader.setLayoutManager(new
+
+                LinearLayoutManager(this, OrientationHelper.HORIZONTAL, false));
+        listHeader.setAdapter(new
+
+                ExtendHeadAdapter(mDatas).
+
+                setItemClickListener(new CommonAdapter.ItemClickListener() {
+                    @Override
+                    public void onItemClicked(int position, View view) {
+                        ToastHelper.makeToast(mDatas.get(position) + " 功能待实现");
+                    }
+                }));
 
     }
 
     private List<String> getData() {
-        List<String> list = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 78; i++) {
             list.add("item+" + i);
         }
         return list;
