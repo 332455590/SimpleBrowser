@@ -120,14 +120,11 @@ public class ListActivity extends AppCompatActivity {
                             mListView.smoothScrollBy(scrollY - headerListHeight, 500);
                         }
                     }
-
                 }
             }
         });
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-
-        {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ToastHelper.makeToast("点击了+第" + position);
@@ -148,14 +145,8 @@ public class ListActivity extends AppCompatActivity {
         mDatas.add("全屏浏览");
         mDatas.add("翻译");
         mDatas.add("切换UA");
-        listHeader.setLayoutManager(new
-
-                LinearLayoutManager(this, OrientationHelper.HORIZONTAL, false));
-        listHeader.setAdapter(new
-
-                ExtendHeadAdapter(mDatas).
-
-                setItemClickListener(new CommonAdapter.ItemClickListener() {
+        listHeader.setLayoutManager(new LinearLayoutManager(this, OrientationHelper.HORIZONTAL, false));
+        listHeader.setAdapter(new ExtendHeadAdapter(mDatas).setItemClickListener(new CommonAdapter.ItemClickListener() {
                     @Override
                     public void onItemClicked(int position, View view) {
                         ToastHelper.makeToast(mDatas.get(position) + " 功能待实现");
@@ -164,12 +155,10 @@ public class ListActivity extends AppCompatActivity {
 
     }
 
-    private List<String> getData() {
-        for (int i = 0; i < 78; i++) {
+    private void getData() {
+        for (int i = 0; i < 8; i++) {
             list.add("item+" + i);
         }
-        return list;
     }
-
 
 }
