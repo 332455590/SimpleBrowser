@@ -46,21 +46,6 @@ public class ListActivity extends AppCompatActivity {
         getData();
         final MyAdapter arrayAdapter = new MyAdapter(list, this);
 
-     /*   @Override
-        public void notifyDataSetChanged () {
-            super.notifyDataSetChanged();
-            Logs.h5.d("xxxx--" + footView.getTop());
-            ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
-            lp.height = mListView.getHeight();
-            ViewGroup.LayoutParams lp2 = footView.getLayoutParams();
-            if (footView.getTop() != 0) {
-                lp2.height = lp.height - footView.getTop();
-            } else {
-                lp2.height = 0;
-            }
-            footView.setLayoutParams(lp2);
-
-        }*/
 
         mListView.setAdapter(arrayAdapter);
         mListView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -156,7 +141,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i <58; i++) {
             list.add("item+" + i);
         }
     }

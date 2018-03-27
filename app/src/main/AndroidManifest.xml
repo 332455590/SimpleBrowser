@@ -35,6 +35,8 @@
         </activity>
         <activity android:name=".view.page.ListActivity">
         </activity>
+        <activity android:name=".view.page.Recycler2Activity">
+        </activity>
     </application>
 
 </manifest>
