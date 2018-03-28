@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.renny.simplebrowser.R;
 import com.renny.simplebrowser.business.base.CommonAdapter;
 import com.renny.simplebrowser.business.base.ViewHolder;
+import com.renny.simplebrowser.business.helper.UIHelper;
 import com.renny.simplebrowser.business.toast.ToastHelper;
 import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
 import com.renny.simplebrowser.view.widget.MyRecyclerView;
@@ -63,20 +64,24 @@ public class Recycler2Activity extends AppCompatActivity {
         mRecyclerView.setAdapter(mHeaderAndFooterWrapper);
         mHeaderAndFooterWrapper.notifyDataSetChanged();
         mExtendListHeader = headView.findViewById(R.id.extend_header);
+        final View inner = footView.findViewById(R.id.inner);
         mRecyclerView.setExtendListHeader(mExtendListHeader);
         mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                //计算内容是否充满一屏幕
+                Log.d("xxx--2",mRecyclerView.getHeight()+" "+UIHelper.dip2px(40) * list.size());
+                if (UIHelper.dip2px(40) * list.size() < mRecyclerView.getHeight()){
+                    ViewGroup.LayoutParams lp2 = inner.getLayoutParams();
+                    lp2.height = mRecyclerView.getHeight() - UIHelper.dip2px(40) * list.size();
+                    Log.d("xxx--2",mRecyclerView.getHeight()+" "+UIHelper.dip2px(40) * list.size());
+                    inner.setLayoutParams(lp2);
+                }
                 ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
                 lp.height = mRecyclerView.getHeight();
+                Log.d("xxx--",lp.height+" ");
                 mExtendListHeader.setLayoutParams(lp);
-
-                mRecyclerView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        layoutManager.scrollToPositionWithOffset(1, 0);
-                    }
-                });
+                layoutManager.scrollToPositionWithOffset(1, 0);
                 mRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -134,7 +139,7 @@ public class Recycler2Activity extends AppCompatActivity {
     }
 
     private void getData() {
-        for (int i = 0; i < 28; i++) {
+        for (int i = 0; i < 8; i++) {
             list.add("item+" + i);
         }
     }

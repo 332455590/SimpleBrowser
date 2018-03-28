@@ -1,15 +1,12 @@
 package com.renny.simplebrowser.view.widget;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListHeaderNew;
 
@@ -41,12 +38,24 @@ public class MyRecyclerView extends RecyclerView {
             if (layoutManager.findFirstVisibleItemPosition() == 0) {
                 View firstVisibleItemView = layoutManager.getChildAt(0);
                 if (firstVisibleItemView != null) {
-                    int scrollY = firstVisibleItemView.getBottom();
-                    int headerListHeight = mExtendListHeader.getListSize();
+                    final int scrollY = firstVisibleItemView.getBottom();
+                    final int headerListHeight = mExtendListHeader.getListSize();
                     if (scrollY < headerListHeight / 2) {
-                        layoutManager.scrollToPositionWithOffset(1, 0);
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                smoothScrollBy(0,scrollY);
+                            }
+                        });
+                        //layoutManager.scrollToPositionWithOffset(1, 0);
                     } else if (scrollY < headerListHeight || scrollY > headerListHeight) {
-                        layoutManager.scrollToPositionWithOffset(1, headerListHeight);
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                smoothScrollBy(0,scrollY-headerListHeight);
+                            }
+                        });
+                     //   layoutManager.scrollToPositionWithOffset(1, headerListHeight);
                     }
                 }
             }
@@ -54,28 +63,6 @@ public class MyRecyclerView extends RecyclerView {
         return super.onTouchEvent(ev);
     }
 
-    ValueAnimator valueAnimator;
-
-    private void scroll(final LinearLayoutManager layoutManager, int start, int end) {
-        if (valueAnimator != null && valueAnimator.isRunning()) {
-            valueAnimator.cancel();
-        }
-        valueAnimator = ValueAnimator.ofInt(start, end);
-
-        valueAnimator.setDuration(500);
-        valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                //获取估值器给我们的返回值
-                int animatedValue = (int) animation.getAnimatedValue();
-                //调用RecyclerView的scrollBy执行滑动
-                scrollBy(0, animatedValue);
-                Log.e("TAG", "animatedValue:" + animatedValue);
-            }
-        });
-        valueAnimator.start();
-    }
 }
 
 
