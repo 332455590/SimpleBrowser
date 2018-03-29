@@ -16,15 +16,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.renny.simplebrowser.R;
-import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
-import com.renny.simplebrowser.view.adapter.ExtendMarkAdapter;
-import com.renny.simplebrowser.view.adapter.OverFlyingLayoutManager;
 import com.renny.simplebrowser.business.base.BaseFragment;
 import com.renny.simplebrowser.business.base.CommonAdapter;
 import com.renny.simplebrowser.business.db.dao.BookMarkDao;
 import com.renny.simplebrowser.business.db.entity.BookMark;
 import com.renny.simplebrowser.business.helper.Validator;
 import com.renny.simplebrowser.business.toast.ToastHelper;
+import com.renny.simplebrowser.view.adapter.ExtendHeadAdapter;
+import com.renny.simplebrowser.view.adapter.ExtendMarkAdapter;
+import com.renny.simplebrowser.view.adapter.OverFlyingLayoutManager;
 import com.renny.simplebrowser.view.listener.GoPageListener;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListFooter;
 import com.renny.simplebrowser.view.widget.pullextend.ExtendListHeader;
@@ -63,8 +63,8 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         mPullNewHeader = rootView.findViewById(R.id.extend_header);
         mPullNewFooter = rootView.findViewById(R.id.extend_footer);
         mPullExtendLayout = rootView.findViewById(R.id.pull_extend);
-        rootView.findViewById(R.id.scan).setOnClickListener(this);
-        rootView.findViewById(R.id.url_edit).setOnClickListener(this);
+        rootView.findViewById(R.id.list_view).setOnClickListener(this);
+        rootView.findViewById(R.id.recycler).setOnClickListener(this);
         listHeader = mPullNewHeader.getRecyclerView();
         listFooter = mPullNewFooter.getRecyclerView();
         listHeader.setLayoutManager(new OverFlyingLayoutManager(OrientationHelper.HORIZONTAL));
@@ -186,13 +186,12 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
 
         int id = v.getId();
         switch (id) {
-            case R.id.scan:
-                if (mGoPageListener != null) {
-                    getRuntimeRight();
-                }
+            case R.id.recycler:
+               startActivity(new Intent(getActivity(),Recycler2Activity.class));
                 break;
-            case R.id.url_edit:
-                ((WebViewActivity) getActivity()).goSearchPage();
+            case R.id.list_view:
+                startActivity(new Intent(getActivity(),ListActivity.class));
+                break;
 
         }
     }
