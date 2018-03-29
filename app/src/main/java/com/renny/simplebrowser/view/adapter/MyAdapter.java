@@ -46,7 +46,7 @@ public class MyAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //加载布局为一个视图
-        View view = inflater.inflate(R.layout.list_list_item, null);
+        View view = inflater.inflate(R.layout.list_item, null);
         String student = getItem(position);
         TextView tv_name = view.findViewById(R.id.text1);
         tv_name.setText(student);

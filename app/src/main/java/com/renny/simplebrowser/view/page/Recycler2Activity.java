@@ -69,17 +69,15 @@ public class Recycler2Activity extends AppCompatActivity {
         mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+
                 //计算内容是否充满一屏幕
-                Log.d("xxx--2",mRecyclerView.getHeight()+" "+UIHelper.dip2px(40) * list.size());
                 if (UIHelper.dip2px(40) * list.size() < mRecyclerView.getHeight()){
                     ViewGroup.LayoutParams lp2 = inner.getLayoutParams();
                     lp2.height = mRecyclerView.getHeight() - UIHelper.dip2px(40) * list.size();
-                    Log.d("xxx--2",mRecyclerView.getHeight()+" "+UIHelper.dip2px(40) * list.size());
                     inner.setLayoutParams(lp2);
                 }
                 ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
                 lp.height = mRecyclerView.getHeight();
-                Log.d("xxx--",lp.height+" ");
                 mExtendListHeader.setLayoutParams(lp);
                 layoutManager.scrollToPositionWithOffset(1, 0);
                 mRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);

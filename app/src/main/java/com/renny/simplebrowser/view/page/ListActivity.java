@@ -39,26 +39,34 @@ public class ListActivity extends AppCompatActivity {
         mListView = findViewById(R.id.list);
         final View headView = LayoutInflater.from(this).inflate(R.layout.list_view_header_layout, mListView, false);
         final View footView = LayoutInflater.from(ListActivity.this).inflate(R.layout.list_view_footer_layout, mListView, false);
-        mListView.addFooterView(footView, null, false);
+        mListView.addFooterView(footView);
         mExtendListHeader = headView.findViewById(R.id.extend_header);
         mListView.addHeaderView(headView);
-
+        final View inner = footView.findViewById(R.id.inner);
         getData();
         final MyAdapter arrayAdapter = new MyAdapter(list, this);
-
 
         mListView.setAdapter(arrayAdapter);
         mListView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                Log.d("xxx--2",mListView.getHeight()+" "+UIHelper.dip2px(40) * list.size());
+                if (list.size() * UIHelper.dip2px(40) < mListView.getHeight()) {
+                    ViewGroup.LayoutParams lp2 = inner.getLayoutParams();
+                    lp2.height = mListView.getHeight() - list.size() * UIHelper.dip2px(40);
+                    inner.setLayoutParams(lp2);
+                    Log.d("xxx--2",inner.getHeight()+" "+ lp2.height);
+                }
+
                 ViewGroup.LayoutParams lp = mExtendListHeader.getLayoutParams();
                 lp.height = mListView.getHeight();
                 mExtendListHeader.setLayoutParams(lp);
-                if (arrayAdapter.getCount() * UIHelper.dip2px(40) < lp.height) {
-                    ViewGroup.LayoutParams lp2 = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,lp.height - arrayAdapter.getCount() * UIHelper.dip2px(40)+UIHelper.dip2px(180));
-                    footView.setLayoutParams(lp2);
-                }
-                mListView.setSelection(1);
+                mListView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListView.setSelection(1);
+                    }
+                });
                 mListView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -132,16 +140,16 @@ public class ListActivity extends AppCompatActivity {
         mDatas.add("切换UA");
         listHeader.setLayoutManager(new LinearLayoutManager(this, OrientationHelper.HORIZONTAL, false));
         listHeader.setAdapter(new ExtendHeadAdapter(mDatas).setItemClickListener(new CommonAdapter.ItemClickListener() {
-                    @Override
-                    public void onItemClicked(int position, View view) {
-                        ToastHelper.makeToast(mDatas.get(position) + " 功能待实现");
-                    }
-                }));
+            @Override
+            public void onItemClicked(int position, View view) {
+                ToastHelper.makeToast(mDatas.get(position) + " 功能待实现");
+            }
+        }));
 
     }
 
     private void getData() {
-        for (int i = 0; i <58; i++) {
+        for (int i = 0; i < 8; i++) {
             list.add("item+" + i);
         }
     }
